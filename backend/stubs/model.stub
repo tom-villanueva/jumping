@@ -1,0 +1,32 @@
+<?php
+
+namespace {{ namespace }};
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class {{ class }} extends BaseModel
+{
+    use HasFactory;
+
+    /**
+     * query builder options
+     */
+    public function allowedFilters()
+    {
+        return [
+        ];
+    }
+
+    public function allowedSorts()
+    {
+        return [
+        ];
+    }
+
+    public function allowedIncludes()
+    {
+        return [
+        ];
+    }
+}
