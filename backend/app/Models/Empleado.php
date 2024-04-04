@@ -65,4 +65,8 @@ class Empleado extends Authenticatable
         return [
         ];
     }
+
+    public function getModelGuard() {
+        return $this->guard;
+    }
 }
