@@ -1,0 +1,24 @@
+<?php
+namespace App\Http\Controllers\{{ name }};
+
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Repositories\{{ name }}Repository;
+use App\Http\Requests\{{ name }}\Store{{ name }}Request;
+
+class Store{{ name }}Controller extends Controller
+{
+    private $repository;
+
+    public function __construct({{ name }}Repository $repository)
+    {
+        $this->repository = $repository;
+    }
+
+    public function __invoke(Store{{ name }}Request $request)
+    {
+        $new_entity = $this->repository->create($request->all());
+
+        return response()->json($new_entity);
+    }
+}

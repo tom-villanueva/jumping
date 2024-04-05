@@ -1,0 +1,27 @@
+<?php
+namespace App\Http\Controllers\{{ name }};
+
+use App\Http\Controllers\Controller;
+use App\Repositories\{{ name }}Repository;
+use App\Http\Requests\{{ name }}\Update{{ name }}Request;
+
+class Update{{ name }}Controller extends Controller
+{
+    private $repository;
+
+    public function __construct({{ name }}Repository $repository)
+    {
+        $this->repository = $repository;
+    }
+
+    public function __invoke(Update{{ name }}Request request, $id)
+    {
+        $result = $this->repository->update(request()->all(), $id);
+
+        if ($result) {
+            return response()->json($result);
+        }
+
+        return response()->json([], 404);
+    }
+}

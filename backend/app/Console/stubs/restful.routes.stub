@@ -1,0 +1,15 @@
+<?php
+
+use App\Http\Controllers\{{ name }}\Get{{ namePlural }}Controller;
+use App\Http\Controllers\{{ name }}\Get{{ name }}ByIdController;
+use App\Http\Controllers\{{ name }}\Store{{ name }}Controller;
+use App\Http\Controllers\{{ name }}\Update{{ name }}Controller;
+use App\Http\Controllers\{{ name }}\Delete{{ name }}Controller;
+
+Route::group(['prefix' => '{{ namePluralLowerCase }}'], function () {
+    Route::get('/', Get{{ namePlural }}Controller::class);
+    Route::get('/{id}', Get{{ name }}ByIdController::class);
+    Route::post('/', Store{{ name }}Controller::class);
+    Route::put('/{id}', Update{{ name }}Controller::class);
+    Route::delete('/{id}', Delete{{ name }}Controller::class);
+});

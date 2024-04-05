@@ -1,0 +1,16 @@
+<?php
+
+namespace App\Repositories;
+
+use App\Core\BaseRepository;
+use App\Models\{{ name }};
+
+class ActividadRepository extends BaseRepository
+{
+    protected $model;
+
+    public function __construct({{ name }} $model)
+    {
+        $this->model = $model;
+    }
+}
