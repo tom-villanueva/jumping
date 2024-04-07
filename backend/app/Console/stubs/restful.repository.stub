@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Repositories\{{ name }};
 
 use App\Core\BaseRepository;
 use App\Models\{{ name }};
 
-class ActividadRepository extends BaseRepository
+class {{ name }}Repository extends BaseRepository
 {
     protected $model;
 

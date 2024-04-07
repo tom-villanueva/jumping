@@ -57,15 +57,15 @@ class ResourceMakeCommand extends Command
 
     private $basePaths = [
         'model' => 'Models/',
-        'repository' => 'Repositories/',
-        'get' => 'Http/Controllers/',
-        'getById' => 'Http/Controllers/',
-        'store' => 'Http/Controllers/',
-        'update' => 'Http/Controllers/',
-        'delete' => 'Http/Controllers/',
-        'routes' => 'routes/',
-        'storeRequest' => 'Http/Requests/',
-        'updateRequest' => 'Http/Requests/' 
+        'repository' => 'Repositories',
+        'get' => 'Http/Controllers',
+        'getById' => 'Http/Controllers',
+        'store' => 'Http/Controllers',
+        'update' => 'Http/Controllers',
+        'delete' => 'Http/Controllers',
+        'routes' => 'routes',
+        'storeRequest' => 'Http/Requests',
+        'updateRequest' => 'Http/Requests' 
     ];
 
     private $fileNames = [
@@ -120,6 +120,10 @@ class ResourceMakeCommand extends Command
             $lcName = Str::lower(Str::snake($name));
             $fileName = $lcName;
             return $this->laravel->basePath("$basePath/$fileName.php");
+        } elseif($type == 'get') {
+            $pluralName = Str::plural($name);
+            $filePath = "$name/"; 
+            $fileName = $filePath . str_replace('{{ name }}', $pluralName, $this->fileNames[$type]);
         } else {
             $filePath = "$name/"; 
             $fileName = $filePath . str_replace('{{ name }}', $name, $this->fileNames[$type]);

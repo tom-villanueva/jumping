@@ -3,7 +3,7 @@ namespace App\Http\Controllers\{{ name }};
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Repositories\{{ name }}Repository;
+use App\Repositories\{{ name }}\{{ name }}Repository;
 use App\Http\Requests\{{ name }}\Store{{ name }}Request;
 
 class Store{{ name }}Controller extends Controller
