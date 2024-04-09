@@ -16,7 +16,7 @@ class Update{{ name }}Controller extends Controller
 
     public function __invoke(Update{{ name }}Request $request, $id)
     {
-        $result = $this->repository->update($request->all(), $id);
+        $result = $this->repository->update($id, $request->all());
 
         if ($result) {
             return response()->json($result);
