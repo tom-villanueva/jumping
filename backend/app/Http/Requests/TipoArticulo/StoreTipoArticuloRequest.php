@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Talle;
+namespace App\Http\Requests\TipoArticulo;
 
 use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreTalleRequest extends FormRequest
+class StoreTipoArticuloRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,17 +25,17 @@ class StoreTalleRequest extends FormRequest
     public function rules()
     {
         return [
-            'descripcion' => 'required|unique:talle,descripcion',
-            'tipo_articulo_ids' => 'nullable|array',
-            'tipo_articulo_ids.*.tipo_articulo_id' => 'exists:tipo_articulos,id',
-            'tipo_articulo_ids.*.stock' => 'integer|min:0'
+            'descripcion' => 'required|unique:tipo_articulos,descripcion',
+            'talle_ids' => 'nullable|array',
+            'talle_ids.*.talle_id' => 'integer|exists:talle,id',
+            'talle_ids.*.stock' => 'integer|min:0'
         ];
     }
 
     public function messages()
     {
         return [
-            'tipo_articulo_ids.*.tipo_articulo_id.exists' => 'El tipo artículo en posición :position no existe en la BD.' 
+            'talle_ids.*.talle_id.exists' => 'El talle en posición :position no existe en la BD.' 
         ];
     }
 }

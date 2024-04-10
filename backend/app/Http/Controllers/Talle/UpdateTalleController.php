@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Talle;
 use App\Http\Controllers\Controller;
 use App\Repositories\Talle\TalleRepository;
 use App\Http\Requests\Talle\UpdateTalleRequest;
+use Illuminate\Support\Facades\DB;
 
 class UpdateTalleController extends Controller
 {
@@ -16,12 +17,18 @@ class UpdateTalleController extends Controller
 
     public function __invoke(UpdateTalleRequest $request, $id)
     {
+        DB::beginTransaction();
+
         $result = $this->repository->update($id, $request->all());
 
-        if ($result) {
-            return response()->json($result);
+        $tipo_articulos = $request->tipo_articulo_ids;
+
+        if($tipo_articulos != null) {
+            $result->tipo_articulo_talle()->sync($tipo_articulos);
         }
 
-        return response()->json([], 404);
+        DB::commit();
+
+        return response()->json($result);
     }
 }

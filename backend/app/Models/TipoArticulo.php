@@ -4,9 +4,9 @@ namespace App\Models;
 
 use App\Core\BaseModel;
 
-class Talle extends BaseModel
+class TipoArticulo extends BaseModel
 {
-    protected $table = 'talle';
+    protected $table = 'tipo_articulos';
 
     protected $fillable = [
         'id',
@@ -17,9 +17,13 @@ class Talle extends BaseModel
      * Relaciones
      */
     public function tipo_articulo_talle() {
-        return $this->belongsToMany(TipoArticulo::class, 'tipo_articulo_talle', 'talle_id', 'tipo_articulo_id')
+        return $this->belongsToMany(Talle::class, 'tipo_articulo_talle', 'tipo_articulo_id', 'talle_id')
             ->withPivot('stock')
-            ->as('tipo_articulos');
+            ->as('talles');
+    }
+
+    public function equipo_tipo_articulo() {
+        return $this->belongsToMany(Equipo::class, 'equipo_tipo_articulo', 'tipo_articulo_id', 'equipo_id')->as('equipos');
     }
 
     /**
@@ -40,7 +44,8 @@ class Talle extends BaseModel
     public function allowedIncludes()
     {
         return [
-            'tipo_articulo_talle'
+            'tipo_articulo_talle',
+            'equipo_tipo_articulo'
         ];
     }
 }

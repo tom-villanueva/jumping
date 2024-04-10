@@ -3,10 +3,10 @@ namespace App\Http\Controllers\TipoArticulo;
 
 use App\Http\Controllers\Controller;
 use App\Repositories\TipoArticulo\TipoArticuloRepository;
-use App\Http\Requests\TipoArticulo\UpdateTipoArticuloRequest;
+use App\Http\Requests\TipoArticulo\StoreTipoArticuloRequest;
 use Illuminate\Support\Facades\DB;
 
-class UpdateTipoArticuloController extends Controller
+class StoreTipoArticuloController extends Controller
 {
     private $repository;
 
@@ -15,20 +15,20 @@ class UpdateTipoArticuloController extends Controller
         $this->repository = $repository;
     }
 
-    public function __invoke(UpdateTipoArticuloRequest $request, $id)
+    public function __invoke(StoreTipoArticuloRequest $request)
     {
         DB::beginTransaction();
 
-        $result = $this->repository->update($id, $request->all());
+        $new_entity = $this->repository->create($request->all());
 
         $talles = $request->talle_ids;
 
         if($talles != null) {
-            $result->tipo_articulo_talle()->sync($talles);
+            $new_entity->tipo_articulo_talle()->attach($talles);
         }
 
         DB::commit();
 
-        return response()->json($result);
+        return response()->json($new_entity);
     }
 }

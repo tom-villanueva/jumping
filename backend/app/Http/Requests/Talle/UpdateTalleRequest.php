@@ -24,14 +24,19 @@ class UpdateTalleRequest extends FormRequest
      */
     public function rules()
     {
+        $talle_id = $this->route('id');
         return [
-            'descripcion' => 'required|unique:talle,descripcion'
+            'descripcion' => 'required|unique:talle,descripcion,'.$talle_id,
+            'tipo_articulo_ids' => 'nullable|array',
+            'tipo_articulo_ids.*.tipo_articulo_id' => 'exists:tipo_articulos,id',
+            'tipo_articulo_ids.*.stock' => 'integer|min:0'
         ];
     }
 
     public function messages()
     {
         return [
+            'tipo_articulo_ids.*.tipo_articulo_id.exists' => 'El tipo artículo en posición :position no existe en la BD.' 
         ];
     }
 }
