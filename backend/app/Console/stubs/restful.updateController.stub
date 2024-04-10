@@ -18,10 +18,6 @@ class Update{{ name }}Controller extends Controller
     {
         $result = $this->repository->update($id, $request->all());
 
-        if ($result) {
-            return response()->json($result);
-        }
-
-        return response()->json([], 404);
+        return response()->json($result);
     }
 }

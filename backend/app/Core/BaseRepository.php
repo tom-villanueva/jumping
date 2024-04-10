@@ -72,13 +72,19 @@ class BaseRepository implements Repository
     public function update($id, array $data)
     {
         try {
-            $result = $this->model::find($id)->update($data);
+            $model = $this->model::find($id);
+            
+            if ($model == null) {
+                throw new ModelNotFoundException("No se encuentra registro con ese id");;
+            }
+
+            $result = $model->update($data);
 
             if ($result) {
-                return $this->model::find($id);
+                return $model;
             }
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
+            throw new \Exception($e->getMessage());
         }
     }
 
@@ -103,7 +109,7 @@ class BaseRepository implements Repository
             ->allowedIncludes($this->getIncludes());
 
         if (null == $instance = $q->find($id)) {
-            throw new ModelNotFoundException('Object not found');
+            throw new ModelNotFoundException('No se encuentra registro con ese id');
         }
 
         if (count($options) > 0) {
