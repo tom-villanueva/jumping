@@ -17,10 +17,6 @@ class DeleteTalleController extends Controller
     {
         $result = $this->repository->delete($id);
 
-        if ($result) {
-            return response()->json($result);
-        }
-
-        return response()->json([], 404);
+        return response()->json($result);
     }
 }

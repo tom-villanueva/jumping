@@ -1,14 +1,14 @@
 <?php
-namespace App\Http\Controllers\TipoArticulo;
+namespace App\Http\Controllers\Articulo;
 
 use App\Http\Controllers\Controller;
-use App\Repositories\TipoArticulo\TipoArticuloRepository;
+use App\Repositories\Articulo\ArticuloRepository;
 
-class DeleteTipoArticuloController extends Controller
+class DeleteArticuloController extends Controller
 {
     private $repository;
 
-    public function __construct(TipoArticuloRepository $repository)
+    public function __construct(ArticuloRepository $repository)
     {
         $this->repository = $repository;
     }
