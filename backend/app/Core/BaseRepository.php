@@ -71,30 +71,22 @@ class BaseRepository implements Repository
 
     public function update($id, array $data)
     {
-        try {
-            $model = $this->model::find($id);
-            
-            if ($model == null) {
-                throw new ModelNotFoundException("No se encuentra registro con ese id");;
-            }
+        $model = $this->model::findOrFail($id);
 
-            $result = $model->update($data);
+        $result = $model->updateOrFail($data);
 
-            if ($result) {
-                return $model;
-            }
-        } catch (\Exception $e) {
-            throw new \Exception($e->getMessage());
+        if ($result) {
+            return $model;
         }
+
+        return null;
     }
 
     public function delete($id)
     {
-        try {
-            return $this->model->destroy($id);
-        } catch (\Exception $e) {
-            throw new \Exception($e->getMessage());
-        }
+        $model = $this->model::findOrFail($id);
+
+        return $model->deleteOrFail();
     }
 
     public function find($id, $options = [])
@@ -108,9 +100,10 @@ class BaseRepository implements Repository
             ->allowedFilters($this->getFilters())
             ->allowedIncludes($this->getIncludes());
 
-        if (null == $instance = $q->find($id)) {
-            throw new ModelNotFoundException('No se encuentra registro con ese id');
-        }
+        $instance = $q->findOrFail($id);
+        // if (null == $instance = $q->find($id)) {
+        //     throw new ModelNotFoundException('No se encuentra registro con ese id');
+        // }
 
         if (count($options) > 0) {
             $instance->load($options);
