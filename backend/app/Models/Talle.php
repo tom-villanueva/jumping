@@ -18,8 +18,7 @@ class Talle extends BaseModel
      */
     public function tipo_articulo_talle() {
         return $this->belongsToMany(TipoArticulo::class, 'tipo_articulo_talle', 'talle_id', 'tipo_articulo_id')
-            ->withPivot('stock')
-            ->as('tipo_articulos');
+            ->withPivot('stock');
     }
 
     /**

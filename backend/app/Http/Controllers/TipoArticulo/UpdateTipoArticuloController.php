@@ -24,7 +24,23 @@ class UpdateTipoArticuloController extends Controller
         $talles = $request->talle_ids;
 
         if($talles != null) {
+            $res = [];
+
+            foreach($talles as $talle) {
+                $res[$talle['talle_id']] = ['stock' => $talle['stock']];
+            }
+
+            $talles = $res;
+
             $result->tipo_articulo_talle()->sync($talles);
+        }
+
+        $equipos = $request->equipo_ids;
+
+        if($equipos != null) {
+            $equipos = array_column($equipos, 'equipo_id');
+
+            $result->equipo_tipo_articulo()->sync($equipos);
         }
 
         DB::commit();
