@@ -3,9 +3,8 @@ namespace App\Http\Controllers\Articulo;
 
 use App\Http\Controllers\Controller;
 use App\Repositories\Articulo\ArticuloRepository;
-use App\Http\Requests\Articulo\UpdateArticuloRequest;
 
-class UpdateArticuloController extends Controller
+class GetArticulosController extends Controller
 {
     private $repository;
 
@@ -14,10 +13,10 @@ class UpdateArticuloController extends Controller
         $this->repository = $repository;
     }
 
-    public function __invoke(UpdateArticuloRequest $request, $id)
+    public function __invoke()
     {
-        $result = $this->repository->update($id, $request->all());
-
+        $result = $this->repository->get();
+       
         return response()->json($result);
     }
 }

@@ -3,9 +3,9 @@ namespace App\Http\Controllers\Articulo;
 
 use App\Http\Controllers\Controller;
 use App\Repositories\Articulo\ArticuloRepository;
-use App\Http\Requests\Articulo\UpdateArticuloRequest;
+use App\Http\Requests\Articulo\StoreArticuloRequest;
 
-class UpdateArticuloController extends Controller
+class StoreArticuloController extends Controller
 {
     private $repository;
 
@@ -14,10 +14,10 @@ class UpdateArticuloController extends Controller
         $this->repository = $repository;
     }
 
-    public function __invoke(UpdateArticuloRequest $request, $id)
+    public function __invoke(StoreArticuloRequest $request)
     {
-        $result = $this->repository->update($id, $request->all());
+        $new_entity = $this->repository->create($request->all());
 
-        return response()->json($result);
+        return response()->json($new_entity);
     }
 }
