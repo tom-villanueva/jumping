@@ -28,11 +28,18 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->render(function (NotFoundHttpException $e, Request $request) {
             if ($request->is('api/*')) { 
                 $id = $request->route(('id'));
-                $type = explode('/', $request->path())[1]; 
-                return response()->json([
-                    'message' => 'No se encuentra el registro.', 
-                    'errors' => ["not found" => ["No se encuentra el registro en $type para el id $id"]]
-                ], 404);
+                if($id != null) {
+                    $type = explode('/', $request->path())[1]; 
+                    return response()->json([
+                        'message' => 'No se encuentra el registro.', 
+                        'errors' => ["not found" => ["No se encuentra el registro en $type para el id $id"]]
+                    ], 404);
+                } else {
+                    return response()->json([
+                        'message' => 'No se encuentra la ruta.', 
+                        'errors' => ["not found" => ["No se encuentra la ruta."]]
+                    ], 404);
+                }
             }
         });
     })->create();
