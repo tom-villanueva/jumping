@@ -3,6 +3,8 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -23,5 +25,14 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
+        $exceptions->render(function (NotFoundHttpException $e, Request $request) {
+            if ($request->is('api/*')) { 
+                $id = $request->route(('id'));
+                $type = explode('/', $request->path())[1]; 
+                return response()->json([
+                    'message' => 'No se encuentra el registro.', 
+                    'errors' => ["not found" => ["No se encuentra el registro en $type para el id $id"]]
+                ], 404);
+            }
+        });
     })->create();
