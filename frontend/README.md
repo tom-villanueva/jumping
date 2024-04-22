@@ -89,3 +89,11 @@ Please review [our security policy](https://github.com/laravel/breeze-next/secur
 ## License
 
 Laravel Breeze Next is open-sourced software licensed under the [MIT license](LICENSE.md).
+
+## Estilos utilizados
+
+Para titulos: Archivo Black
+Para textos: Montserrat
+Colores de admin: Slate (900,700 y 400)
+Color rojo de acento jumping: redPrimary
+Background difuminado: #212121 al 60% o rgb: 33,33,33,0.6
