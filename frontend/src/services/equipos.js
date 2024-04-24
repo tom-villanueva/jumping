@@ -33,3 +33,7 @@ export async function storeEquipo(data) {
 export async function updateEquipo(id, data) {
   return axios.put(`${baseUrl}/api/equipos/${id}`, data)
 }
+
+export async function deleteEquipo(id) {
+  return axios.delete(`${baseUrl}/api/equipos/${id}`)
+}

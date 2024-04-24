@@ -1,7 +1,7 @@
 'use server'
 
 import { z } from 'zod'
-import { storeEquipo, updateEquipo } from '@/services/equipos'
+import { deleteEquipo, storeEquipo, updateEquipo } from '@/services/equipos'
 import { revalidateTag } from 'next/cache'
 import { fromErrorToFormState, toFormState } from '@/lib/utils'
 
@@ -66,4 +66,17 @@ export async function editEquipo(selected, formState, formData) {
   revalidateTag('equipos')
 
   return toFormState('SUCCESS', 'Equipo editado')
+}
+
+export async function removeEquipo(formState, formData) {
+  try {
+    const data = Object.fromEntries(formData)
+
+    const res = await deleteEquipo(data.equipoId)
+  } catch (error) {
+    return fromErrorToFormState(error)
+  }
+  revalidateTag('equipos')
+
+  return toFormState('SUCCESS', 'Equipo eliminado')
 }

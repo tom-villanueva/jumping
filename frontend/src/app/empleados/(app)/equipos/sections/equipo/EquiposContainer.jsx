@@ -5,9 +5,11 @@ import EditEquipoForm from './EditEquipoForm'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Check, Edit, Trash, X } from 'lucide-react'
+import DeleteEquipoForm from './DeleteEquipoForm'
 
 export default function EquiposContainer({ equipos, tipoArticulos }) {
   const [openEditForm, setOpenEditForm] = useState(false)
+  const [openDeleteForm, setOpenDeleteForm] = useState(false)
   const [selectedEquipo, setSelectedEquipo] = useState({})
 
   const columns = [
@@ -86,7 +88,12 @@ export default function EquiposContainer({ equipos, tipoArticulos }) {
               }}>
               <Edit className="h-4 w-4" />
             </Button>
-            <Button variant="outline">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setSelectedEquipo(equipo)
+                setOpenDeleteForm(true)
+              }}>
               <Trash className="h-4 w-4" />
             </Button>
           </div>
@@ -97,6 +104,11 @@ export default function EquiposContainer({ equipos, tipoArticulos }) {
 
   return (
     <div>
+      <DeleteEquipoForm
+        openDeleteForm={openDeleteForm}
+        setOpenDeleteForm={setOpenDeleteForm}
+        equipo={selectedEquipo}
+      />
       <EditEquipoForm
         tipoArticulos={tipoArticulos}
         equipo={selectedEquipo}
