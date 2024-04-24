@@ -2,10 +2,10 @@ import { columns } from './columns'
 import { DataTable } from '../data-table'
 import CreateEquipoForm from './CreateEquipoForm'
 
-export default function EquiposContainer({ equipos }) {
+export default function EquiposContainer({ equipos, tipoArticulos }) {
   return (
     <div>
-      <CreateEquipoForm />
+      <CreateEquipoForm tipoArticulos={tipoArticulos} />
       <DataTable columns={columns} data={equipos} />
     </div>
   )

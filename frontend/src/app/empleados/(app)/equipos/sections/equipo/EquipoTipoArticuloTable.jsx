@@ -1,11 +1,10 @@
 'use client'
-
+import { useContext } from 'react'
 import {
   flexRender,
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-
 import {
   Table,
   TableBody,
@@ -14,14 +13,16 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-
 import EquipoTipoArticuloForm from './EquipoTipoArticuloForm'
+import EquipoTipoArticuloContext from './EquipoTipoArticuloContext'
+import { Trash } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
-export default function EquipoTipoArticuloTable({
-  tipoArticulos,
-  selected,
-  setSelected,
-}) {
+export default function EquipoTipoArticuloTable() {
+  const { selected, tipoArticulos, deleteTipoArticulo } = useContext(
+    EquipoTipoArticuloContext,
+  )
+
   const columns = [
     {
       accessorKey: 'id',
@@ -34,6 +35,15 @@ export default function EquipoTipoArticuloTable({
     {
       accessorKey: 'acciones',
       header: 'Acciones',
+      cell: ({ row }) => {
+        const tipoId = row.getValue('id')
+
+        return (
+          <Button variant="outline" onClick={() => deleteTipoArticulo(tipoId)}>
+            <Trash className="h-4 w-4" />
+          </Button>
+        )
+      },
     },
   ]
 
@@ -45,6 +55,7 @@ export default function EquipoTipoArticuloTable({
 
   return (
     <div className="col-span-12">
+      <EquipoTipoArticuloForm tipoArticulos={tipoArticulos} />
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -93,7 +104,6 @@ export default function EquipoTipoArticuloTable({
           </TableBody>
         </Table>
       </div>
-      <EquipoTipoArticuloForm tipoArticulos={tipoArticulos} />
     </div>
   )
 }

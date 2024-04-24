@@ -21,7 +21,7 @@ const equipoSchema = z.object({
   tipo_articulo_ids: z.array(tipoArticuloSchema).nullable(),
 })
 
-export async function saveEquipo(formState, formData) {
+export async function saveEquipo(selected, formState, formData) {
   try {
     const data = Object.fromEntries(formData)
 
@@ -29,17 +29,17 @@ export async function saveEquipo(formState, formData) {
       descripcion: data.descripcion,
       precio: parseInt(data.precio),
       disponible: data.disponible.toLowerCase() === 'true',
-      tipo_articulo_ids: null,
+      tipo_articulo_ids:
+        selected.length > 0
+          ? selected.map(tipo => ({ tipo_articulo_id: tipo.id }))
+          : null,
     })
 
-    console.log(equipo)
-
-    //const res = await storeEquipo(equipo)
+    const res = await storeEquipo(equipo)
   } catch (error) {
-    console.log(error)
     return fromErrorToFormState(error)
   }
-  return toFormState('SUCCESS', 'Equipo guardado')
+  revalidateTag('equipos')
 
-  //revalidateTag('equipos')
+  return toFormState('SUCCESS', 'Equipo guardado')
 }

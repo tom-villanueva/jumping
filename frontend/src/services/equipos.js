@@ -26,6 +26,6 @@ export async function getEquipos({ params } = {}) {
   return json
 }
 
-export async function storeEquipo({ data }) {
+export async function storeEquipo(data) {
   return axios.post(`${baseUrl}/api/equipos`, data)
 }

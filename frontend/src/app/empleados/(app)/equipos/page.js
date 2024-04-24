@@ -13,7 +13,7 @@ const Equipos = async () => {
 
   return (
     <div className="container mx-auto pt-10">
-      <EquiposContainer equipos={equipos} />
+      <EquiposContainer equipos={equipos} tipoArticulos={tipoArticulos} />
     </div>
   )
 }

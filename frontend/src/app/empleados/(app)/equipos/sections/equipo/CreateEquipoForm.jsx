@@ -1,21 +1,21 @@
+'use client'
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
 import EquipoForm from './EquipoForm'
-import Button from '@/components/Button'
-import { getTipoArticulos } from '@/services/tipo-articulos'
+import { Button } from '@/components/ui/button'
+import { useState } from 'react'
 
-export default async function CreateEquipoForm() {
-  const tipoArticulos = await getTipoArticulos()
+export default function CreateEquipoForm({ tipoArticulos }) {
+  const [open, setOpen] = useState(false)
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={() => setOpen(!open)}>
       <DialogTrigger asChild>
         <Button variant="outline">Agregar Equipo</Button>
       </DialogTrigger>
@@ -26,7 +26,10 @@ export default async function CreateEquipoForm() {
             Rellenar todos los datos. Apretar guardar cuando termines.
           </DialogDescription>
         </DialogHeader>
-        <EquipoForm tipoArticulos={tipoArticulos} />
+        <EquipoForm
+          tipoArticulos={tipoArticulos}
+          closeDialog={() => setOpen(false)}
+        />
       </DialogContent>
     </Dialog>
   )

@@ -5,10 +5,8 @@ import { Button } from '@/components/ui/button'
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from '@/components/ui/form'
 import {
@@ -19,6 +17,9 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Plus } from 'lucide-react'
+import { useContext } from 'react'
+import EquipoTipoArticuloContext from './EquipoTipoArticuloContext'
+import InputError from '@/components/InputError'
 
 const schema = z.object({
   tipo_articulo_id: z
@@ -28,7 +29,11 @@ const schema = z.object({
     .min(1, 'Debe elegir un tipo de artículo'),
 })
 
-export default function EquipoTipoArticuloForm({ tipoArticulos }) {
+export default function EquipoTipoArticuloForm({ tipoArticulos, setSelected }) {
+  const { addTipoArticulo, filteredTipoArticulos } = useContext(
+    EquipoTipoArticuloContext,
+  )
+
   const form = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -37,25 +42,26 @@ export default function EquipoTipoArticuloForm({ tipoArticulos }) {
   })
 
   function onSubmit(data) {
-    console.log(data)
+    addTipoArticulo(Number(data.tipo_articulo_id))
+    form.resetField('tipo_articulo_id')
   }
 
   return (
     <Form {...form}>
-      <div className="grid grid-cols-6 items-center gap-4 pt-4">
+      <div className="grid grid-cols-6 items-center gap-4 pb-4">
         <FormField
           control={form.control}
           name="tipo_articulo_id"
           render={({ field }) => (
             <FormItem className="col-span-5">
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Seleccione un tipo de artículo" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {tipoArticulos?.map(tipo => (
+                  {filteredTipoArticulos?.map(tipo => (
                     <SelectItem key={tipo.id} value={String(tipo.id)}>
                       {tipo.descripcion}
                     </SelectItem>
