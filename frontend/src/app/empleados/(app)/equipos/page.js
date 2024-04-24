@@ -7,6 +7,7 @@ const Equipos = async () => {
   const equipos = await getEquipos({
     params: {
       include: 'equipo_tipo_articulo',
+      sort: 'id',
     },
   })
 
