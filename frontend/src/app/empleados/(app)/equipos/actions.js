@@ -1,7 +1,7 @@
 'use server'
 
 import { z } from 'zod'
-import { storeEquipo } from '@/services/equipos'
+import { storeEquipo, updateEquipo } from '@/services/equipos'
 import { revalidateTag } from 'next/cache'
 import { fromErrorToFormState, toFormState } from '@/lib/utils'
 
@@ -42,4 +42,28 @@ export async function saveEquipo(selected, formState, formData) {
   revalidateTag('equipos')
 
   return toFormState('SUCCESS', 'Equipo guardado')
+}
+
+export async function editEquipo(selected, formState, formData) {
+  try {
+    const data = Object.fromEntries(formData)
+
+    const equipo = equipoSchema.parse({
+      descripcion: data.descripcion,
+      precio: parseInt(data.precio),
+      disponible: data.disponible.toLowerCase() === 'true',
+      tipo_articulo_ids:
+        selected.length > 0
+          ? selected.map(tipo => ({ tipo_articulo_id: tipo.id }))
+          : null,
+    })
+
+    const res = await updateEquipo(data.equipoId, equipo)
+  } catch (error) {
+    console.log(error)
+    return fromErrorToFormState(error)
+  }
+  revalidateTag('equipos')
+
+  return toFormState('SUCCESS', 'Equipo editado')
 }

@@ -12,15 +12,18 @@ import { EMPTY_FORM_STATE } from '@/lib/utils'
 import { useContext, useEffect } from 'react'
 import EquipoTipoArticuloContext from './EquipoTipoArticuloContext'
 
-export default function EquipoFormContent({ closeDialog }) {
+export default function EquipoFormContent({
+  closeDialog,
+  equipo,
+  serverAction,
+}) {
   const { selected } = useContext(EquipoTipoArticuloContext)
   const [formState, action] = useFormState(
-    saveEquipo.bind(null, selected),
+    serverAction.bind(null, selected),
     EMPTY_FORM_STATE,
   )
 
   useEffect(() => {
-    console.log(formState)
     if (formState.status === 'SUCCESS') {
       closeDialog()
     }
@@ -37,6 +40,7 @@ export default function EquipoFormContent({ closeDialog }) {
         placeholder="Escriba descripcion"
         className="col-span-12"
         required
+        defaultValue={equipo.descripcion ?? ''}
       />
       <InputError
         messages={formState.fieldErrors.descripcion}
@@ -48,7 +52,7 @@ export default function EquipoFormContent({ closeDialog }) {
         name="precio"
         type="number"
         placeholder="Escriba precio"
-        defaultValue={0}
+        defaultValue={equipo.precio ?? 0}
         className="col-span-12"
         required
         min="0"
@@ -63,7 +67,7 @@ export default function EquipoFormContent({ closeDialog }) {
         <Checkbox
           id="disponible"
           name="disponible"
-          defaultChecked={true}
+          defaultChecked={equipo?.disponible ?? true}
           value={true}
         />
         <Label
@@ -80,6 +84,7 @@ export default function EquipoFormContent({ closeDialog }) {
         loading="Guardando..."
         className="col-span-6"
       />
+      <input type="hidden" name="equipoId" value={equipo?.id} />
     </form>
   )
 }

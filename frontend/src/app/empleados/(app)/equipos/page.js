@@ -1,6 +1,7 @@
 import { getEquipos } from '@/services/equipos'
 import EquiposContainer from './sections/equipo/EquiposContainer'
 import { getTipoArticulos } from '@/services/tipo-articulos'
+import { Suspense } from 'react'
 
 const Equipos = async () => {
   const equipos = await getEquipos({
@@ -13,7 +14,9 @@ const Equipos = async () => {
 
   return (
     <div className="container mx-auto pt-10">
-      <EquiposContainer equipos={equipos} tipoArticulos={tipoArticulos} />
+      <Suspense fallback={<p>Loading...</p>}>
+        <EquiposContainer equipos={equipos} tipoArticulos={tipoArticulos} />
+      </Suspense>
     </div>
   )
 }

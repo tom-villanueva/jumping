@@ -6,9 +6,10 @@ export default EquipoTipoArticuloContext
 
 export const EquipoTipoArticuloContextProvider = ({
   children,
+  defaultSelected = [],
   tipoArticulos,
 }) => {
-  const [selected, setSelected] = useState([])
+  const [selected, setSelected] = useState(defaultSelected)
   const [filteredTipoArticulos, setFilteredTipoArticulos] = useState(
     tipoArticulos,
   )

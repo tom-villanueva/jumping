@@ -29,3 +29,7 @@ export async function getEquipos({ params } = {}) {
 export async function storeEquipo(data) {
   return axios.post(`${baseUrl}/api/equipos`, data)
 }
+
+export async function updateEquipo(id, data) {
+  return axios.put(`${baseUrl}/api/equipos/${id}`, data)
+}
