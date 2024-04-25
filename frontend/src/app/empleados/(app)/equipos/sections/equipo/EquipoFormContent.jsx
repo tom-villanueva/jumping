@@ -6,17 +6,18 @@ import SubmitButton from '@/components/SubmitButton'
 import InputError from '@/components/InputError'
 import EquipoTipoArticuloTable from './EquipoTipoArticuloTable'
 import { Separator } from '@/components/ui/separator'
-import { saveEquipo } from '../../actions'
 import { useFormState } from 'react-dom'
 import { EMPTY_FORM_STATE } from '@/lib/utils'
 import { useContext, useEffect } from 'react'
 import EquipoTipoArticuloContext from './EquipoTipoArticuloContext'
+import { useToast } from '@/components/ui/use-toast'
 
 export default function EquipoFormContent({
-  closeDialog,
+  onFormSubmit,
   equipo,
   serverAction,
 }) {
+  const { toast } = useToast()
   const { selected } = useContext(EquipoTipoArticuloContext)
   const [formState, action] = useFormState(
     serverAction.bind(null, selected),
@@ -25,7 +26,19 @@ export default function EquipoFormContent({
 
   useEffect(() => {
     if (formState.status === 'SUCCESS') {
-      closeDialog()
+      toast({
+        title: `😄 ${formState.message}`,
+      })
+      onFormSubmit()
+    } else if (
+      formState.status === 'ERROR' &&
+      Object.keys(formState.fieldErrors).length == 0
+    ) {
+      toast({
+        title: `🥲 ${formState.message}`,
+        description: 'Intente de nuevo más tarde.',
+        variant: 'destructive',
+      })
     }
   }, [formState])
 
@@ -40,7 +53,7 @@ export default function EquipoFormContent({
         placeholder="Escriba descripcion"
         className="col-span-12"
         required
-        defaultValue={equipo.descripcion ?? ''}
+        defaultValue={equipo?.descripcion}
       />
       <InputError
         messages={formState.fieldErrors.descripcion}
@@ -52,7 +65,7 @@ export default function EquipoFormContent({
         name="precio"
         type="number"
         placeholder="Escriba precio"
-        defaultValue={equipo.precio ?? 0}
+        defaultValue={equipo?.precio}
         className="col-span-12"
         required
         min="0"
@@ -67,7 +80,7 @@ export default function EquipoFormContent({
         <Checkbox
           id="disponible"
           name="disponible"
-          defaultChecked={equipo?.disponible ?? true}
+          defaultChecked={equipo?.disponible}
           value={true}
         />
         <Label
@@ -84,7 +97,7 @@ export default function EquipoFormContent({
         loading="Guardando..."
         className="col-span-6"
       />
-      <input type="hidden" name="equipoId" value={equipo?.id} />
+      <input type="hidden" name="equipoId" value={equipo?.id ?? ''} />
     </form>
   )
 }

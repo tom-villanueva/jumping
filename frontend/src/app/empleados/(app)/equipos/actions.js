@@ -41,7 +41,7 @@ export async function saveEquipo(selected, formState, formData) {
   }
   revalidateTag('equipos')
 
-  return toFormState('SUCCESS', 'Equipo guardado')
+  return toFormState('SUCCESS', 'Equipo guardado con éxito')
 }
 
 export async function editEquipo(selected, formState, formData) {
@@ -65,7 +65,7 @@ export async function editEquipo(selected, formState, formData) {
   }
   revalidateTag('equipos')
 
-  return toFormState('SUCCESS', 'Equipo editado')
+  return toFormState('SUCCESS', 'Equipo editado con éxito.')
 }
 
 export async function removeEquipo(formState, formData) {
@@ -78,5 +78,5 @@ export async function removeEquipo(formState, formData) {
   }
   revalidateTag('equipos')
 
-  return toFormState('SUCCESS', 'Equipo eliminado')
+  return toFormState('SUCCESS', 'Equipo eliminado con éxito.')
 }

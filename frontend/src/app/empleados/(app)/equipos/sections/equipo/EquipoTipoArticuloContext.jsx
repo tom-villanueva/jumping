@@ -1,4 +1,4 @@
-import { createContext, useState } from 'react'
+import { createContext, useEffect, useState } from 'react'
 
 const EquipoTipoArticuloContext = createContext(null)
 
@@ -14,29 +14,25 @@ export const EquipoTipoArticuloContextProvider = ({
     tipoArticulos,
   )
 
-  function addTipoArticulo(tipoArticuloId) {
-    const tipo = tipoArticulos.find(tipo => tipo.id === tipoArticuloId)
-    const newSelected = [...selected, tipo]
-    setSelected(newSelected)
-
-    const selectedVals = newSelected.map(s => s.id)
+  useEffect(() => {
+    const selectedVals = selected.map(s => s.id)
 
     const filteredTipos = tipoArticulos.filter(
       tipo => !selectedVals.includes(tipo.id),
     )
+
     setFilteredTipoArticulos(filteredTipos)
+  }, [selected])
+
+  function addTipoArticulo(tipoArticuloId) {
+    const tipo = tipoArticulos.find(tipo => tipo.id === tipoArticuloId)
+    const newSelected = [...selected, tipo]
+    setSelected(newSelected)
   }
 
   function deleteTipoArticulo(tipoArticuloId) {
     const newSelected = selected.filter(tipo => tipo.id !== tipoArticuloId)
     setSelected(newSelected)
-
-    const selectedVals = newSelected.map(s => s.id)
-
-    const filteredTipos = tipoArticulos.filter(
-      tipo => !selectedVals.includes(tipo.id),
-    )
-    setFilteredTipoArticulos(filteredTipos)
   }
 
   const value = {

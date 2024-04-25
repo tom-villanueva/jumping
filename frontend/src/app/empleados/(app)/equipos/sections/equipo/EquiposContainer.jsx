@@ -1,16 +1,22 @@
 'use client'
 import { DataTable } from '../data-table'
-import CreateEquipoForm from './CreateEquipoForm'
-import EditEquipoForm from './EditEquipoForm'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Check, Edit, Trash, X } from 'lucide-react'
 import DeleteEquipoForm from './DeleteEquipoForm'
+import CreateEditEquipoForm from './CreateEditEquipoForm'
+
+const EQUIPO_DEFAULT_VALUES = {
+  descripcion: '',
+  precio: 0,
+  disponibilidad: true,
+}
 
 export default function EquiposContainer({ equipos, tipoArticulos }) {
-  const [openEditForm, setOpenEditForm] = useState(false)
+  const [editing, setEditing] = useState(false)
+  const [openForm, setOpenForm] = useState(false)
   const [openDeleteForm, setOpenDeleteForm] = useState(false)
-  const [selectedEquipo, setSelectedEquipo] = useState({})
+  const [selectedEquipo, setSelectedEquipo] = useState(EQUIPO_DEFAULT_VALUES)
 
   const columns = [
     {
@@ -84,7 +90,8 @@ export default function EquiposContainer({ equipos, tipoArticulos }) {
               variant="outline"
               onClick={() => {
                 setSelectedEquipo(equipo)
-                setOpenEditForm(true)
+                setEditing(true)
+                setOpenForm(true)
               }}>
               <Edit className="h-4 w-4" />
             </Button>
@@ -109,13 +116,23 @@ export default function EquiposContainer({ equipos, tipoArticulos }) {
         setOpenDeleteForm={setOpenDeleteForm}
         equipo={selectedEquipo}
       />
-      <EditEquipoForm
-        tipoArticulos={tipoArticulos}
+      <div className="flex w-full justify-end pb-4">
+        <Button
+          onClick={() => {
+            setSelectedEquipo(EQUIPO_DEFAULT_VALUES)
+            setEditing(false)
+            setOpenForm(true)
+          }}>
+          Agregar Equipo
+        </Button>
+      </div>
+      <CreateEditEquipoForm
+        open={openForm}
+        editing={editing}
+        setOpen={setOpenForm}
         equipo={selectedEquipo}
-        openEditForm={openEditForm}
-        setOpenEditForm={setOpenEditForm}
+        tipoArticulos={tipoArticulos}
       />
-      <CreateEquipoForm tipoArticulos={tipoArticulos} />
       <DataTable columns={columns} data={equipos} />
     </div>
   )
