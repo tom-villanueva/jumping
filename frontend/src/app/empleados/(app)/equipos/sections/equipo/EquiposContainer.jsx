@@ -9,7 +9,7 @@ import CreateEditEquipoForm from './CreateEditEquipoForm'
 const EQUIPO_DEFAULT_VALUES = {
   descripcion: '',
   precio: 0,
-  disponibilidad: true,
+  disponible: false,
 }
 
 export default function EquiposContainer({ equipos, tipoArticulos }) {
