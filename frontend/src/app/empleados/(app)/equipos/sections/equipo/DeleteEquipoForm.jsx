@@ -11,6 +11,7 @@ import {
 import { EMPTY_FORM_STATE } from '@/lib/utils'
 import { useEffect } from 'react'
 import SubmitButton from '@/components/SubmitButton'
+import { useToast } from '@/components/ui/use-toast'
 
 export default function DeleteEquipoForm({
   openDeleteForm,
@@ -18,9 +19,20 @@ export default function DeleteEquipoForm({
   equipo,
 }) {
   const [formState, action] = useFormState(removeEquipo, EMPTY_FORM_STATE)
+  const { toast } = useToast()
 
   useEffect(() => {
     if (formState.status === 'SUCCESS') {
+      toast({
+        title: `😄 ${formState.message}`,
+      })
+      setOpenDeleteForm(false)
+    } else if (formState.status === 'ERROR') {
+      toast({
+        title: `🥲 ${formState.message}`,
+        description: 'Intente de nuevo más tarde.',
+        variant: 'destructive',
+      })
       setOpenDeleteForm(false)
     }
   }, [formState])
