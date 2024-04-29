@@ -9,8 +9,8 @@ import { Separator } from '@/components/ui/separator'
 import { useFormState } from 'react-dom'
 import { EMPTY_FORM_STATE } from '@/lib/utils'
 import { useContext, useEffect } from 'react'
-import EquipoTipoArticuloContext from './EquipoTipoArticuloContext'
 import { useToast } from '@/components/ui/use-toast'
+import SelectManyEntitiesContext from '../SelectManyEntitiesContext'
 
 export default function EquipoFormContent({
   onFormSubmit,
@@ -18,7 +18,7 @@ export default function EquipoFormContent({
   serverAction,
 }) {
   const { toast } = useToast()
-  const { selected } = useContext(EquipoTipoArticuloContext)
+  const { selected } = useContext(SelectManyEntitiesContext)
   const [formState, action] = useFormState(
     serverAction.bind(null, selected),
     EMPTY_FORM_STATE,

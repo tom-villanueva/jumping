@@ -14,13 +14,13 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import EquipoTipoArticuloForm from './EquipoTipoArticuloForm'
-import EquipoTipoArticuloContext from './EquipoTipoArticuloContext'
 import { Trash } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import SelectManyEntitiesContext from '../SelectManyEntitiesContext'
 
 export default function EquipoTipoArticuloTable() {
-  const { selected, tipoArticulos, deleteTipoArticulo } = useContext(
-    EquipoTipoArticuloContext,
+  const { selected, entities, deleteEntity } = useContext(
+    SelectManyEntitiesContext,
   )
 
   const columns = [
@@ -39,7 +39,7 @@ export default function EquipoTipoArticuloTable() {
         const tipoId = row.getValue('id')
 
         return (
-          <Button variant="outline" onClick={() => deleteTipoArticulo(tipoId)}>
+          <Button variant="outline" onClick={() => deleteEntity(tipoId)}>
             <Trash className="h-4 w-4" />
           </Button>
         )
@@ -55,7 +55,7 @@ export default function EquipoTipoArticuloTable() {
 
   return (
     <div className="col-span-12">
-      <EquipoTipoArticuloForm tipoArticulos={tipoArticulos} />
+      <EquipoTipoArticuloForm tipoArticulos={entities} />
       <div className="rounded-md border">
         <Table>
           <TableHeader>

@@ -18,8 +18,7 @@ import {
 } from '@/components/ui/select'
 import { Plus } from 'lucide-react'
 import { useContext } from 'react'
-import EquipoTipoArticuloContext from './EquipoTipoArticuloContext'
-import InputError from '@/components/InputError'
+import SelectManyEntitiesContext from '../SelectManyEntitiesContext'
 
 const schema = z.object({
   tipo_articulo_id: z
@@ -30,8 +29,8 @@ const schema = z.object({
 })
 
 export default function EquipoTipoArticuloForm({ tipoArticulos, setSelected }) {
-  const { addTipoArticulo, filteredTipoArticulos } = useContext(
-    EquipoTipoArticuloContext,
+  const { addEntity, filteredEntities } = useContext(
+    SelectManyEntitiesContext,
   )
 
   const form = useForm({
@@ -42,7 +41,7 @@ export default function EquipoTipoArticuloForm({ tipoArticulos, setSelected }) {
   })
 
   function onSubmit(data) {
-    addTipoArticulo(Number(data.tipo_articulo_id))
+    addEntity(Number(data.tipo_articulo_id))
     form.resetField('tipo_articulo_id')
   }
 
@@ -61,7 +60,7 @@ export default function EquipoTipoArticuloForm({ tipoArticulos, setSelected }) {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {filteredTipoArticulos?.map(tipo => (
+                  {filteredEntities?.map(tipo => (
                     <SelectItem key={tipo.id} value={String(tipo.id)}>
                       {tipo.descripcion}
                     </SelectItem>

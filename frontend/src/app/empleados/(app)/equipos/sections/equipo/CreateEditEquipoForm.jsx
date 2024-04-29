@@ -1,7 +1,7 @@
 'use client'
 import { editEquipo, saveEquipo } from '../../actions'
+import { SelectManyEntitiesContextProvider } from '../SelectManyEntitiesContext'
 import EquipoFormContent from './EquipoFormContent'
-import { EquipoTipoArticuloContextProvider } from './EquipoTipoArticuloContext'
 import {
   Dialog,
   DialogContent,
@@ -30,8 +30,8 @@ export default function CreateEditEquipoForm({
             Rellenar todos los datos. Apretar guardar cuando termines.
           </DialogDescription>
         </DialogHeader>
-        <EquipoTipoArticuloContextProvider
-          tipoArticulos={tipoArticulos}
+        <SelectManyEntitiesContextProvider
+          entities={tipoArticulos}
           defaultSelected={equipo?.equipo_tipo_articulo?.map(
             // Le saco el atributo pivot
             ({ pivot, ...rest }) => rest,
@@ -41,7 +41,7 @@ export default function CreateEditEquipoForm({
             equipo={equipo}
             serverAction={editing ? editEquipo : saveEquipo}
           />
-        </EquipoTipoArticuloContextProvider>
+        </SelectManyEntitiesContextProvider>
       </DialogContent>
     </Dialog>
   )
