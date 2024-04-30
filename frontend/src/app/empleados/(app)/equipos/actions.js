@@ -72,7 +72,7 @@ export async function removeEquipo(formState, formData) {
   try {
     const data = Object.fromEntries(formData)
 
-    const res = await deleteEquipo(data.equipoId)
+    const res = await deleteEquipo(data.entityId)
   } catch (error) {
     return fromErrorToFormState(error)
   }

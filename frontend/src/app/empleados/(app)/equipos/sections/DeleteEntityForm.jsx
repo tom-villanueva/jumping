@@ -1,6 +1,5 @@
 'use client'
 import { useFormState } from 'react-dom'
-import { removeEquipo } from '../../actions'
 import {
   Dialog,
   DialogContent,
@@ -13,12 +12,14 @@ import { useEffect } from 'react'
 import SubmitButton from '@/components/SubmitButton'
 import { useToast } from '@/components/ui/use-toast'
 
-export default function DeleteEquipoForm({
+export default function DeleteEntityForm({
   openDeleteForm,
   setOpenDeleteForm,
-  equipo,
+  entity,
+  serverAction,
+  name,
 }) {
-  const [formState, action] = useFormState(removeEquipo, EMPTY_FORM_STATE)
+  const [formState, action] = useFormState(serverAction, EMPTY_FORM_STATE)
   const { toast } = useToast()
 
   useEffect(() => {
@@ -41,13 +42,13 @@ export default function DeleteEquipoForm({
     <Dialog open={openDeleteForm} onOpenChange={() => setOpenDeleteForm(!open)}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Eliminar Equipo</DialogTitle>
+          <DialogTitle>Eliminar {name}</DialogTitle>
           <DialogDescription>
-            Se eliminará permanentemente el equipo.
+            Se eliminará permanentemente el {name}.
           </DialogDescription>
         </DialogHeader>
         <form action={action}>
-          <input type="hidden" name="equipoId" value={equipo?.id} />
+          <input type="hidden" name="entityId" value={entity?.id} />
           <SubmitButton
             variant="destructive"
             label="Confirmar"

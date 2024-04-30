@@ -3,8 +3,9 @@ import { DataTable } from '../data-table'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Check, Edit, Trash, X } from 'lucide-react'
-import DeleteEquipoForm from './DeleteEquipoForm'
 import CreateEditEquipoForm from './CreateEditEquipoForm'
+import DeleteEntityForm from '../DeleteEntityForm'
+import { removeEquipo } from '../../actions'
 
 const EQUIPO_DEFAULT_VALUES = {
   descripcion: '',
@@ -111,10 +112,12 @@ export default function EquiposContainer({ equipos, tipoArticulos }) {
 
   return (
     <div>
-      <DeleteEquipoForm
+      <DeleteEntityForm
         openDeleteForm={openDeleteForm}
         setOpenDeleteForm={setOpenDeleteForm}
-        equipo={selectedEquipo}
+        entity={selectedEquipo}
+        serverAction={removeEquipo}
+        name="equipo"
       />
       <div className="flex w-full justify-end pb-4">
         <Button
