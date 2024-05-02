@@ -60,7 +60,6 @@ export async function editEquipo(selected, formState, formData) {
 
     const res = await updateEquipo(data.equipoId, equipo)
   } catch (error) {
-    console.log(error)
     return fromErrorToFormState(error)
   }
   revalidateTag('equipos')

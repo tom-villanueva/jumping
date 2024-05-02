@@ -7,6 +7,7 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from '@/components/ui/form'
 import {
@@ -19,42 +20,61 @@ import {
 import { Plus } from 'lucide-react'
 import { useContext } from 'react'
 import SelectManyEntitiesContext from '../SelectManyEntitiesContext'
+import { Input } from '@/components/ui/input'
 
 const schema = z.object({
-  tipo_articulo_id: z
+  talle_id: z
     .string({
-      required_error: 'Debe elegir un tipo de artículo',
+      required_error: 'Debe elegir un talle',
     })
-    .min(1, 'Debe elegir un tipo de artículo'),
+    .min(1, 'Debe elegir un talle'),
+  stock: z
+    .number({
+      required_error: 'Se requiere stock',
+      invalid_type_error: 'Tiene que ser un número',
+    })
+    .nonnegative('No puede ser negativo'),
 })
 
-export default function EquipoTipoArticuloForm() {
+function toDesiredShape(entity, stock) {
+  return {
+    id: entity.id,
+    descripcion: entity.descripcion,
+    stock,
+  }
+}
+
+export default function TipoArticuloTalleForm() {
   const { addEntity, filteredEntities } = useContext(SelectManyEntitiesContext)
 
   const form = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
-      tipo_articulo_id: '',
+      talle_id: '',
+      stock: 0,
     },
   })
 
   function onSubmit(data) {
-    addEntity(Number(data.tipo_articulo_id))
-    form.resetField('tipo_articulo_id')
+    addEntity(Number(data.talle_id), entity =>
+      toDesiredShape(entity, Number(data.stock)),
+    )
+    form.reset()
   }
 
   return (
     <Form {...form}>
-      <div className="grid grid-cols-6 items-center gap-4 pb-4">
+      <div className="grid grid-cols-12 items-center gap-4 pb-4">
         <FormField
           control={form.control}
-          name="tipo_articulo_id"
+          name="talle_id"
           render={({ field }) => (
-            <FormItem className="col-span-5">
+            <FormItem className="col-span-6">
+              <FormLabel>Talle</FormLabel>
               <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Seleccione un tipo de artículo" />
+                    <SelectValue placeholder="Seleccione un talle" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
@@ -69,8 +89,26 @@ export default function EquipoTipoArticuloForm() {
             </FormItem>
           )}
         />
+        <FormField
+          control={form.control}
+          name="stock"
+          render={({ field }) => (
+            <FormItem className="col-span-4">
+              <FormLabel>Stock</FormLabel>
+              <FormControl>
+                <Input
+                  type="number"
+                  placeholder="stock..."
+                  {...field}
+                  onChange={event => field.onChange(+event.target.value)}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <Button
-          className="col-span-1"
+          className="col-span-2"
           variant="outline"
           type="click"
           onClick={form.handleSubmit(onSubmit)}>
