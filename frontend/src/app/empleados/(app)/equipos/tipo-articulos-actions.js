@@ -29,7 +29,7 @@ export async function saveTipoArticulo(selected, formState, formData) {
           ? selected.map(talle => ({ talle_id: talle.id, stock: talle.stock }))
           : null,
     })
-    console.log(tipoArticulo)
+
     const res = await storeTipoArticulo(tipoArticulo)
   } catch (error) {
     return fromErrorToFormState(error)
