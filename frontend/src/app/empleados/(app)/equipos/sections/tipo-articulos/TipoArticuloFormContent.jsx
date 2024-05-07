@@ -4,17 +4,17 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import SubmitButton from '@/components/SubmitButton'
 import InputError from '@/components/InputError'
-import EquipoTipoArticuloTable from './EquipoTipoArticuloTable'
 import { Separator } from '@/components/ui/separator'
 import { useFormState } from 'react-dom'
 import { EMPTY_FORM_STATE } from '@/lib/utils'
 import { useContext, useEffect } from 'react'
 import { useToast } from '@/components/ui/use-toast'
 import SelectManyEntitiesContext from '../SelectManyEntitiesContext'
+import TipoArticuloTalleTable from './TipoArticuloTalleTable'
 
-export default function EquipoFormContent({
+export default function TipoArticuloFormContent({
   onFormSubmit,
-  equipo,
+  tipoArticulo,
   serverAction,
 }) {
   const { toast } = useToast()
@@ -46,58 +46,32 @@ export default function EquipoFormContent({
     <form
       action={action}
       className="grid w-full grid-cols-12 gap-2 gap-y-4 rounded p-2">
-      <Label htmlFor="descripcion">Descripcion</Label>
+      <Label htmlFor="descripcion">Descripción</Label>
       <Input
         id="descripcion"
         name="descripcion"
-        placeholder="Escriba descripcion"
+        placeholder="Escriba descripción"
         className="col-span-12"
         required
-        defaultValue={equipo?.descripcion}
+        defaultValue={tipoArticulo?.descripcion}
       />
       <InputError
-        messages={formState.fieldErrors.descripcion}
+        messages={formState?.fieldErrors?.descripcion}
         className="col-span-12"
       />
-      <Label htmlFor="precio">Precio</Label>
-      <Input
-        id="precio"
-        name="precio"
-        type="number"
-        placeholder="Escriba precio"
-        defaultValue={equipo?.precio}
-        className="col-span-12"
-        required
-        min="0"
-      />
-      <InputError
-        messages={formState.fieldErrors.precio}
-        className="col-span-12"
-      />
-      <div className="col-span-12 flex items-center space-x-2">
-        {/* Input hidden para mandar el estado unchecked */}
-        <input type="hidden" name="disponible" value={false} />
-        <Checkbox
-          id="disponible"
-          name="disponible"
-          defaultChecked={equipo?.disponible}
-          value={true}
-        />
-        <Label
-          htmlFor="disponible"
-          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-          Disponible (visible para reservar)
-        </Label>
-      </div>
       <Separator className="col-span-12" />
-      <Label className="col-span-12 font-medium">Compuesto por:</Label>
-      <EquipoTipoArticuloTable />
+      <Label className="col-span-12 font-medium">Asociado a:</Label>
+      <TipoArticuloTalleTable />
       <SubmitButton
         label="Guardar"
         loading="Guardando..."
         className="col-span-6"
       />
-      <input type="hidden" name="equipoId" value={equipo?.id ?? ''} />
+      <input
+        type="hidden"
+        name="tipoArticuloId"
+        value={tipoArticulo?.id ?? ''}
+      />
     </form>
   )
 }

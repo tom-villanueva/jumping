@@ -1,5 +1,5 @@
 'use client'
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import {
   flexRender,
   getCoreRowModel,
@@ -13,15 +13,17 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import EquipoTipoArticuloForm from './EquipoTipoArticuloForm'
-import { Trash } from 'lucide-react'
+import { Edit, Save, Trash } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import SelectManyEntitiesContext from '../SelectManyEntitiesContext'
+import TipoArticuloTalleForm from './TipoArticuloTalleForm'
 
-export default function EquipoTipoArticuloTable() {
-  const { selected, entities, deleteEntity } = useContext(
+export default function TipoArticuloTalleTable() {
+  const { selected, updateEntity, deleteEntity } = useContext(
     SelectManyEntitiesContext,
   )
+  const [isEditing, setIsEditing] = useState(false)
+  const [selectedTalleId, setSelectedTalleId] = useState(null)
 
   const columns = [
     {
@@ -33,15 +35,65 @@ export default function EquipoTipoArticuloTable() {
       header: 'Descripción',
     },
     {
+      accessorKey: 'stock',
+      header: 'Stock Total',
+      cell: ({ row }) => {
+        const talle = row.original
+        const talleId = row.getValue('id')
+
+        if (isEditing && talleId === selectedTalleId) {
+          return (
+            <input
+              autoFocus
+              className="max-w-[64px]"
+              id="stock"
+              name="stock"
+              type="number"
+              placeholder="stock..."
+              defaultValue={talle.stock}
+              min="0"
+              onChange={e => {
+                if (Number(e.target.value) < 0) return
+                updateEntity({ ...talle, stock: Number(e.target.value) })
+              }}
+              onKeyDown={e => {
+                e.stopPropagation()
+                if (e.key === 'Enter' || e.key === 'Escape') {
+                  setIsEditing(!isEditing)
+                  setSelectedTalleId(null)
+                }
+              }}
+            />
+          )
+        } else {
+          return <span>{talle.stock}</span>
+        }
+      },
+    },
+    {
       accessorKey: 'acciones',
       header: 'Acciones',
       cell: ({ row }) => {
-        const tipoId = row.getValue('id')
+        const talleId = row.getValue('id')
 
         return (
-          <Button variant="outline" onClick={() => deleteEntity(tipoId)}>
-            <Trash className="h-4 w-4" />
-          </Button>
+          <div className="flex flex-row gap-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setSelectedTalleId(isEditing ? null : talleId)
+                setIsEditing(!isEditing)
+              }}>
+              {isEditing && talleId === selectedTalleId ? (
+                <Save className="h-4 w-4" />
+              ) : (
+                <Edit className="h-4 w-4" />
+              )}
+            </Button>
+            <Button variant="destructive" onClick={() => deleteEntity(talleId)}>
+              <Trash className="h-4 w-4" />
+            </Button>
+          </div>
         )
       },
     },
@@ -55,7 +107,7 @@ export default function EquipoTipoArticuloTable() {
 
   return (
     <div className="col-span-12">
-      <EquipoTipoArticuloForm />
+      <TipoArticuloTalleForm />
       <div className="rounded-md border">
         <Table>
           <TableHeader>

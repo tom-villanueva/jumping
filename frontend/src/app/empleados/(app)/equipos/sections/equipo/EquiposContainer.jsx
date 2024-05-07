@@ -3,8 +3,11 @@ import { DataTable } from '../data-table'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Check, Edit, Trash, X } from 'lucide-react'
-import DeleteEquipoForm from './DeleteEquipoForm'
-import CreateEditEquipoForm from './CreateEditEquipoForm'
+import DeleteEntityForm from '../DeleteEntityForm'
+import { editEquipo, removeEquipo, saveEquipo } from '../../equipos-actions'
+import CreateEditEntityModal from '../CreateEditEntityModal'
+import { SelectManyEntitiesContextProvider } from '../SelectManyEntitiesContext'
+import EquipoFormContent from './EquipoFormContent'
 
 const EQUIPO_DEFAULT_VALUES = {
   descripcion: '',
@@ -85,7 +88,7 @@ export default function EquiposContainer({ equipos, tipoArticulos }) {
       cell: ({ row }) => {
         const equipo = row.original
         return (
-          <div className="flex flex-row">
+          <div className="flex flex-row gap-2">
             <Button
               variant="outline"
               onClick={() => {
@@ -96,7 +99,7 @@ export default function EquiposContainer({ equipos, tipoArticulos }) {
               <Edit className="h-4 w-4" />
             </Button>
             <Button
-              variant="outline"
+              variant="destructive"
               onClick={() => {
                 setSelectedEquipo(equipo)
                 setOpenDeleteForm(true)
@@ -111,10 +114,12 @@ export default function EquiposContainer({ equipos, tipoArticulos }) {
 
   return (
     <div>
-      <DeleteEquipoForm
+      <DeleteEntityForm
         openDeleteForm={openDeleteForm}
         setOpenDeleteForm={setOpenDeleteForm}
-        equipo={selectedEquipo}
+        entity={selectedEquipo}
+        serverAction={removeEquipo}
+        name="equipo"
       />
       <div className="flex w-full justify-end pb-4">
         <Button
@@ -123,16 +128,27 @@ export default function EquiposContainer({ equipos, tipoArticulos }) {
             setEditing(false)
             setOpenForm(true)
           }}>
-          Agregar Equipo
+          Nuevo Equipo
         </Button>
       </div>
-      <CreateEditEquipoForm
+      <CreateEditEntityModal
         open={openForm}
+        onOpenChange={() => setOpenForm(!openForm)}
         editing={editing}
-        setOpen={setOpenForm}
-        equipo={selectedEquipo}
-        tipoArticulos={tipoArticulos}
-      />
+        name="equipo">
+        <SelectManyEntitiesContextProvider
+          entities={tipoArticulos}
+          defaultSelected={selectedEquipo?.equipo_tipo_articulo?.map(
+            // Le saco el atributo pivot
+            ({ pivot, ...rest }) => rest,
+          )}>
+          <EquipoFormContent
+            onFormSubmit={() => setOpenForm(!openForm)}
+            equipo={selectedEquipo}
+            serverAction={editing ? editEquipo : saveEquipo}
+          />
+        </SelectManyEntitiesContextProvider>
+      </CreateEditEntityModal>
       <DataTable columns={columns} data={equipos} />
     </div>
   )
