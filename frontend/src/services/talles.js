@@ -17,11 +17,22 @@ export async function getTalles({ params } = {}) {
   })
 
   if (!res.ok) {
-    console.error(res)
     throw new Error('Error cargando los talles')
   }
 
   const json = await res.json()
 
   return json
+}
+
+export async function storeTalle(data) {
+  return axios.post(`${baseUrl}/api/talles`, data)
+}
+
+export async function updateTalle(id, data) {
+  return axios.put(`${baseUrl}/api/talles/${id}`, data)
+}
+
+export async function deleteTalle(id) {
+  return axios.delete(`${baseUrl}/api/talles/${id}`)
 }

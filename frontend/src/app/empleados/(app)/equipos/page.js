@@ -5,6 +5,7 @@ import { Suspense } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import TipoArticulosContainer from './sections/tipo-articulos/TipoArticulosContainer'
 import { getTalles } from '@/services/talles'
+import TallesContainer from './sections/talles/TallesContainer'
 
 const Equipos = async () => {
   const equipos = await getEquipos({
@@ -35,6 +36,7 @@ const Equipos = async () => {
           <TabsList>
             <TabsTrigger value="equipos">Equipos</TabsTrigger>
             <TabsTrigger value="tipo_articulos">Tipos de Artículos</TabsTrigger>
+            <TabsTrigger value="talles">Talles</TabsTrigger>
           </TabsList>
           <TabsContent value="equipos">
             <EquiposContainer equipos={equipos} tipoArticulos={tipoArticulos} />
@@ -44,6 +46,9 @@ const Equipos = async () => {
               tipoArticulos={tipoArticulos}
               talles={talles}
             />
+          </TabsContent>
+          <TabsContent value="talles">
+            <TallesContainer talles={talles} tipoArticulos={tipoArticulos} />
           </TabsContent>
         </Tabs>
       </Suspense>
