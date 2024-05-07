@@ -7,13 +7,12 @@ import { Button } from '@/components/ui/button'
 import { Edit, Trash } from 'lucide-react'
 import TalleFormContent from './TalleFormContent'
 import CreateEditEntityModal from '../CreateEditEntityModal'
-import { SelectManyEntitiesContextProvider } from '../SelectManyEntitiesContext'
 
 const TALLE_DEFAULT_VALUES = {
   descripcion: '',
 }
 
-export default function TallesContainer({ talles, tipoArticulos }) {
+export default function TallesContainer({ talles }) {
   const [editing, setEditing] = useState(false)
   const [openForm, setOpenForm] = useState(false)
   const [openDeleteForm, setOpenDeleteForm] = useState(false)
@@ -28,23 +27,23 @@ export default function TallesContainer({ talles, tipoArticulos }) {
       accessorKey: 'descripcion',
       header: 'Descripción',
     },
-    {
-      accessorKey: 'tipo_articulo_talle',
-      header: 'Asociado a',
-      cell: ({ row }) => {
-        const tipo_articulos = row.getValue('tipo_articulo_talle')
+    // {
+    //   accessorKey: 'tipo_articulo_talle',
+    //   header: 'Asociado a',
+    //   cell: ({ row }) => {
+    //     const tipo_articulos = row.getValue('tipo_articulo_talle')
 
-        return (
-          <ul>
-            {tipo_articulos.map(tipo => (
-              <li key={tipo.id} className="">
-                {tipo.descripcion}
-              </li>
-            ))}
-          </ul>
-        )
-      },
-    },
+    //     return (
+    //       <ul>
+    //         {tipo_articulos.map(tipo => (
+    //           <li key={tipo.id} className="">
+    //             {tipo.descripcion}
+    //           </li>
+    //         ))}
+    //       </ul>
+    //     )
+    //   },
+    // },
     {
       accessorKey: 'acciones',
       header: 'Acciones',
@@ -99,18 +98,11 @@ export default function TallesContainer({ talles, tipoArticulos }) {
         onOpenChange={() => setOpenForm(!openForm)}
         editing={editing}
         name="talle">
-        <SelectManyEntitiesContextProvider
-          entities={tipoArticulos}
-          defaultSelected={selectedTalle?.tipo_articulo_talle?.map(
-            // Le saco el atributo pivot
-            ({ pivot, ...rest }) => rest,
-          )}>
-          <TalleFormContent
-            onFormSubmit={() => setOpenForm(!openForm)}
-            talle={selectedTalle}
-            serverAction={editing ? editTalle : saveTalle}
-          />
-        </SelectManyEntitiesContextProvider>
+        <TalleFormContent
+          onFormSubmit={() => setOpenForm(!openForm)}
+          talle={selectedTalle}
+          serverAction={editing ? editTalle : saveTalle}
+        />
       </CreateEditEntityModal>
       <DataTable columns={columns} data={talles} />
     </div>

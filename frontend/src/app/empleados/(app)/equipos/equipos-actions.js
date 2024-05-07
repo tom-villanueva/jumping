@@ -32,7 +32,7 @@ export async function saveEquipo(selected, formState, formData) {
       tipo_articulo_ids:
         selected.length > 0
           ? selected.map(tipo => ({ tipo_articulo_id: tipo.id }))
-          : null,
+          : [],
     })
 
     const res = await storeEquipo(equipo)
@@ -55,7 +55,7 @@ export async function editEquipo(selected, formState, formData) {
       tipo_articulo_ids:
         selected.length > 0
           ? selected.map(tipo => ({ tipo_articulo_id: tipo.id }))
-          : null,
+          : [],
     })
 
     const res = await updateEquipo(data.equipoId, equipo)

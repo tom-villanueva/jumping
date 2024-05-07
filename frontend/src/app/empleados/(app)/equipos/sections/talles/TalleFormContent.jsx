@@ -5,11 +5,8 @@ import SubmitButton from '@/components/SubmitButton'
 import InputError from '@/components/InputError'
 import { useFormState } from 'react-dom'
 import { EMPTY_FORM_STATE } from '@/lib/utils'
-import { useContext, useEffect } from 'react'
+import { useEffect } from 'react'
 import { useToast } from '@/components/ui/use-toast'
-import { Separator } from '@/components/ui/separator'
-import EquipoTipoArticuloTable from '../equipo/EquipoTipoArticuloTable'
-import SelectManyEntitiesContext from '../SelectManyEntitiesContext'
 
 export default function TalleFormContent({
   onFormSubmit,
@@ -17,11 +14,7 @@ export default function TalleFormContent({
   serverAction,
 }) {
   const { toast } = useToast()
-  const { selected } = useContext(SelectManyEntitiesContext)
-  const [formState, action] = useFormState(
-    serverAction.bind(null, selected),
-    EMPTY_FORM_STATE,
-  )
+  const [formState, action] = useFormState(serverAction, EMPTY_FORM_STATE)
 
   useEffect(() => {
     if (formState.status === 'SUCCESS') {
@@ -58,9 +51,6 @@ export default function TalleFormContent({
         messages={formState?.fieldErrors?.descripcion}
         className="col-span-12"
       />
-      <Separator className="col-span-12" />
-      <Label className="col-span-12 font-medium">Compuesto por:</Label>
-      <EquipoTipoArticuloTable />
       <SubmitButton
         label="Guardar"
         loading="Guardando..."

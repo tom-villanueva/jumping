@@ -27,7 +27,7 @@ export async function saveTipoArticulo(selected, formState, formData) {
       talle_ids:
         selected.length > 0
           ? selected.map(talle => ({ talle_id: talle.id, stock: talle.stock }))
-          : null,
+          : [],
     })
 
     const res = await storeTipoArticulo(tipoArticulo)
@@ -48,7 +48,7 @@ export async function editTipoArticulo(selected, formState, formData) {
       talle_ids:
         selected.length > 0
           ? selected.map(talle => ({ talle_id: talle.id, stock: talle.stock }))
-          : null,
+          : [],
     })
 
     const res = await updateTipoArticulo(data.tipoArticuloId, tipoArticulo)

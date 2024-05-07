@@ -4,27 +4,29 @@ import { revalidateTag } from 'next/cache'
 import { fromErrorToFormState, toFormState } from '@/lib/utils'
 import { deleteTalle, storeTalle, updateTalle } from '@/services/talles'
 
-const tipoArticuloSchema = z.object({
-  tipo_articulo_id: z.number(),
-})
+// const tipoArticuloSchema = z.object({
+//   tipo_articulo_id: z.number(),
+// })
 
 const talleSchema = z.object({
   descripcion: z.string().min(1, 'Se requiere descripcion'),
-  tipo_articulo_ids: z.array(tipoArticuloSchema).nullable(),
+  // tipo_articulo_ids: z.array(talleSchema).nullable(),
 })
 
-export async function saveTalle(selected, formState, formData) {
+export async function saveTalle(formState, formData) {
+  //selected,
   try {
     const data = Object.fromEntries(formData)
 
     const talle = talleSchema.parse({
       descripcion: data.descripcion,
-      tipo_articulo_ids:
-        selected.length > 0
-          ? selected.map(tipo_articulo => ({
-              tipo_articulo_id: tipo_articulo.id,
-            }))
-          : null,
+      // tipo_articulo_ids:
+      //   selected.length > 0
+      //     ? selected.map(tipo_articulo => ({
+      //         tipo_articulo_id: tipo_articulo.id,
+      //         stock: tipo_articulo.stock,
+      //       }))
+      //     : null,
     })
 
     const res = await storeTalle(talle)
@@ -36,18 +38,20 @@ export async function saveTalle(selected, formState, formData) {
   return toFormState('SUCCESS', 'Talle guardado con éxito')
 }
 
-export async function editTalle(selected, formState, formData) {
+export async function editTalle(formState, formData) {
+  //selected,
   try {
     const data = Object.fromEntries(formData)
 
     const talle = talleSchema.parse({
       descripcion: data.descripcion,
-      tipo_articulo_ids:
-        selected.length > 0
-          ? selected.map(tipo_articulo => ({
-              tipo_articulo_id: tipo_articulo.id,
-            }))
-          : null,
+      // tipo_articulo_ids:
+      //   selected.length > 0
+      //     ? selected.map(talle => ({
+      //         tipo_articulo_id: tipo_articulo.id,
+      //         stock: tipo_articulo.stock,
+      //       }))
+      //     : null,
     })
 
     const res = await updateTalle(data.talleId, talle)
