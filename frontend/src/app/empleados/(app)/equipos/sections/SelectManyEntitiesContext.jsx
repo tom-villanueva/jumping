@@ -42,6 +42,18 @@ export const SelectManyEntitiesContextProvider = ({
     // updateFilteredEntities(newSelected)
   }
 
+  function updateEntity(updatedEntity) {
+    const newEntities = selected.map(entity => {
+      if (entity.id === updatedEntity.id) {
+        return updatedEntity
+      } else {
+        return entity
+      }
+    })
+
+    setSelected(newEntities)
+  }
+
   function deleteEntity(entityId) {
     const newSelected = selected.filter(entity => entity.id !== entityId)
     setSelected(newSelected)
@@ -53,6 +65,7 @@ export const SelectManyEntitiesContextProvider = ({
     selected,
     filteredEntities,
     addEntity,
+    updateEntity,
     deleteEntity,
   }
 
