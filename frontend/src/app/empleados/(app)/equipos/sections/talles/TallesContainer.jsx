@@ -27,23 +27,23 @@ export default function TallesContainer({ talles }) {
       accessorKey: 'descripcion',
       header: 'Descripción',
     },
-    // {
-    //   accessorKey: 'tipo_articulo_talle',
-    //   header: 'Asociado a',
-    //   cell: ({ row }) => {
-    //     const tipo_articulos = row.getValue('tipo_articulo_talle')
+    {
+      accessorKey: 'tipo_articulo_talle',
+      header: 'Asociado a',
+      cell: ({ row }) => {
+        const tipo_articulos = row.getValue('tipo_articulo_talle')
 
-    //     return (
-    //       <ul>
-    //         {tipo_articulos.map(tipo => (
-    //           <li key={tipo.id} className="">
-    //             {tipo.descripcion}
-    //           </li>
-    //         ))}
-    //       </ul>
-    //     )
-    //   },
-    // },
+        return (
+          <ul>
+            {tipo_articulos.map(tipo => (
+              <li key={tipo.id} className="">
+                {tipo.descripcion}
+              </li>
+            ))}
+          </ul>
+        )
+      },
+    },
     {
       accessorKey: 'acciones',
       header: 'Acciones',
