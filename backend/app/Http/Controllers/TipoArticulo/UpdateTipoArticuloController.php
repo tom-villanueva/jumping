@@ -23,7 +23,7 @@ class UpdateTipoArticuloController extends Controller
 
         $talles = $request->talle_ids;
 
-        if($talles != null) {
+        if($talles !== null) {
             $res = [];
 
             foreach($talles as $talle) {
@@ -31,13 +31,13 @@ class UpdateTipoArticuloController extends Controller
             }
 
             $talles = $res;
-
+            
             $result->tipo_articulo_talle()->sync($talles);
         }
 
         $equipos = $request->equipo_ids;
 
-        if($equipos != null) {
+        if($equipos !== null) {
             $equipos = array_column($equipos, 'equipo_id');
 
             $result->equipo_tipo_articulo()->sync($equipos);
