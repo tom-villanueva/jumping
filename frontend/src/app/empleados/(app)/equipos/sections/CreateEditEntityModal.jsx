@@ -16,7 +16,7 @@ export default function CreateEditEntityModal({
 }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="max-h-screen overflow-y-auto sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>
             {editing ? `Editar ${name}` : `Nuevo ${name}`}

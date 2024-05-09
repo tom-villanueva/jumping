@@ -26,6 +26,14 @@ export const toFormState = (status, message) => {
   }
 }
 
+export class CustomValidationError extends Error {
+  constructor(message, errors) {
+    super(message)
+    this.name = 'CustomValidationError'
+    this.errors = errors
+  }
+}
+
 export const fromErrorToFormState = error => {
   // validación de Next
   if (error instanceof ZodError) {
@@ -35,12 +43,20 @@ export const fromErrorToFormState = error => {
       fieldErrors: error.flatten().fieldErrors,
       timestamp: Date.now(),
     }
-    // validación de Laravel
+    // validación de Laravel desde axios
   } else if (axios.isAxiosError(error)) {
     return {
       status: 'ERROR',
       message: error.message,
       fieldErrors: error.response.data.errors,
+      timestamp: Date.now(),
+    }
+    // validación de Laravel pero desde fetch
+  } else if (error instanceof CustomValidationError) {
+    return {
+      status: 'ERROR',
+      message: error.message,
+      fieldErrors: error.errors,
       timestamp: Date.now(),
     }
     // Se chingó otra cosa

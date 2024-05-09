@@ -1,7 +1,12 @@
 'use server'
 
 import { z } from 'zod'
-import { deleteEquipo, storeEquipo, updateEquipo } from '@/services/equipos'
+import {
+  deleteEquipo,
+  storeEquipo,
+  updateEquipo,
+  uploadEquipoThumbnail,
+} from '@/services/equipos'
 import { revalidateTag } from 'next/cache'
 import { fromErrorToFormState, toFormState } from '@/lib/utils'
 
@@ -78,4 +83,50 @@ export async function removeEquipo(formState, formData) {
   revalidateTag('equipos')
 
   return toFormState('SUCCESS', 'Equipo eliminado con éxito.')
+}
+
+const MAX_FILE_SIZE = 1024 * 1024 // 1mb
+const ACCEPTED_IMAGE_TYPES = [
+  'image/jpeg',
+  'image/jpg',
+  'image/png',
+  'image/webp',
+]
+
+const uploadEquipoThumbnailSchema = z.object({
+  thumbnail: z
+    .any()
+    .refine(file => file?.size !== 0, 'Seleccione una imagen.')
+    .refine(file => file?.size <= MAX_FILE_SIZE, `Tamaño máximo es 1MB.`)
+    .refine(
+      file => ACCEPTED_IMAGE_TYPES.includes(file?.type),
+      'Se aceptan solo .jpg, .jpeg, .png and .webp',
+    ),
+})
+
+export async function updateEquipoThumbnail(formState, formData) {
+  let res
+  try {
+    const data = Object.fromEntries(formData)
+
+    const equipo = uploadEquipoThumbnailSchema.parse({
+      thumbnail: data?.thumb,
+    })
+
+    const payload = new FormData()
+    payload.append('thumbnail', equipo?.thumbnail)
+
+    res = await uploadEquipoThumbnail(data?.equipoId, payload)
+  } catch (error) {
+    return fromErrorToFormState(error)
+  }
+  revalidateTag('equipos')
+
+  return {
+    status: 'SUCCESS',
+    message: 'Thumbnail subido con éxito.',
+    res,
+    fieldErrors: {},
+    timestamp: Date.now(),
+  }
 }

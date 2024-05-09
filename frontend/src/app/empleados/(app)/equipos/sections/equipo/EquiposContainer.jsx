@@ -1,6 +1,6 @@
 'use client'
 import { DataTable } from '../data-table'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Check, Edit, Trash, X } from 'lucide-react'
 import DeleteEntityForm from '../DeleteEntityForm'
@@ -8,6 +8,7 @@ import { editEquipo, removeEquipo, saveEquipo } from '../../equipos-actions'
 import CreateEditEntityModal from '../CreateEditEntityModal'
 import { SelectManyEntitiesContextProvider } from '../SelectManyEntitiesContext'
 import EquipoFormContent from './EquipoFormContent'
+import EquipoThumbnailUploadInput from './EquipoThumbnailUploadInput'
 
 const EQUIPO_DEFAULT_VALUES = {
   descripcion: '',
@@ -112,6 +113,17 @@ export default function EquiposContainer({ equipos, tipoArticulos }) {
     },
   ]
 
+  useEffect(() => {
+    // Esto lo hice para que se recargue la imagen al subirla
+    // funciona, no sé si es la mejor solución
+    if (selectedEquipo.hasOwnProperty('id')) {
+      const newSelectedEquipo = equipos.find(
+        equipo => equipo.id === selectedEquipo.id,
+      )
+      setSelectedEquipo(newSelectedEquipo)
+    }
+  }, [equipos])
+
   return (
     <div>
       <DeleteEntityForm
@@ -136,6 +148,7 @@ export default function EquiposContainer({ equipos, tipoArticulos }) {
         onOpenChange={() => setOpenForm(!openForm)}
         editing={editing}
         name="equipo">
+        {editing && <EquipoThumbnailUploadInput equipo={selectedEquipo} />}
         <SelectManyEntitiesContextProvider
           entities={tipoArticulos}
           defaultSelected={selectedEquipo?.equipo_tipo_articulo?.map(
