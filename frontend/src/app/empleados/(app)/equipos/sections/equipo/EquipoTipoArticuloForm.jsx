@@ -72,7 +72,7 @@ export default function EquipoTipoArticuloForm() {
         <Button
           className="col-span-1"
           variant="outline"
-          type="click"
+          type="button"
           onClick={form.handleSubmit(onSubmit)}>
           <Plus className="h-6 w-6" />
         </Button>

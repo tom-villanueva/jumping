@@ -39,7 +39,10 @@ export default function EquipoTipoArticuloTable() {
         const tipoId = row.getValue('id')
 
         return (
-          <Button variant="outline" onClick={() => deleteEntity(tipoId)}>
+          <Button
+            variant="outline"
+            type="button"
+            onClick={() => deleteEntity(tipoId)}>
             <Trash className="h-4 w-4" />
           </Button>
         )

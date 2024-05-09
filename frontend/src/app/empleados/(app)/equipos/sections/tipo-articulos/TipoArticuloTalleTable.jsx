@@ -80,6 +80,7 @@ export default function TipoArticuloTalleTable() {
           <div className="flex flex-row gap-2">
             <Button
               variant="outline"
+              type="button"
               onClick={() => {
                 setSelectedTalleId(isEditing ? null : talleId)
                 setIsEditing(!isEditing)
@@ -90,7 +91,10 @@ export default function TipoArticuloTalleTable() {
                 <Edit className="h-4 w-4" />
               )}
             </Button>
-            <Button variant="destructive" onClick={() => deleteEntity(talleId)}>
+            <Button
+              variant="destructive"
+              type="button"
+              onClick={() => deleteEntity(talleId)}>
               <Trash className="h-4 w-4" />
             </Button>
           </div>

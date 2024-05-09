@@ -53,6 +53,7 @@ export default function TallesContainer({ talles }) {
           <div className="flex flex-row gap-2">
             <Button
               variant="outline"
+              type="button"
               onClick={() => {
                 setSelectedTalle(talle)
                 setEditing(true)
@@ -62,6 +63,7 @@ export default function TallesContainer({ talles }) {
             </Button>
             <Button
               variant="destructive"
+              type="button"
               onClick={() => {
                 setSelectedTalle(talle)
                 setOpenDeleteForm(true)

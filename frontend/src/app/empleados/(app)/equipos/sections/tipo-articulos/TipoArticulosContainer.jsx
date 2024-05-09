@@ -61,6 +61,7 @@ export default function TipoArticulosContainer({ tipoArticulos, talles }) {
           <div className="flex flex-row gap-2">
             <Button
               variant="outline"
+              type="button"
               onClick={() => {
                 setSelectedTipoArticulo(tipoArticulo)
                 setEditing(true)
@@ -70,6 +71,7 @@ export default function TipoArticulosContainer({ tipoArticulos, talles }) {
             </Button>
             <Button
               variant="destructive"
+              type="button"
               onClick={() => {
                 setSelectedTipoArticulo(tipoArticulo)
                 setOpenDeleteForm(true)

@@ -92,6 +92,7 @@ export default function EquiposContainer({ equipos, tipoArticulos }) {
           <div className="flex flex-row gap-2">
             <Button
               variant="outline"
+              type="button"
               onClick={() => {
                 setSelectedEquipo(equipo)
                 setEditing(true)
@@ -101,6 +102,7 @@ export default function EquiposContainer({ equipos, tipoArticulos }) {
             </Button>
             <Button
               variant="destructive"
+              type="button"
               onClick={() => {
                 setSelectedEquipo(equipo)
                 setOpenDeleteForm(true)

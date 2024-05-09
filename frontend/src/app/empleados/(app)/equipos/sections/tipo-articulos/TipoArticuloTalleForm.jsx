@@ -110,7 +110,7 @@ export default function TipoArticuloTalleForm() {
         <Button
           className="col-span-2"
           variant="outline"
-          type="click"
+          type="button"
           onClick={form.handleSubmit(onSubmit)}>
           <Plus className="h-6 w-6" />
         </Button>
