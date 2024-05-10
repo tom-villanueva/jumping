@@ -45,11 +45,9 @@ const Dashboard = () => {
               <p className="ml-5 text-xl font-bold text-white">Reservas</p>
               <InfoChart />
             </div>
-            <div className="col-span-1 mt-5 max-h-80 overflow-auto rounded-lg border border-slate-400 bg-slate-700 sm:col-span-5 sm:mt-0">
-              <p className="p-5 text-xl font-bold text-white">
-                Pagos entrantes
-              </p>
-              <DataTable></DataTable>
+            <p className="p-5 text-xl font-bold text-white">Pagos entrantes</p>
+            <div className="col-span-1 mt-5 max-h-80 overflow-auto rounded-lg border-b border-t sm:col-span-5 sm:mt-0">
+              <DataTable />
             </div>
           </div>
         </div>
