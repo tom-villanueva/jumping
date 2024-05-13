@@ -45,7 +45,7 @@ export default function EquipoFormContent({
   return (
     <form
       action={action}
-      className="grid grid-cols-12 w-full gap-2 gap-y-4 rounded p-2">
+      className="grid w-full grid-cols-12 gap-2 gap-y-4 rounded p-2">
       <Label htmlFor="descripcion">Descripcion</Label>
       <Input
         id="descripcion"
@@ -74,7 +74,7 @@ export default function EquipoFormContent({
         messages={formState.fieldErrors.precio}
         className="col-span-12"
       />
-      <div className="flex items-center space-x-2 col-span-12">
+      <div className="col-span-12 flex items-center space-x-2">
         {/* Input hidden para mandar el estado unchecked */}
         <input type="hidden" name="disponible" value={false} />
         <Checkbox
@@ -90,7 +90,7 @@ export default function EquipoFormContent({
         </Label>
       </div>
       <Separator className="col-span-12" />
-      <Label className="font-medium col-span-12">Compuesto por:</Label>
+      <Label className="col-span-12 font-medium">Compuesto por:</Label>
       <EquipoTipoArticuloTable />
       <SubmitButton
         label="Guardar"
