@@ -3,25 +3,22 @@
 namespace App\Models;
 
 use App\Core\BaseModel;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Talle extends BaseModel
+class EquipoPrecio extends BaseModel
 {
-    use SoftDeletes;
-    protected $table = 'talle';
+    protected $table = 'equipo_precio';
 
     protected $fillable = [
-        'id',
-        'descripcion'
+        'equipo_id',
+        'precio',
     ];
-
+    
     /**
      * Relaciones
      */
-    public function tipo_articulo_talle() 
+    public function equipo() 
     {
-        return $this->belongsToMany(TipoArticulo::class, 'tipo_articulo_talle', 'talle_id', 'tipo_articulo_id')
-            ->withPivot('stock');
+        return $this->belongsTo(Equipo::class, 'equipo_id');
     }
 
     /**
@@ -42,7 +39,7 @@ class Talle extends BaseModel
     public function allowedIncludes()
     {
         return [
-            'tipo_articulo_talle'
+            'equipo'
         ];
     }
 }

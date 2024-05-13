@@ -6,10 +6,11 @@ use App\Core\BaseModel;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Equipo extends BaseModel implements HasMedia
 {
+    use SoftDeletes;
     use InteractsWithMedia;
 
     protected $table = 'equipo';
@@ -21,15 +22,20 @@ class Equipo extends BaseModel implements HasMedia
     protected $fillable = [
         'id',
         'descripcion',
-        'precio',
         'disponible'
     ];
 
     /**
      * Relaciones
      */
-    public function equipo_tipo_articulo() {
+    public function equipo_tipo_articulo() 
+    {
         return $this->belongsToMany(TipoArticulo::class, 'equipo_tipo_articulo', 'equipo_id', 'tipo_articulo_id');
+    }
+
+    public function equipo_precio() 
+    {
+        return $this->hasMany(EquipoPrecio::class, 'equipo_id');
     }
 
     /**
@@ -44,6 +50,11 @@ class Equipo extends BaseModel implements HasMedia
         }
 
         return '';
+    }
+
+    public function precios() 
+    {
+        return $this->equipo_precio()->orderBy('created_at', 'desc');
     }
 
     /**
@@ -64,7 +75,9 @@ class Equipo extends BaseModel implements HasMedia
     public function allowedIncludes()
     {
         return [
-            'equipo_tipo_articulo'
+            'equipo_tipo_articulo',
+            'equipo_precio',
+            'precios'
         ];
     }
 

@@ -3,9 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\Equipo;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\EquipoPrecio;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class Equipos extends Seeder
 {
@@ -24,8 +23,13 @@ class Equipos extends Seeder
         foreach ($equipos as $equipo) {
             $model = Equipo::updateOrCreate([
                 "descripcion" => $equipo['descripcion'],
-                "precio" => 20000,
+                // "precio" => 20000,
                 "disponible" => true
+            ]);
+
+            $equipoPrecio = EquipoPrecio::updateOrCreate([
+                "precio" => 20000,
+                "equipo_id" => $model->id
             ]);
             
             $model->equipo_tipo_articulo()->attach($equipo['ids']);
