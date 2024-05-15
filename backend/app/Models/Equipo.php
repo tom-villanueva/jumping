@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Core\BaseModel;
+use Carbon\Carbon;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -37,6 +38,41 @@ class Equipo extends BaseModel implements HasMedia
     {
         return $this->hasMany(EquipoPrecio::class, 'equipo_id');
     }
+    
+    public function precios() 
+    {
+        return $this->equipo_precio()->orderBy('created_at', 'desc');
+    }
+
+    public function precio_vigente()
+    {
+        return $this->equipo_precio()
+            ->orderBy('created_at', 'desc')
+            ->first();
+    }
+
+    public function equipo_descuento() 
+    {
+        return $this->belongsToMany(Descuento::class, 'equipo_descuento', 'equipo_id', 'descuento_id')
+            ->withPivot(['fecha_desde', 'fecha_hasta', 'deleted_at'])
+            ->whereNull('deleted_at')
+            ->withTimestamps();
+    }
+
+    public function equipo_descuento_trashed()
+    {
+        return $this->belongsToMany(Descuento::class, 'equipo_descuento', 'equipo_id', 'descuento_id')
+            ->withPivot(['fecha_desde', 'fecha_hasta', 'deleted_at'])
+            ->withTimestamps();
+    }
+
+    public function descuentos_vigentes()
+    {
+        $today = Carbon::now()->format('Y-m-d');
+        return $this->equipo_descuento()
+            ->whereDate('fecha_hasta', '<=', $today)
+            ->orderBy("fecha_hasta", 'desc');
+    }
 
     /**
      * Accessors
@@ -50,11 +86,6 @@ class Equipo extends BaseModel implements HasMedia
         }
 
         return '';
-    }
-
-    public function precios() 
-    {
-        return $this->equipo_precio()->orderBy('created_at', 'desc');
     }
 
     /**
@@ -77,7 +108,10 @@ class Equipo extends BaseModel implements HasMedia
         return [
             'equipo_tipo_articulo',
             'equipo_precio',
-            'precios'
+            'precios',
+            'precio_vigente',
+            'equipo_descuento',
+            'descuentos_vigentes'
         ];
     }
 

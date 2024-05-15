@@ -24,15 +24,24 @@ class StoreEquipoController extends Controller
     public function __invoke(StoreEquipoRequest $request)
     {
         DB::beginTransaction();
-
+        
         $new_entity = $this->repository->create($request->all());
 
+        // Agrego tipos de articulos
         $tipo_articulos = $request->tipo_articulo_ids;
 
         if($tipo_articulos != null) {
             $new_entity->equipo_tipo_articulo()->attach($tipo_articulos);
         }
 
+        // Agrego descuentos
+        $descuentos = $request->descuentos_ids;
+
+        if($descuentos != null) {
+            $new_entity->equipo_descuento()->attach($descuentos);
+        }
+
+        // Agrego histórico de precios
         $equipoPrecio = [
             "equipo_id" => $new_entity->id,
             "precio" => $request->precio,

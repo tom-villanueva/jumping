@@ -37,6 +37,23 @@ class UpdateEquipoController extends Controller
             $result->equipo_tipo_articulo()->sync($tipo_articulos);
         }
 
+        $descuentos = $request->descuentos_ids;
+
+        if($descuentos !== null) {
+            $res = [];
+
+            foreach($descuentos as $descuento) {
+                $res[$descuento['descuento_id']] = [
+                    'fecha_desde' => $descuento['fecha_desde'],
+                    'fecha_hasta' => $descuento['fecha_hasta']
+                ];
+            }
+
+            $descuentos = $res;
+            
+            $result->equipo_descuento()->syncWithoutDetaching($descuentos);
+        }
+
         // agarro el último precio vigente
         $equipoPrecio = EquipoPrecio::where('equipo_id', '=', $result->id)
             ->whereDate('created_at', '<=', Carbon::now())

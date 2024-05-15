@@ -30,6 +30,10 @@ class StoreEquipoRequest extends FormRequest
             'disponible' => 'required|boolean',
             'tipo_articulo_ids' => 'nullable|array',
             'tipo_articulo_ids.*.tipo_articulo_id' => 'exists:tipo_articulos,id',
+            'descuentos_ids' => 'nullable|array',
+            'descuentos_ids.*.descuento_id' => 'exists:descuentos,id',
+            'descuentos_ids.*.fecha_desde' => 'date_format:Y-m-d|after_or_equal:today',
+            'descuentos_ids.*.fecha_hasta' => 'date_format:Y-m-d|after_or_equal:descuentos_ids.*.fecha_desde',
         ];
     }
 
