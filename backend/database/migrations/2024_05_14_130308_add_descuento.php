@@ -44,7 +44,7 @@ return new class extends Migration
     public function down(): void
     {
         //
-        Schema::drop("descuento");
         Schema::drop("equipo_descuento");
+        Schema::drop("descuentos");
     }
 };

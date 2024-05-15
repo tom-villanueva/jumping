@@ -55,7 +55,7 @@ class Equipo extends BaseModel implements HasMedia
     {
         return $this->belongsToMany(Descuento::class, 'equipo_descuento', 'equipo_id', 'descuento_id')
             ->withPivot(['fecha_desde', 'fecha_hasta', 'deleted_at'])
-            ->whereNull('deleted_at')
+            ->whereNull('equipo_descuento.deleted_at')
             ->withTimestamps();
     }
 
@@ -70,7 +70,7 @@ class Equipo extends BaseModel implements HasMedia
     {
         $today = Carbon::now()->format('Y-m-d');
         return $this->equipo_descuento()
-            ->whereDate('fecha_hasta', '<=', $today)
+            ->whereDate('fecha_hasta', '>=', $today)
             ->orderBy("fecha_hasta", 'desc');
     }
 

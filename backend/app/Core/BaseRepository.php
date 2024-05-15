@@ -105,9 +105,9 @@ class BaseRepository implements Repository
         //     throw new ModelNotFoundException('No se encuentra registro con ese id');
         // }
 
-        if (count($options) > 0) {
-            $instance->load($options);
-        }
+        // if (count($options) > 0) {
+        //     $instance->load($options);
+        // }
 
         return $instance;
     }
