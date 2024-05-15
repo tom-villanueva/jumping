@@ -19,3 +19,4 @@ require __DIR__.'/tipo_articulo.php';
 require __DIR__.'/talle.php';
 require __DIR__.'/equipo.php';
 require __DIR__.'/articulo.php';
+require __DIR__.'/descuento.php';

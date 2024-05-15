@@ -5,6 +5,7 @@ use App\Http\Controllers\Equipo\GetEquipoByIdController;
 use App\Http\Controllers\Equipo\StoreEquipoController;
 use App\Http\Controllers\Equipo\UpdateEquipoController;
 use App\Http\Controllers\Equipo\DeleteEquipoController;
+use App\Http\Controllers\Equipo\UpdateEquipoDescuentosController;
 use App\Http\Controllers\Equipo\UpdateEquipoThumbnailController;
 
 Route::group(['prefix' => 'equipos'], function () {
@@ -15,4 +16,6 @@ Route::group(['prefix' => 'equipos'], function () {
     Route::delete('/{id}', DeleteEquipoController::class);
     // Thumbnail
     Route::post('/{id}/upload-thumbnail', UpdateEquipoThumbnailController::class);
+    // Descuentos
+    Route::put('/{id}/descuentos', UpdateEquipoDescuentosController::class);
 });
