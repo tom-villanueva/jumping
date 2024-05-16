@@ -5,7 +5,9 @@ import { Suspense } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import TipoArticulosContainer from './sections/tipo-articulos/TipoArticulosContainer'
 import { getTalles } from '@/services/talles'
+import { getDescuentos } from '@/services/descuentos'
 import TallesContainer from './sections/talles/TallesContainer'
+import DescuentosContainer from './sections/descuentos/DescuentosContainer'
 
 const Equipos = async () => {
   const equipos = await getEquipos({
@@ -29,6 +31,10 @@ const Equipos = async () => {
     },
   })
 
+  const descuentos = await getDescuentos({})
+
+  console.log(descuentos)
+
   return (
     <div className="container mx-auto pt-10">
       <Suspense fallback={<p>Loading...</p>}>
@@ -37,6 +43,7 @@ const Equipos = async () => {
             <TabsTrigger value="equipos">Equipos</TabsTrigger>
             <TabsTrigger value="tipo_articulos">Tipos de Artículos</TabsTrigger>
             <TabsTrigger value="talles">Talles</TabsTrigger>
+            <TabsTrigger value="descuentos">Descuentos</TabsTrigger>
           </TabsList>
           <TabsContent value="equipos">
             <EquiposContainer equipos={equipos} tipoArticulos={tipoArticulos} />
@@ -49,6 +56,9 @@ const Equipos = async () => {
           </TabsContent>
           <TabsContent value="talles">
             <TallesContainer talles={talles} tipoArticulos={tipoArticulos} />
+          </TabsContent>
+          <TabsContent value="descuentos">
+            <DescuentosContainer descuentos={descuentos} />
           </TabsContent>
         </Tabs>
       </Suspense>
