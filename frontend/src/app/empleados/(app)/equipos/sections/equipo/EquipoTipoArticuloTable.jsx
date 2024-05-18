@@ -40,7 +40,7 @@ export default function EquipoTipoArticuloTable() {
 
         return (
           <Button
-            variant="outline"
+            variant="destructive"
             type="button"
             onClick={() => deleteEntity(tipoId)}>
             <Trash className="h-4 w-4" />
