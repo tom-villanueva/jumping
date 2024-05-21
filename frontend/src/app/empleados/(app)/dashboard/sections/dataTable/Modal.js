@@ -17,13 +17,13 @@ export function Modal({ payment }) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="bg-transparent hover:bg-slate-700">
+        <Button variant="outline" type="button">
           <Eye />
         </Button>
       </DialogTrigger>
-      <DialogContent className="bg-slate-900 sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle className="text-white">Detalle</DialogTitle>
+          <DialogTitle>Detalle</DialogTitle>
           <DialogDescription>
             Aqui puedes ver los detalles del movimiento
           </DialogDescription>
