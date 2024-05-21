@@ -3,8 +3,13 @@ namespace App\Http\Controllers\Equipo;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Equipo\UpdateEquipoDescuentosRequest;
+use App\Models\EquipoDescuento;
 use App\Repositories\Equipo\EquipoRepository;
 use Carbon\Carbon;
+use Exception;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 
 class UpdateEquipoDescuentosController extends Controller
@@ -16,85 +21,123 @@ class UpdateEquipoDescuentosController extends Controller
         $this->repository = $repository;
     }
 
-    public function __invoke(UpdateEquipoDescuentosRequest $request, $id)
+    public function __invoke(UpdateEquipoDescuentosRequest $request, $id) 
     {
         DB::beginTransaction();
+
         $equipo = $this->repository->find($id, [
             'include' => 'descuentos_vigentes'
         ]);
 
         $descuentos_vigentes = $equipo->descuentos_vigentes->toArray();
 
-        //[{"descuento_id": 2, "fecha_desde": "2024-05-14", "fecha_hasta": "2024-05-30"}]
-        $descuentos = $request->descuentos_ids;
-        $descuentos_ids = array_column($descuentos, 'descuento_id');
+        $descuentos_nuevos = $request->descuentos_ids;
+        $descuentos_ids = array_column($descuentos_nuevos, 'id');
 
-        // Este foreach es para ver si hay que hacer soft delete
-        foreach($descuentos_vigentes as $descuentoVigente) {
-            $descuentoId = $descuentoVigente['id'];
-            $existe = in_array($descuentoId, $descuentos_ids);
+        try {
+            foreach($descuentos_vigentes as $descuentoVigente) {
+                $descuentoVigenteId = $descuentoVigente['pivot']['id'];
+                $eliminar = !in_array($descuentoVigenteId, $descuentos_ids);
 
-            if($existe) { // es porque lo quieren mantener, pero capaz le cambiaron la fecha
-                $nuevoDescuento = $this->searchDescuentoById($descuentoId, $descuentos);
-                $cambioFechas = $this->checkCambioFechas($descuentoVigente['pivot'], $nuevoDescuento);
-                $tieneReservasAsociadas = $this->checkReservasAsociadas($descuentoVigente);
-
-                if($cambioFechas && $tieneReservasAsociadas) {
-                    // soft delete
-                    $equipo->equipo_descuento()->updateExistingPivot($descuentoId, ['deleted_at' => Carbon::now()]);
-                    // attach nuevo
-                    $equipo->equipo_descuento()->attach($descuentoId, [
-                        'fecha_desde' => $nuevoDescuento['fecha_desde'],
-                        'fecha_hasta' => $nuevoDescuento['fecha_hasta']
-                    ]);
-                } else if($cambioFechas && !$tieneReservasAsociadas) {
-                    // sync de fechas
-                    $equipo->equipo_descuento()->updateExistingPivot($descuentoId, [
-                        'fecha_desde' => $nuevoDescuento['fecha_desde'],
-                        'fecha_hasta' => $nuevoDescuento['fecha_hasta']
-                    ]);
+                if($eliminar) {
+                    if($this->tieneReservasAsociadas($descuentoVigente)) {
+                        // soft delete
+                        DB::table('equipo_descuento')
+                            ->where('id', '=', $descuentoVigenteId)
+                            ->update([
+                                "updated_at" => Carbon::now(),
+                                'deleted_at' => Carbon::now()
+                            ]);
+                    } else {
+                        // hard delete
+                        DB::table('equipo_descuento')
+                            ->where('id', '=', $descuentoVigenteId)
+                            ->delete();
+                    }
                 }
-            } else { // es porque lo quieren borrar, pero capaz ya tiene reservas
-                $tieneReservasAsociadas = $this->checkReservasAsociadas($descuentoVigente);
+            }
 
-                if($tieneReservasAsociadas) {
-                    // soft delete
-                    $equipo->equipo_descuento()->updateExistingPivot($descuentoId, ['deleted_at' => Carbon::now()]);
+            foreach($descuentos_nuevos as $descuentoNuevo) {
+                if(isset($descuentoNuevo['id'])) {
+                    $descuentoActual = $this->searchDescuentoById($descuentoNuevo['id'], $descuentos_vigentes);
+                    $cambioFechas = $this->checkCambioFechas($descuentoNuevo, $descuentoActual['pivot']);
+                    $tieneReservasAsociadas = $this->tieneReservasAsociadas($descuentoNuevo);
+
+                    if($cambioFechas) {
+                        $solapaFechas = $this->solapaFechasPivot($equipo, $descuentoNuevo);
+
+                        if($solapaFechas) {
+                            //throw new Exception('Se solapan las fechas de algún descuento');
+                            throw new HttpResponseException(
+                                response()->json([
+                                    'message' => "Se solapan las fechas de algún descuento",
+                                    'errors' => []
+                                ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
+                            );
+                        }
+                    }
+
+                    if($cambioFechas && $tieneReservasAsociadas) {
+                        // soft delete
+                        DB::table('equipo_descuento')
+                            ->where('id', '=', $descuentoNuevo['id'])
+                            ->update([
+                                "updated_at" => Carbon::now(),
+                                'deleted_at' => Carbon::now()
+                            ]);
+                        // attach nuevo
+                        DB::table('equipo_descuento')
+                            ->insert([
+                                'equipo_id' => $equipo->id,
+                                'descuento_id' => $descuentoNuevo['descuento_id'], 
+                                'fecha_desde' => $descuentoNuevo['fecha_desde'],
+                                'fecha_hasta' => $descuentoNuevo['fecha_hasta'],
+                                "created_at" =>  Carbon::now(),
+                                "updated_at" => Carbon::now()
+                            ]);
+                    } else if($cambioFechas && !$tieneReservasAsociadas) {
+                        // sync de fechas
+                        DB::table('equipo_descuento')
+                            ->where('id', '=', $descuentoNuevo['id'])
+                            ->update([
+                                'fecha_desde' => $descuentoNuevo['fecha_desde'],
+                                'fecha_hasta' => $descuentoNuevo['fecha_hasta'],
+                                "updated_at" => Carbon::now()
+                            ]);
+                    }
                 } else {
-                    // hard delete
-                    $equipo->equipo_descuento()->detach($descuentoId);
-                }
-            }
-        }
+                    $solapaFechas = $this->solapaFechas($equipo, $descuentoNuevo);
 
-        if(count($descuentos_vigentes) > 0) {
-            $descuentos_vigentes_ids = array_column($descuentos_vigentes, 'id');
-            foreach ($descuentos as $descuento) {
-                if(!in_array($descuento['descuento_id'], $descuentos_vigentes_ids)) {
-                    $equipo->equipo_descuento()->attach($descuento['descuento_id'], [
-                        'fecha_desde' => $descuento['fecha_desde'],
-                        'fecha_hasta' => $descuento['fecha_hasta']
+                    if($solapaFechas) {
+                        //throw new Exception('Se solapan las fechas de algún descuento');
+                        throw new HttpResponseException(
+                            response()->json([
+                                'message' => "Se solapan las fechas de algún descuento",
+                                'errors' => []
+                            ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
+                        );
+                    }
+
+                    $equipo->equipo_descuento()->attach($descuentoNuevo['descuento_id'], [
+                        'fecha_desde' => $descuentoNuevo['fecha_desde'],
+                        'fecha_hasta' => $descuentoNuevo['fecha_hasta']
                     ]);
                 }
             }
-        } else {
-            foreach ($descuentos as $descuento) {
-                $equipo->equipo_descuento()->attach($descuento['descuento_id'], [
-                    'fecha_desde' => $descuento['fecha_desde'],
-                    'fecha_hasta' => $descuento['fecha_hasta']
-                ]);   
-            }
+
+            DB::commit();
+            // EquipoDescuento::truncate();
+            return response()->json($equipo);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
         }
-
-        DB::commit();
-
-        return response()->json($equipo);
     }
 
     private function searchDescuentoById($id, $array) 
     {
         foreach ($array as $element) {
-            if($element['descuento_id'] === $id) {
+            if($element['pivot']['id'] === $id) {
                 return $element;
             }
         }
@@ -110,8 +153,77 @@ class UpdateEquipoDescuentosController extends Controller
         return $cambioFechaDesde || $cambioFechaHasta;
     }
 
-    private function checkReservasAsociadas($descuento) 
+    /*
+    If we have two date ranges [x1, y1] & [x2, y2], they can overlap in 4 ways:
+
+    1. ([)] -> x1 <= x2 && y1 >= x2
+    2. [(]) -> x1 <= y2 && y1 >= y2
+    3. [()] -> x1 >= x2 && y1 <= y2
+    4. ([]) -> x1 <= x2 && y1 >= y2
+    */
+    private function solapaFechas($equipo, $descuento)
     {
-        return true;
+        $solapados = DB::table('equipo_descuento')
+            ->where('equipo_id', $equipo->id)
+            ->whereNull('deleted_at')
+            ->where(function (Builder $query) use($descuento) {
+                $query->whereDate('fecha_desde', '>=', $descuento['fecha_desde'])
+                      ->whereDate('fecha_desde', '<=', $descuento['fecha_hasta'])
+                ->orWhere(function (Builder $query) use($descuento) {
+                    $query->whereDate('fecha_hasta', '>=', $descuento['fecha_desde'])
+                          ->whereDate('fecha_hasta', '<=', $descuento['fecha_hasta']);
+                })
+                ->orWhere(function (Builder $query) use($descuento) {
+                    $query->whereDate('fecha_desde', '<=', $descuento['fecha_desde'])
+                          ->whereDate('fecha_hasta', '>=', $descuento['fecha_hasta']);
+                })
+                ->orWhere(function (Builder $query) use($descuento) {
+                    $query->whereDate('fecha_desde', '>=', $descuento['fecha_desde'])
+                          ->whereDate('fecha_hasta', '<=', $descuento['fecha_hasta']);
+                });
+            });
+
+            // if($descuento['descuento_id'] == 4) {
+            //     dd($descuento['fecha_desde'], $descuento['fecha_hasta'], $solapados->get());
+            // }
+        
+        return $solapados->count() >= 1;
+    }
+
+    private function solapaFechasPivot($equipo, $descuento)
+    {
+        $solapados = DB::table('equipo_descuento')
+            ->where('equipo_id', '=', $equipo->id)
+            ->whereNot('id', $descuento['id']) // para evitar que se solape con él mismo
+            ->whereNotNull('deleted_at')
+            ->where(function (Builder $query) use($descuento) {
+                $query->where(function (Builder $query) use($descuento) {
+                    $query->whereDate('fecha_desde', '>=', $descuento['fecha_desde'])
+                          ->whereDate('fecha_desde', '<=', $descuento['fecha_hasta']);
+                })
+                ->orWhere(function (Builder $query) use($descuento) {
+                    $query->whereDate('fecha_hasta', '>=', $descuento['fecha_desde'])
+                          ->whereDate('fecha_hasta', '<=', $descuento['fecha_hasta']);
+                })
+                ->orWhere(function (Builder $query) use($descuento) {
+                    $query->whereDate('fecha_desde', '<=', $descuento['fecha_desde'])
+                          ->whereDate('fecha_hasta', '>=', $descuento['fecha_hasta']);
+                })
+                ->orWhere(function (Builder $query) use($descuento) {
+                    $query->whereDate('fecha_desde', '>=', $descuento['fecha_desde'])
+                          ->whereDate('fecha_hasta', '<=', $descuento['fecha_hasta']);
+                });
+            })
+            ->count();
+        
+        return $solapados >= 1;
+    }
+
+    private function tieneReservasAsociadas($descuento) 
+    {
+        // if($descuento['id'] == 5) {
+        //     return true;
+        // }
+        return false;
     }
 }

@@ -17,6 +17,8 @@ return new class extends Migration
             $table->decimal("valor", 5, 2);
             $table->boolean("tipo_descuento");
             $table->string("descripcion")->nullable();
+
+            $table->unique('valor');
             
             $table->timestamps();
             $table->softDeletes();

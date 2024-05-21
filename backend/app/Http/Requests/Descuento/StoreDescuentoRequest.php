@@ -25,7 +25,7 @@ class StoreDescuentoRequest extends FormRequest
     public function rules()
     {
         return [
-            'valor' => 'required|numeric|min:0',
+            'valor' => 'required|unique:descuentos,valor|numeric|min:0',
             'descripcion' => 'nullable|string',
             'tipo_descuento' => 'required|boolean'
         ];

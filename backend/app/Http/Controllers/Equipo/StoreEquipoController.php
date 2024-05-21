@@ -34,13 +34,6 @@ class StoreEquipoController extends Controller
             $new_entity->equipo_tipo_articulo()->attach($tipo_articulos);
         }
 
-        // Agrego descuentos
-        $descuentos = $request->descuentos_ids;
-
-        if($descuentos != null) {
-            $new_entity->equipo_descuento()->attach($descuentos);
-        }
-
         // Agrego histórico de precios
         $equipoPrecio = [
             "equipo_id" => $new_entity->id,

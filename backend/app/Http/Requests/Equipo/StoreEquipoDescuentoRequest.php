@@ -2,9 +2,10 @@
 
 namespace App\Http\Requests\Equipo;
 
+use App\Rules\NoOverlappingDiscounts;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateEquipoDescuentosRequest extends FormRequest
+class StoreEquipoDescuentoRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,10 +25,10 @@ class UpdateEquipoDescuentosRequest extends FormRequest
     public function rules()
     {
         return [
-            'descuentos_ids' => 'required|array',
-            'descuentos_ids.*.descuento_id' => 'exists:descuentos,id',
-            'descuentos_ids.*.fecha_desde' => 'date_format:Y-m-d|after_or_equal:today',
-            'descuentos_ids.*.fecha_hasta' => 'date_format:Y-m-d|after_or_equal:descuentos_ids.*.fecha_desde',
+            'equipo_id' => ['required', 'exists:equipo,id', new NoOverlappingDiscounts()],
+            'descuento_id' => 'required|exists:descuentos,id',
+            'fecha_desde' => 'date_format:Y-m-d|after_or_equal:today',
+            'fecha_hasta' => 'date_format:Y-m-d|after_or_equal:descuentos_ids.*.fecha_desde',
         ];
     }
 

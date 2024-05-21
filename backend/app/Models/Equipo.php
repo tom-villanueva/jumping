@@ -17,7 +17,8 @@ class Equipo extends BaseModel implements HasMedia
     protected $table = 'equipo';
 
     protected $appends = [
-        'thumb_url'
+        'thumb_url',
+        'precio_vigente'
     ];
 
     protected $fillable = [
@@ -44,25 +45,18 @@ class Equipo extends BaseModel implements HasMedia
         return $this->equipo_precio()->orderBy('created_at', 'desc');
     }
 
-    public function precio_vigente()
-    {
-        return $this->equipo_precio()
-            ->orderBy('created_at', 'desc')
-            ->first();
-    }
-
     public function equipo_descuento() 
     {
         return $this->belongsToMany(Descuento::class, 'equipo_descuento', 'equipo_id', 'descuento_id')
-            ->withPivot(['fecha_desde', 'fecha_hasta', 'deleted_at'])
-            ->whereNull('equipo_descuento.deleted_at')
+            ->withPivot(['id', 'fecha_desde', 'fecha_hasta', 'deleted_at'])
+            ->wherePivotNull('deleted_at')
             ->withTimestamps();
     }
 
     public function equipo_descuento_trashed()
     {
         return $this->belongsToMany(Descuento::class, 'equipo_descuento', 'equipo_id', 'descuento_id')
-            ->withPivot(['fecha_desde', 'fecha_hasta', 'deleted_at'])
+            ->withPivot(['id', 'fecha_desde', 'fecha_hasta', 'deleted_at'])
             ->withTimestamps();
     }
 
@@ -71,7 +65,7 @@ class Equipo extends BaseModel implements HasMedia
         $today = Carbon::now()->format('Y-m-d');
         return $this->equipo_descuento()
             ->whereDate('fecha_hasta', '>=', $today)
-            ->orderBy("fecha_hasta", 'desc');
+            ->orderBy("fecha_hasta", 'asc');
     }
 
     /**
@@ -86,6 +80,13 @@ class Equipo extends BaseModel implements HasMedia
         }
 
         return '';
+    }
+
+    public function getPrecioVigenteAttribute()
+    {
+        return $this->equipo_precio()
+            ->orderBy('created_at', 'desc')
+            ->first();
     }
 
     /**
