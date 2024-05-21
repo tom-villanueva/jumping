@@ -39,7 +39,9 @@ export default function DeleteEntityForm({
   }, [formState])
 
   return (
-    <Dialog open={openDeleteForm} onOpenChange={() => setOpenDeleteForm(!open)}>
+    <Dialog
+      open={openDeleteForm}
+      onOpenChange={() => setOpenDeleteForm(!openDeleteForm)}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Eliminar {name}</DialogTitle>

@@ -12,7 +12,7 @@ import DescuentosContainer from './sections/descuentos/DescuentosContainer'
 const Equipos = async () => {
   const equipos = await getEquipos({
     params: {
-      include: 'equipo_tipo_articulo',
+      include: 'equipo_tipo_articulo,descuentos_vigentes',
       sort: 'id',
     },
   })
@@ -33,8 +33,6 @@ const Equipos = async () => {
 
   const descuentos = await getDescuentos({})
 
-  console.log(descuentos)
-
   return (
     <div className="container mx-auto pt-10">
       <Suspense fallback={<p>Loading...</p>}>
@@ -46,7 +44,11 @@ const Equipos = async () => {
             <TabsTrigger value="descuentos">Descuentos</TabsTrigger>
           </TabsList>
           <TabsContent value="equipos">
-            <EquiposContainer equipos={equipos} tipoArticulos={tipoArticulos} />
+            <EquiposContainer
+              equipos={equipos}
+              tipoArticulos={tipoArticulos}
+              descuentos={descuentos}
+            />
           </TabsContent>
           <TabsContent value="tipo_articulos">
             <TipoArticulosContainer

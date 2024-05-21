@@ -11,6 +11,7 @@ export async function getDescuentos({ params } = {}) {
   const res = await fetch(`${baseUrl}/api/descuentos?${queryParams}`, {
     headers: {
       'X-XSRF-TOKEN': xsrf.value,
+      Accept: 'application/json',
     },
     credentials: 'include',
     next: { tags: 'descuentos' },
@@ -26,13 +27,13 @@ export async function getDescuentos({ params } = {}) {
 }
 
 export async function storeDescuento(data) {
-  return axios.post(`${baseUrl}/api/descuentos`, data)
+  return axios.post(`/api/descuentos`, data)
 }
 
 export async function updateDescuento(id, data) {
-  return axios.put(`${baseUrl}/api/descuentos/${id}`, data)
+  return axios.put(`/api/descuentos/${id}`, data)
 }
 
 export async function deleteDescuento(id) {
-  return axios.delete(`${baseUrl}/api/descuentos/${id}`)
+  return axios.delete(`/api/descuentos/${id}`)
 }

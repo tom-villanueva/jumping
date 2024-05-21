@@ -9,6 +9,7 @@ import CreateEditEntityModal from '../CreateEditEntityModal'
 import { SelectManyEntitiesContextProvider } from '../SelectManyEntitiesContext'
 import EquipoFormContent from './EquipoFormContent'
 import EquipoThumbnailUploadInput from './EquipoThumbnailUploadInput'
+import EquipoDescuentoFormModal from './EquipoDescuentoFormModal'
 
 const EQUIPO_DEFAULT_VALUES = {
   descripcion: '',
@@ -16,10 +17,15 @@ const EQUIPO_DEFAULT_VALUES = {
   disponible: false,
 }
 
-export default function EquiposContainer({ equipos, tipoArticulos }) {
+export default function EquiposContainer({
+  equipos,
+  tipoArticulos,
+  descuentos,
+}) {
   const [editing, setEditing] = useState(false)
   const [openForm, setOpenForm] = useState(false)
   const [openDeleteForm, setOpenDeleteForm] = useState(false)
+  const [openDescuentoForm, setOpenDescuentoForm] = useState(false)
   const [selectedEquipo, setSelectedEquipo] = useState(EQUIPO_DEFAULT_VALUES)
 
   const columns = [
@@ -32,14 +38,14 @@ export default function EquiposContainer({ equipos, tipoArticulos }) {
       header: 'Descripción',
     },
     {
-      accessorKey: 'precio',
+      accessorKey: 'precio_vigente',
       header: 'Precio',
       cell: ({ row }) => {
-        const precio = parseFloat(row.getValue('precio'))
+        const precioVigente = row.getValue('precio_vigente')
         const formatted = new Intl.NumberFormat('es-AR', {
           style: 'currency',
           currency: 'ARS',
-        }).format(precio)
+        }).format(precioVigente?.precio)
 
         return <div className="font-medium">{formatted}</div>
       },
@@ -82,6 +88,21 @@ export default function EquiposContainer({ equipos, tipoArticulos }) {
     {
       accessorKey: 'descuentos',
       header: 'Descuentos',
+      cell: ({ row }) => {
+        const equipo = row.original
+
+        return (
+          <Button
+            variant="outline"
+            type="button"
+            onClick={() => {
+              setSelectedEquipo(equipo)
+              setOpenDescuentoForm(true)
+            }}>
+            <Edit className="h-4 w-4" />
+          </Button>
+        )
+      },
     },
     {
       accessorKey: 'acciones',
@@ -134,6 +155,13 @@ export default function EquiposContainer({ equipos, tipoArticulos }) {
         entity={selectedEquipo}
         serverAction={removeEquipo}
         name="equipo"
+      />
+      <EquipoDescuentoFormModal
+        open={openDescuentoForm}
+        onOpenChange={() => setOpenDescuentoForm(!openDescuentoForm)}
+        equipo={selectedEquipo}
+        descuentos={descuentos}
+        descuentosVigentes={selectedEquipo?.descuentos_vigentes}
       />
       <div className="flex w-full justify-end pb-4">
         <Button

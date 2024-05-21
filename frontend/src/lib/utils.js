@@ -47,8 +47,8 @@ export const fromErrorToFormState = error => {
   } else if (axios.isAxiosError(error)) {
     return {
       status: 'ERROR',
-      message: error.message,
-      fieldErrors: error.response.data.errors,
+      message: error?.response?.data?.message ?? error?.message,
+      fieldErrors: error?.response?.data?.errors ?? {},
       timestamp: Date.now(),
     }
     // validación de Laravel pero desde fetch
@@ -68,4 +68,18 @@ export const fromErrorToFormState = error => {
       timestamp: Date.now(),
     }
   }
+}
+
+export const formatDate = date => {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
+export const convertToUTC = date => {
+  const localDate = new Date(date)
+  const offset = localDate.getTimezoneOffset()
+  const utcTimestamp = localDate.getTime() + offset * 60 * 1000
+  return new Date(utcTimestamp)
 }

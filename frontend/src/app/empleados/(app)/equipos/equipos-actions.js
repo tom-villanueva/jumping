@@ -3,12 +3,16 @@
 import { z } from 'zod'
 import {
   deleteEquipo,
+  deleteEquipoDescuento,
   storeEquipo,
+  storeEquipoDescuento,
   updateEquipo,
+  updateEquipoDescuento,
+  updateEquipoDescuentos,
   uploadEquipoThumbnail,
 } from '@/services/equipos'
 import { revalidateTag } from 'next/cache'
-import { fromErrorToFormState, toFormState } from '@/lib/utils'
+import { convertToUTC, fromErrorToFormState, toFormState } from '@/lib/utils'
 
 const tipoArticuloSchema = z.object({
   tipo_articulo_id: z.number(),
@@ -129,4 +133,133 @@ export async function updateEquipoThumbnail(formState, formData) {
     fieldErrors: {},
     timestamp: Date.now(),
   }
+}
+
+const equipoDescuentoSchema = z
+  .object({
+    equipo_id: z.number(),
+    descuento_id: z
+      .string({
+        required_error: 'Debe elegir un descuento',
+      })
+      .min(1, 'Debe elegir un talle'),
+    fecha_desde: z
+      .string({
+        required_error: 'Se requiere fecha inicio',
+      })
+      .date('Se requiere fecha inicio')
+      .refine(data => convertToUTC(data) >= new Date().setHours(0, 0, 0, 0), {
+        message: 'Fecha inicio tiene que ser igual o mayor a hoy.',
+      }),
+    fecha_hasta: z
+      .string({
+        required_error: 'Se requiere fecha fin',
+      })
+      .date('Se requiere fecha fin'),
+  })
+  .refine(
+    data => convertToUTC(data.fecha_hasta) >= convertToUTC(data.fecha_desde),
+    {
+      message: 'Fecha fin no puede ser menor a fecha inicio',
+      path: ['fecha_hasta'],
+    },
+  )
+
+export async function addEquipoDescuento(formState, formData) {
+  try {
+    const data = Object.fromEntries(formData)
+
+    const descuento = equipoDescuentoSchema.parse({
+      equipo_id: Number(data?.equipoId),
+      descuento_id: data.descuentoId,
+      fecha_desde: data.fecha_desde,
+      fecha_hasta: data.fecha_hasta,
+    })
+
+    console.log({ descuento })
+
+    const res = await storeEquipoDescuento(descuento)
+  } catch (error) {
+    return fromErrorToFormState(error)
+  }
+  revalidateTag('equipos')
+
+  return {
+    status: 'SUCCESS',
+    message: 'Descuento agregado con éxito.',
+    fieldErrors: {},
+    timestamp: Date.now(),
+  }
+}
+
+const equipoDescuentoEditSchema = z
+  .object({
+    id: z.number(),
+    equipo_id: z.number(),
+    descuento_id: z
+      .string({
+        required_error: 'Debe elegir un descuento',
+      })
+      .min(1, 'Debe elegir un talle'),
+    fecha_desde: z
+      .string({
+        required_error: 'Se requiere fecha inicio',
+      })
+      .date('Se requiere fecha inicio')
+      .refine(data => convertToUTC(data) >= new Date().setHours(0, 0, 0, 0), {
+        message: 'Fecha inicio tiene que ser igual o mayor a hoy.',
+      }),
+    fecha_hasta: z
+      .string({
+        required_error: 'Se requiere fecha fin',
+      })
+      .date('Se requiere fecha fin'),
+  })
+  .refine(
+    data => convertToUTC(data.fecha_hasta) >= convertToUTC(data.fecha_desde),
+    {
+      message: 'Fecha fin no puede ser menor a fecha inicio',
+      path: ['fecha_hasta'],
+    },
+  )
+
+export async function editEquipoDescuento(formState, formData) {
+  try {
+    const data = Object.fromEntries(formData)
+
+    const descuento = equipoDescuentoEditSchema.parse({
+      id: Number(data?.equipoDescuentoId),
+      equipo_id: Number(data?.equipoId),
+      descuento_id: data.descuentoId,
+      fecha_desde: data.fecha_desde,
+      fecha_hasta: data.fecha_hasta,
+    })
+
+    console.log({ descuento })
+
+    const res = await updateEquipoDescuento(data?.equipoDescuentoId, descuento)
+  } catch (error) {
+    return fromErrorToFormState(error)
+  }
+  revalidateTag('equipos')
+
+  return {
+    status: 'SUCCESS',
+    message: 'Descuento actualizado con éxito.',
+    fieldErrors: {},
+    timestamp: Date.now(),
+  }
+}
+
+export async function removeEquipoDescuento(formState, formData) {
+  try {
+    const data = Object.fromEntries(formData)
+
+    const res = await deleteEquipoDescuento(data.entityId)
+  } catch (error) {
+    return fromErrorToFormState(error)
+  }
+  revalidateTag('equipos')
+
+  return toFormState('SUCCESS', 'Descuento eliminado con éxito.')
 }

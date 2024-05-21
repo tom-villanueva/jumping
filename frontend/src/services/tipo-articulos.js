@@ -11,6 +11,7 @@ export async function getTipoArticulos({ params } = {}) {
   const res = await fetch(`${baseUrl}/api/tipo-articulos?${queryParams}`, {
     headers: {
       'X-XSRF-TOKEN': xsrf.value,
+      Accept: 'application/json',
     },
     credentials: 'include',
     next: { tags: 'tipo-articulos' },
@@ -26,13 +27,13 @@ export async function getTipoArticulos({ params } = {}) {
 }
 
 export async function storeTipoArticulo(data) {
-  return axios.post(`${baseUrl}/api/tipo-articulos`, data)
+  return axios.post(`/api/tipo-articulos`, data)
 }
 
 export async function updateTipoArticulo(id, data) {
-  return axios.put(`${baseUrl}/api/tipo-articulos/${id}`, data)
+  return axios.put(`/api/tipo-articulos/${id}`, data)
 }
 
 export async function deleteTipoArticulo(id) {
-  return axios.delete(`${baseUrl}/api/tipo-articulos/${id}`)
+  return axios.delete(`/api/tipo-articulos/${id}`)
 }

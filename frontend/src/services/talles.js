@@ -11,6 +11,7 @@ export async function getTalles({ params } = {}) {
   const res = await fetch(`${baseUrl}/api/talles?${queryParams}`, {
     headers: {
       'X-XSRF-TOKEN': xsrf.value,
+      Accept: 'application/json',
     },
     credentials: 'include',
     next: { tags: 'talles' },
@@ -26,13 +27,13 @@ export async function getTalles({ params } = {}) {
 }
 
 export async function storeTalle(data) {
-  return axios.post(`${baseUrl}/api/talles`, data)
+  return axios.post(`/api/talles`, data)
 }
 
 export async function updateTalle(id, data) {
-  return axios.put(`${baseUrl}/api/talles/${id}`, data)
+  return axios.put(`/api/talles/${id}`, data)
 }
 
 export async function deleteTalle(id) {
-  return axios.delete(`${baseUrl}/api/talles/${id}`)
+  return axios.delete(`/api/talles/${id}`)
 }

@@ -12,13 +12,14 @@ export async function getEquipos({ params } = {}) {
   const res = await fetch(`${baseUrl}/api/equipos?${queryParams}`, {
     headers: {
       'X-XSRF-TOKEN': xsrf.value,
+      Accept: 'application/json',
     },
     credentials: 'include',
     next: { tags: 'equipos' },
   })
 
   if (!res.ok) {
-    console.error(res)
+    const error = await res.json()
     throw new Error('Error cargando los equipos')
   }
 
@@ -28,19 +29,30 @@ export async function getEquipos({ params } = {}) {
 }
 
 export async function storeEquipo(data) {
-  return axios.post(`${baseUrl}/api/equipos`, data)
+  return axios.post(`/api/equipos`, data)
 }
 
 export async function updateEquipo(id, data) {
-  return axios.put(`${baseUrl}/api/equipos/${id}`, data)
+  return axios.put(`/api/equipos/${id}`, data)
 }
 
 export async function deleteEquipo(id) {
-  return axios.delete(`${baseUrl}/api/equipos/${id}`)
+  return axios.delete(`/api/equipos/${id}`)
+}
+
+export async function storeEquipoDescuento(data) {
+  return axios.post(`/api/equipos/descuentos`, data)
+}
+
+export async function updateEquipoDescuento(id, data) {
+  return axios.put(`/api/equipos/descuentos/${id}`, data)
+}
+
+export async function deleteEquipoDescuento(id) {
+  return axios.delete(`/api/equipos/descuentos/${id}`)
 }
 
 export async function uploadEquipoThumbnail(id, data) {
-  // return axios.post(`${baseUrl}/api/equipos/${id}/upload-thumbnail`, data)
   const xsrf = cookies().get('XSRF-TOKEN')
 
   const res = await fetch(`${baseUrl}/api/equipos/${id}/upload-thumbnail`, {
@@ -55,7 +67,7 @@ export async function uploadEquipoThumbnail(id, data) {
 
   if (!res.ok) {
     const json = await res.json()
-    throw new CustomValidationError(json.message, json.errors)
+    throw new CustomValidationError(json?.message, json?.errors ?? [])
   }
 
   const json = await res.json()
