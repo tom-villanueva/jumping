@@ -65,7 +65,7 @@ export default function EquipoFormContent({
         name="precio"
         type="number"
         placeholder="Escriba precio"
-        defaultValue={equipo?.precio}
+        defaultValue={equipo?.precio_vigente?.precio}
         className="col-span-12"
         required
         min="0"

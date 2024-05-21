@@ -29,7 +29,7 @@ class TipoArticulos extends Seeder
             $model = TipoArticulo::updateOrCreate([
                 "descripcion" => $tipo,
             ]);
-            $model->tipo_articulo_talle()->attach([1,2,3,4,5]);
+            $model->tipo_articulo_talle()->attach([1,2,3,4,5], ['stock' => 120]);
         }
 
         // enable fk check

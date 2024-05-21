@@ -45,7 +45,7 @@ export default function TipoArticuloTalleTable() {
           return (
             <input
               autoFocus
-              className="max-w-[64px]"
+              className="max-w-[64px] text-black"
               id="stock"
               name="stock"
               type="number"
