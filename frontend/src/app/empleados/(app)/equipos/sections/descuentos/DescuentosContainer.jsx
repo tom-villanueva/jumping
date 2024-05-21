@@ -41,7 +41,12 @@ export default function DescuentosContainer({ descuentos }) {
     },
     {
       accessorKey: 'tipo_descuento',
-      header: 'Tipo de descuento',
+      header: 'Tipo',
+      cell: ({ row }) => {
+        const tipo = row.getValue('tipo_descuento')
+
+        return <span>{tipo ? 'Descuento' : 'Aumento'}</span>
+      },
     },
     {
       accessorKey: 'acciones',

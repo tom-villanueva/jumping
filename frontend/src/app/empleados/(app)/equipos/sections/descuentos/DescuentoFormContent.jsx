@@ -66,7 +66,7 @@ export default function DescuentoFormContent({
         messages={formState?.fieldErrors?.valor}
         className="col-span-12"
       />
-      <div className="col-span-12 flex items-center space-x-2">
+      <div className="col-span-12 flex items-start space-x-2">
         {/* Input hidden para mandar el estado unchecked */}
         <input type="hidden" name="tipo_descuento" value={false} />
         <Checkbox
@@ -78,9 +78,12 @@ export default function DescuentoFormContent({
         <Label
           htmlFor="tipo_descuento"
           className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-          Tipo de valor (% de aumento o de descuento)
+          (descuento o aumento)
         </Label>
       </div>
+      <p className="col-span-12 text-sm text-white">
+        Checkbox seleccionado significa que es descuento
+      </p>
       <SubmitButton
         label="Guardar"
         loading="Guardando..."
