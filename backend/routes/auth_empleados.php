@@ -9,21 +9,21 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('empleados')->group(function(){
     Route::post('/register', [RegisteredUserController::class, 'store'])
                     ->middleware('guest:empleado')
-                    ->name('register');
+                    ->name('register.empleado');
 
     Route::post('/login', [AuthenticatedSessionController::class, 'store'])
                     ->middleware('guest:empleado')  
-                    ->name('login');
+                    ->name('login.empleado');
 
     Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])
                     ->middleware('guest:empleado')
-                    ->name('password.email');
+                    ->name('password.email.empleado');
 
     Route::post('/reset-password', [NewPasswordController::class, 'store'])
                     ->middleware('guest:empleado')
-                    ->name('password.store');
+                    ->name('password.store.empleado');
 
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
                     ->middleware('auth:empleado')
-                    ->name('logout');
+                    ->name('logout.empleado');
 });
