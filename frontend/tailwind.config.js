@@ -21,6 +21,9 @@ module.exports = {
         archivo: ['var(--font-archivo)'],
         montserrat: ['var(--font-montserrat)'],
       },
+      backgroundImage: {
+        'hero-image': "url('/hero.webp')",
+      },
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
