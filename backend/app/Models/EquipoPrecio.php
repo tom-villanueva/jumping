@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use App\Core\BaseModel;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class EquipoPrecio extends BaseModel
 {
+    use HasFactory;
+    
     protected $table = 'equipo_precio';
 
     protected $fillable = [

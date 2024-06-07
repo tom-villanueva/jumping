@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use App\Core\BaseModel;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Descuento extends BaseModel
 {
+    use HasFactory;
+    
     protected $table = 'descuentos';
 
     protected $fillable = [
@@ -21,7 +24,7 @@ class Descuento extends BaseModel
     {
         return $this->belongsToMany(Equipo::class, 'equipo_descuento', 'descuento_id', 'equipo_id')
             ->withPivot(['fecha_desde', 'fecha_hasta', 'deleted_at'])
-            ->whereNull('equipo_descuento.deleted_at')
+            ->wherePivotNull('deleted_at')
             ->withTimestamps();
     }
 

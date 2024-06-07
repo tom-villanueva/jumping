@@ -4,10 +4,11 @@ namespace App\Models;
 
 use App\Core\BaseModel;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Talle extends BaseModel
 {
-    use SoftDeletes;
+    use SoftDeletes, HasFactory;
     protected $table = 'talle';
 
     protected $fillable = [

@@ -3,11 +3,12 @@
 namespace App\Models;
 
 use App\Core\BaseModel;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class TipoArticulo extends BaseModel
 {
-    use SoftDeletes;
+    use SoftDeletes, HasFactory;
     protected $table = 'tipo_articulos';
 
     protected $fillable = [
