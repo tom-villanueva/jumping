@@ -26,6 +26,7 @@ class StoreArticuloRequest extends FormRequest
     {
         return [
             'codigo' => 'required|unique:articulo,codigo',
+            'descripcion' => 'required|unique:articulo,descripcion',
             'observacion' => 'nullable',
             'tipo_articulo_talle_id' => 'required|exists:tipo_articulo_talle,id'
         ];

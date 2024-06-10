@@ -34,6 +34,7 @@ return new class extends Migration
             $table->index('talle_id');
 
             $table->unique(['tipo_articulo_id', 'talle_id']);
+            $table->timestamps();
         });
 
         Schema::create('equipo', function (Blueprint $table) {
@@ -53,6 +54,7 @@ return new class extends Migration
             $table->index('equipo_id');
 
             $table->unique(['tipo_articulo_id', 'equipo_id']);
+            $table->timestamps();
         });
 
         Schema::create('articulo', function (Blueprint $table) {

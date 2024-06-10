@@ -27,6 +27,7 @@ class UpdateArticuloRequest extends FormRequest
         $articulo_id = $this->route('id');
         return [
             'codigo' => 'required|unique:articulo,codigo,'.$articulo_id,
+            'descripcion' => 'required|unique:articulo,descripcion,'.$articulo_id,
             'observacion' => 'nullable',
             'tipo_articulo_talle_id' => 'required|exists:tipo_articulo_talle,id'
         ];

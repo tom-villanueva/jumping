@@ -6,7 +6,7 @@ use App\Http\Controllers\Articulo\StoreArticuloController;
 use App\Http\Controllers\Articulo\UpdateArticuloController;
 use App\Http\Controllers\Articulo\DeleteArticuloController;
 
-Route::group(['prefix' => 'articulos'], function () {
+Route::group(['prefix' => 'articulos', 'middleware' => 'auth:empleado'], function () {
     Route::get('/', GetArticulosController::class);
     Route::get('/{id}', GetArticuloByIdController::class);
     Route::post('/', StoreArticuloController::class);
