@@ -96,15 +96,6 @@ class BaseRepository implements Repository
         $model = $this->model->findOrFail($id);
         $model->updateOrFail($data);
         return $model;
-        // $model = $this->model::findOrFail($id);
-
-        // $result = $model->updateOrFail($data);
-
-        // if ($result) {
-        //     return $model;
-        // }
-
-        // return null;
     }
 
      /**
@@ -163,19 +154,6 @@ class BaseRepository implements Repository
         return method_exists($this->model, 'allowedFilters')
             ? array_merge((new BaseModel)->allowedFilters(), $this->model->allowedFilters() ?? [])
             : (new BaseModel)->allowedFilters();
-
-        // if (! method_exists($this->model, 'allowedFilters')) {
-        //     return (new BaseModel)->allowedFilters();
-        // }
-
-        // $all_filters = [
-        //     $this->model->allowedFilters() ?? [],
-        //     (new BaseModel)->allowedFilters(),
-        // ];
-
-        // $filters = array_merge([], ...$all_filters);
-
-        // return $filters;
     }
 
     /**
@@ -188,18 +166,6 @@ class BaseRepository implements Repository
         return method_exists($this->model, 'allowedSorts')
             ? array_merge((new BaseModel)->allowedSorts(), $this->model->allowedSorts() ?? [])
             : (new BaseModel)->allowedSorts();
-        // if (! method_exists($this->model, 'allowedSorts')) {
-        //     return (new BaseModel)->allowedSorts();
-        // }
-
-        // $all_sorts = [
-        //     $this->model->allowedSorts() ?? [],
-        //     (new BaseModel)->allowedSorts(),
-        // ];
-
-        // $sorts = array_merge([], ...$all_sorts);
-
-        // return $sorts;
     }
 
      /**
@@ -212,14 +178,5 @@ class BaseRepository implements Repository
         return method_exists($this->model, 'allowedIncludes')
             ? array_merge((new BaseModel)->allowedIncludes(), $this->model->allowedIncludes() ?? [])
             : (new BaseModel)->allowedIncludes();
-        // $model_includes = [];
-
-        // if (method_exists($this->model, 'allowedIncludes')) {
-        //     $model_includes = $this->model->allowedIncludes();
-        // }
-
-        // $includes = array_merge($model_includes, (new BaseModel)->allowedIncludes());
-
-        // return $includes;
     }
 }

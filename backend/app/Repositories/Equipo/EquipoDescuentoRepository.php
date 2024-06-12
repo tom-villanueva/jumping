@@ -4,14 +4,12 @@ namespace App\Repositories\Equipo;
 
 use App\Core\BaseRepository;
 use App\Models\EquipoDescuento;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 
 class EquipoDescuentoRepository extends BaseRepository
 {
-    protected Model $model;
-
-    public function __construct(EquipoDescuento $model)
+    public function __construct(EquipoDescuento $model, Request $request)
     {
-        $this->model = $model;
+        parent::__construct($model, $request);
     }
 }

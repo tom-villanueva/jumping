@@ -4,14 +4,12 @@ namespace App\Repositories\Articulo;
 
 use App\Core\BaseRepository;
 use App\Models\Articulo;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 
 class ArticuloRepository extends BaseRepository
 {
-    protected Model $model;
-
-    public function __construct(Articulo $model)
+    public function __construct(Articulo $model, Request $request)
     {
-        $this->model = $model;
+        parent::__construct($model, $request);
     }
 }

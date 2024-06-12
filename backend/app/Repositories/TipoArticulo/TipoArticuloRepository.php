@@ -4,14 +4,12 @@ namespace App\Repositories\TipoArticulo;
 
 use App\Core\BaseRepository;
 use App\Models\TipoArticulo;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 
 class TipoArticuloRepository extends BaseRepository
 {
-    protected Model $model;
-
-    public function __construct(TipoArticulo $model)
+    public function __construct(TipoArticulo $model, Request $request)
     {
-        $this->model = $model;
+        parent::__construct($model, $request);
     }
 }

@@ -4,14 +4,12 @@ namespace App\Repositories\Talle;
 
 use App\Core\BaseRepository;
 use App\Models\Talle;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 
 class TalleRepository extends BaseRepository
 {
-    protected Model $model;
-
-    public function __construct(Talle $model)
+    public function __construct(Talle $model, Request $request)
     {
-        $this->model = $model;
+        parent::__construct($model, $request);
     }
 }

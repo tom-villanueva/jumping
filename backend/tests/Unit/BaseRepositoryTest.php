@@ -29,6 +29,15 @@ class BaseRepositoryTest extends TestCase
         $this->assertCount(3, $result);
     }
 
+    public function test_can_get_records()
+    {
+        Talle::factory()->count(3)->create();
+
+        $result = $this->repository->get();
+
+        $this->assertCount(3, $result);
+    }
+
     public function test_can_get_records_with_filters()
     {
         $talles = Talle::factory()->count(3)->create();

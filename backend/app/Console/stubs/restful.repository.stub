@@ -4,14 +4,12 @@ namespace App\Repositories\{{ name }};
 
 use App\Core\BaseRepository;
 use App\Models\{{ name }};
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 
 class {{ name }}Repository extends BaseRepository
 {
-    protected Model $model;
-
-    public function __construct({{ name }} $model)
+    public function __construct({{ name }} $model, Request $request)
     {
-        $this->model = $model;
+        parent::__construct($model, $request);
     }
 }
