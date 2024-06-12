@@ -4,174 +4,222 @@ namespace App\Core;
 
 use App\Core\Interfaces\Repository;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Spatie\QueryBuilder\QueryBuilder;
+use Illuminate\Http\Request;
 
 class BaseRepository implements Repository
 {
-    protected $model;
+    protected Model $model;
+    protected Request $request;
 
-    public function __construct(Model $model)
+    /**
+     * BaseRepository constructor.
+     *
+     * @param  Model  $model
+     * @param  Request  $request
+     */
+    public function __construct(Model $model, Request $request)
     {
         $this->model = $model;
-    }
-
-    public function all()
-    {
-        try {
-            return $this->model->all();
-        } catch (\Exception $e) {
-            throw new \Exception($e->getMessage());
-        }
+        $this->request = $request;
     }
 
     /**
-     * @param  array  $options  (e.g. ["filter" => ["name" => 'Juan"], "include" => "contravencion"])
-     * @return \Illuminate\Database\Eloquent\Collection
+     * Get all records.
+     *
+     * @return Collection
+     * @throws \Exception
      */
-    public function get($options = [])
+    public function all()
     {
-        try {
-            if (count($options) > 0) {
-                // agrego manualmente al request los filtros, includes,etc
-                request()->merge($options);
-            }
-
-            // filter, sort, includes
-            $q = QueryBuilder::for($this->model)
-                ->allowedFilters($this->getFilters())
-                ->allowedSorts($this->getSorts())
-                ->allowedIncludes($this->getIncludes());
-
-            // paginated
-            if (request()->has('page')) {
-                $q->limit(1);
-
-                return $q
-                    ->paginate(request()->page_size ?? 10)
-                    ->withQueryString();
-            }
-
-            return $q
-                ->limit(request()->limit ?? null)
-                ->get();
-        } catch (\Exception $e) {
-            throw new \Exception($e->getMessage());
-        }
+        return $this->model->all();
     }
 
+    /**
+     * Get records with options.
+     *
+     * @param  array  $options (e.g. ["filter" => ["name" => 'Juan"], "include" => "contravencion"])
+     * @return LengthAwarePaginator|Collection
+     * @throws \Exception
+     */
+    public function get(array $options = [])
+    {
+        if (!empty($options)) {
+            // agrego manualmente al request los filtros, includes,etc
+            $this->request->merge($options);
+        }
+
+        // filter, sort, includes
+        $query = QueryBuilder::for($this->model)
+            ->allowedFilters($this->getFilters())
+            ->allowedSorts($this->getSorts())
+            ->allowedIncludes($this->getIncludes());
+
+        // paginated
+        if ($this->request->has('page')) {
+            // $q->limit(1);
+
+            return $query->paginate($this->request->get('page_size', 10))->withQueryString();
+            // return $query
+            //     ->paginate($this->request->page_size ?? 10)
+            //     ->withQueryString();
+        }
+
+        return $query->limit($this->request->get('limit'))->get();
+        // return $q
+        //     ->limit(request()->limit ?? null)
+        //     ->get();
+    }
+
+    /**
+     * Create a new record.
+     *
+     * @param  array  $data
+     * @return Model
+     * @throws \Exception
+     */
     public function create(array $data)
     {
-        try {
-            return $this->model->create($data);
-        } catch (\Exception $e) {
-            throw new \Exception($e->getMessage());
-        }
+        return $this->model->create($data);
     }
 
-    public function update($id, array $data)
+    /**
+     * Update a record by ID.
+     *
+     * @param  int  $id
+     * @param  array  $data
+     * @return Model
+     * @throws ModelNotFoundException
+     */
+    public function update(int $id, array $data)
     {
-        $model = $this->model::findOrFail($id);
+        $model = $this->model->findOrFail($id);
+        $model->updateOrFail($data);
+        return $model;
+        // $model = $this->model::findOrFail($id);
 
-        $result = $model->updateOrFail($data);
+        // $result = $model->updateOrFail($data);
 
-        if ($result) {
-            return $model;
-        }
+        // if ($result) {
+        //     return $model;
+        // }
 
-        return null;
+        // return null;
     }
 
-    public function delete($id)
+     /**
+     * Delete a record by ID.
+     *
+     * @param  int  $id
+     * @return bool|null
+     * @throws \Exception
+     */
+    public function delete(int $id)
     {
         $model = $this->model::findOrFail($id);
-
         return $model->deleteOrFail();
     }
 
-    public function find($id, $options = [])
+    /**
+     * Find a record by ID with options.
+     *
+     * @param  int  $id
+     * @param  array  $options
+     * @return Model
+     * @throws ModelNotFoundException
+     */
+    public function find(int $id, array $options = [])
     {
-        if (count($options) > 0) {
+        if (!empty($options)) {
             // agrego manualmente al request los filtros, includes,etc
-            request()->merge($options);
+            $this->request->merge($options);
         }
 
-        $q = QueryBuilder::for($this->model)
+        $query = QueryBuilder::for($this->model)
             ->allowedFilters($this->getFilters())
             ->allowedIncludes($this->getIncludes());
 
-        $instance = $q->findOrFail($id);
-        // if (null == $instance = $q->find($id)) {
-        //     throw new ModelNotFoundException('No se encuentra registro con ese id');
-        // }
-
-        // if (count($options) > 0) {
-        //     $instance->load($options);
-        // }
-
-        return $instance;
+        return $query->findOrFail($id);
     }
 
+    /**
+     * Get records by an array of IDs.
+     *
+     * @param  array  $ids
+     * @return Collection
+     */
     public function getByIds($ids)
     {
         return $this->model->whereIn('id', $ids)->get();
     }
 
-    /**
-     * Devuelve los filtros disponibles:
-     *      - Filtros del modelo actual (inyectado)
-     *      - Filtros del modelo base
+     /**
+     * Get the allowed filters for the model.
+     *
+     * @return array
      */
     private function getFilters()
     {
-        if (! method_exists($this->model, 'allowedFilters')) {
-            return (new BaseModel)->allowedFilters();
-        }
+        return method_exists($this->model, 'allowedFilters')
+            ? array_merge((new BaseModel)->allowedFilters(), $this->model->allowedFilters() ?? [])
+            : (new BaseModel)->allowedFilters();
 
-        $all_filters = [
-            $this->model->allowedFilters() ?? [],
-            (new BaseModel)->allowedFilters(),
-        ];
+        // if (! method_exists($this->model, 'allowedFilters')) {
+        //     return (new BaseModel)->allowedFilters();
+        // }
 
-        $filters = array_merge([], ...$all_filters);
+        // $all_filters = [
+        //     $this->model->allowedFilters() ?? [],
+        //     (new BaseModel)->allowedFilters(),
+        // ];
 
-        return $filters;
+        // $filters = array_merge([], ...$all_filters);
+
+        // return $filters;
     }
 
     /**
-     * Devuelve los sorts del modelo inyectado
-     * y los del modelo base
+     * Get the allowed sorts for the model.
+     *
+     * @return array
      */
     private function getSorts()
     {
-        if (! method_exists($this->model, 'allowedSorts')) {
-            return (new BaseModel)->allowedSorts();
-        }
+        return method_exists($this->model, 'allowedSorts')
+            ? array_merge((new BaseModel)->allowedSorts(), $this->model->allowedSorts() ?? [])
+            : (new BaseModel)->allowedSorts();
+        // if (! method_exists($this->model, 'allowedSorts')) {
+        //     return (new BaseModel)->allowedSorts();
+        // }
 
-        $all_sorts = [
-            $this->model->allowedSorts() ?? [],
-            (new BaseModel)->allowedSorts(),
-        ];
+        // $all_sorts = [
+        //     $this->model->allowedSorts() ?? [],
+        //     (new BaseModel)->allowedSorts(),
+        // ];
 
-        $sorts = array_merge([], ...$all_sorts);
+        // $sorts = array_merge([], ...$all_sorts);
 
-        return $sorts;
+        // return $sorts;
     }
 
-    /**
-     * Devuelve los sorts del modelo inyectado
-     * y los del modelo base
+     /**
+     * Get the allowed includes for the model.
+     *
+     * @return array
      */
     private function getIncludes()
     {
-        $model_includes = [];
+        return method_exists($this->model, 'allowedIncludes')
+            ? array_merge((new BaseModel)->allowedIncludes(), $this->model->allowedIncludes() ?? [])
+            : (new BaseModel)->allowedIncludes();
+        // $model_includes = [];
 
-        if (method_exists($this->model, 'allowedIncludes')) {
-            $model_includes = $this->model->allowedIncludes();
-        }
+        // if (method_exists($this->model, 'allowedIncludes')) {
+        //     $model_includes = $this->model->allowedIncludes();
+        // }
 
-        $includes = array_merge($model_includes, (new BaseModel)->allowedIncludes());
+        // $includes = array_merge($model_includes, (new BaseModel)->allowedIncludes());
 
-        return $includes;
+        // return $includes;
     }
 }
