@@ -28,6 +28,6 @@ class StoreEquipoDescuentoController extends Controller
             throw $th;
         }
 
-        return response()->json($new_entity);
+        return response()->json($new_entity, 201);
     }
 }

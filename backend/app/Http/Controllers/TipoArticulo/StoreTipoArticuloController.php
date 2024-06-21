@@ -35,6 +35,6 @@ class StoreTipoArticuloController extends Controller
 
         DB::commit();
 
-        return response()->json($new_entity);
+        return response()->json($new_entity, 201);
     }
 }

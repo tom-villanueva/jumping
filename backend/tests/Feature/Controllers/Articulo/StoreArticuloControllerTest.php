@@ -60,7 +60,7 @@ class StoreArticuloControllerTest extends TestCase
         // ES NECESARIO EN EL ACTING AS PONERLE EL GUARD, SINO VA AL DEFAULT (OBVIO xD)
         $response = $this->actingAs($user, $user->getModelGuard())->postJson("/api/articulos", $data);
 
-        $response->assertStatus(200);
+        $response->assertStatus(201);
         $response->assertJson([
             "descripcion" => $data['descripcion'],
             "codigo" => $data['codigo'],

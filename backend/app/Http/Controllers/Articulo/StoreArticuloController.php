@@ -18,6 +18,6 @@ class StoreArticuloController extends Controller
     {
         $new_entity = $this->repository->create($request->all());
 
-        return response()->json($new_entity);
+        return response()->json($new_entity, 201);
     }
 }
