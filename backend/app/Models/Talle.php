@@ -31,6 +31,7 @@ class Talle extends BaseModel
     public function allowedFilters()
     {
         return [
+            'descripcion'
         ];
     }
 

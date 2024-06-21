@@ -7,11 +7,45 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use Tests\WithStubUserEmpleado;
 
-class ArticuloControllersTest extends TestCase
+class StoreArticuloControllerTest extends TestCase
 {
-    use RefreshDatabase, WithStubUserEmpleado;
+	use RefreshDatabase, WithStubUserEmpleado;
 
-    public function test_user_can_store_articulo()
+	public function test_validation_fails_articulo()
+    {
+        // Arrange
+		$user = $this->createStubUser();
+
+        $data = [
+            'codigo' => '', // Invalid data (codigo is required)
+            'descripcion' => '',
+			'observacion' => '',
+			'tipo_articulo_talle_id' => 1
+        ];
+
+        // Act
+        $response = $this->actingAs($user, $user->getModelGuard())->postJson('api/articulos', $data);
+
+        // Assert
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['codigo', 'descripcion', 'tipo_articulo_talle_id']);
+    }
+
+	public function test_unauthorized_user_cannot_store_articulo()
+	{
+		$tipoArticuloTalle = TipoArticuloTalle::factory()->create();
+
+		$response = $this->postJson('/api/articulos', [
+            'descripcion' => 'Test Article',
+            'codigo' => 1,
+            'observacion' => "",
+            'tipo_articulo_talle_id' => $tipoArticuloTalle->id
+        ]);
+
+        $response->assertStatus(401); // Unauthorized
+	}
+
+	public function test_user_can_store_articulo()
     {
         $user = $this->createStubUser();
         $tipoArticuloTalle = TipoArticuloTalle::factory()->create();
@@ -39,21 +73,5 @@ class ArticuloControllersTest extends TestCase
             "descripcion" => $data['descripcion'],
             "codigo" => $data['codigo'],
         ]);
-    }
-
-    public function test_unauthenticated_user_can_not_store_articulo()
-    {
-        $tipoArticuloTalle = TipoArticuloTalle::factory()->create();
-
-        $data = [
-            'descripcion' => 'Articulo test',
-            'codigo' => 1,
-            'observacion' => "",
-            'tipo_articulo_talle_id' => $tipoArticuloTalle->id
-        ];
-
-        $response = $this->postJson("/api/articulos", $data);
-
-        $response->assertStatus(401);
     }
 }

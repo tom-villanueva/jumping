@@ -4,6 +4,24 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+# CÓMO SE HACEN LOS TEST:
+
+## Unitarios
+
+Del modelo usando el ModelTestCase.php
+
+-   Hacer un test para que la configuración esté ok: fillables, casts, etc
+-   Hacer un test para cada una de las relaciones y verificar que están bien seteadas.
+-   Hacer un test para cada una de las relaciones y verificar que la relación contains el modelo, que lo devuelve, que devuelve la clase de modelo correcta, en caso de que haya pivot que estén bien seteados
+
+## De Integración
+
+De los controllers
+
+-   Hacer un test para verificar que las validaciones fallan
+-   Hacer un test para que un usuario no autorizado no pueda acceder
+-   Hacer un test para ver que un usuario autorizado pueda acceder al endpoint y efectivamente se crea/edita/elimina el recurso
+
 # SAIL commands
 
 ## To start Docker containers

@@ -11,6 +11,9 @@ trait WithStubUserEmpleado
      */
     protected $user;
 
+    /**
+     * @return \App\Models\Empleado
+     */
     public function createStubUser(array $data = [])
     {
         $data = array_merge([
