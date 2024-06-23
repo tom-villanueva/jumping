@@ -6,7 +6,7 @@ use App\Core\BaseRepository;
 use App\Models\{{ name }};
 use Illuminate\Http\Request;
 
-class {{ name }}Repository extends BaseRepository
+class {{ className }} extends BaseRepository
 {
     public function __construct({{ name }} $model, Request $request)
     {

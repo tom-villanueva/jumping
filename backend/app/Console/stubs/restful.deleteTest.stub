@@ -1,0 +1,38 @@
+<?php
+
+namespace Tests\Feature;
+
+use App\Models\{{ name }};
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+use Tests\WithStubUserEmpleado;
+
+class Delete{{ name }}ControllerTest extends TestCase
+{
+	use RefreshDatabase, WithStubUserEmpleado;
+
+    public function test_unauthorized_user_can_not_delete_{{ nameLowerCase }}()
+    {
+        ${{ nameLowerCase }} = {{ name }}::factory()->create();
+
+        $response = $this->deleteJson("/api/{{ namePluralLowerCase }}/{${{ nameLowerCase }}->id}");
+
+        $response->assertStatus(401);
+    }
+
+    public function test_user_can_delete_{{ nameLowerCase }}()
+    {
+        $user = $this->createStubUser();
+
+        ${{ nameLowerCase }} = {{ name }}::factory()->create();
+
+        $response = $this->actingAs($user, $user->getModelGuard())
+                        ->deleteJson("/api/{{ namePluralLowerCase }}/{${{ nameLowerCase }}->id}");
+
+        $response->assertStatus(200);
+        
+        $this->assertSoftDeleted('{{ nameLowerCase }}', [
+            'id' => ${{ nameLowerCase }}->id,
+        ]);
+    }
+}

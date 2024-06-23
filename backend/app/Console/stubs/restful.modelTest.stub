@@ -1,0 +1,29 @@
+<?php
+
+namespace Tests\Unit;
+
+use App\Models\{{ name }};
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\ModelTestCase;
+
+class {{ name }}Test extends ModelTestCase
+{
+    use RefreshDatabase;
+
+    public function test_{{ nameLowerCase }}_configuration_is_ok()
+    {
+        $this->runConfigurationAssertions(
+            new {{ name }}(), 
+            fillable: [
+                'id',
+            ],
+            casts: [
+                'id' => 'int', 
+                'deleted_at' => 'datetime' // Este es necesario cuando hay soft delete
+            ],
+            table: '{{ nameLowerCase }}'
+        );
+    }
+
+    /* Tests de relaciones */
+}

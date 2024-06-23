@@ -4,7 +4,7 @@ namespace App\Http\Controllers\{{ name }};
 use App\Http\Controllers\Controller;
 use App\Repositories\{{ name }}\{{ name }}Repository;
 
-class Delete{{ name }}Controller extends Controller
+class {{ className }} extends Controller
 {
     private $repository;
 

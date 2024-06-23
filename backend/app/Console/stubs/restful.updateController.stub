@@ -5,7 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Repositories\{{ name }}\{{ name }}Repository;
 use App\Http\Requests\{{ name }}\Update{{ name }}Request;
 
-class Update{{ name }}Controller extends Controller
+class {{ className }} extends Controller
 {
     private $repository;
 

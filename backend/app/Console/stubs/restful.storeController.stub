@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Repositories\{{ name }}\{{ name }}Repository;
 use App\Http\Requests\{{ name }}\Store{{ name }}Request;
 
-class Store{{ name }}Controller extends Controller
+class {{ className }} extends Controller
 {
     private $repository;
 

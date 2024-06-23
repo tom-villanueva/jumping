@@ -39,7 +39,12 @@ class ResourceMakeCommand extends Command
         'delete',
         'routes',
         'storeRequest',
-        'updateRequest'
+        'updateRequest',
+        'modelTest',
+        'storeTest',
+        'updateTest',
+        'getTest',
+        'deleteTest'
     ];
 
     private $stubs = [
@@ -52,7 +57,12 @@ class ResourceMakeCommand extends Command
         'delete' => '/stubs/restful.deleteController.stub',
         'routes' => '/stubs/restful.routes.stub',
         'storeRequest' => '/stubs/restful.storeRequest.stub',
-        'updateRequest' => '/stubs/restful.updateRequest.stub'
+        'updateRequest' => '/stubs/restful.updateRequest.stub',
+        'modelTest' => '/stubs/restful.modelTest.stub',
+        'storeTest' => '/stubs/restful.storeTest.stub',
+        'updateTest' => '/stubs/restful.updateTest.stub',
+        'getTest' => '/stubs/restful.getTest.stub',
+        'deleteTest' => '/stubs/restful.deleteTest.stub'
     ];
 
     private $basePaths = [
@@ -65,7 +75,12 @@ class ResourceMakeCommand extends Command
         'delete' => 'Http/Controllers',
         'routes' => 'routes',
         'storeRequest' => 'Http/Requests',
-        'updateRequest' => 'Http/Requests' 
+        'updateRequest' => 'Http/Requests',
+        'modelTest' => 'tests/Unit/Models',
+        'storeTest' => 'tests/Feature/Controllers',
+        'updateTest' => 'tests/Feature/Controllers',
+        'getTest' => 'tests/Feature/Controllers',
+        'deleteTest' => 'tests/Feature/Controllers'
     ];
 
     private $fileNames = [
@@ -76,7 +91,12 @@ class ResourceMakeCommand extends Command
         'update' => 'Update{{ name }}Controller',
         'delete' => 'Delete{{ name }}Controller',
         'storeRequest' => 'Store{{ name }}Request',
-        'updateRequest' => 'Update{{ name }}Request'
+        'updateRequest' => 'Update{{ name }}Request',
+        'modelTest' => '{{ name }}Test',
+        'storeTest' => 'Store{{ name }}ControllerTest',
+        'updateTest' => 'Update{{ name }}ControllerTest',
+        'getTest' => 'Get{{ name }}ControllerTest',
+        'deleteTest' => 'Delete{{ name }}ControllerTest'
     ];
 
     protected function resolveStubPath($stub)
@@ -102,6 +122,17 @@ class ResourceMakeCommand extends Command
                 '{{ namePlural }}' => Str::plural($modelName),
                 '{{ namePluralLowerCase }}' => Str::plural(Str::lower(Str::kebab($modelName)))
             ];
+        } elseif($type == "modelTest") {
+            return [
+                '{{ name }}' => $modelName,
+                '{{ nameLowerCase }}' => Str::lower(Str::kebab($modelName)),
+            ];
+        } elseif(str_contains($type, 'Test')) {
+            return [
+                '{{ name }}' => $modelName,
+                '{{ nameLowerCase }}' => Str::lower(Str::kebab($modelName)),
+                '{{ namePluralLowerCase }}' => Str::plural(Str::lower(Str::kebab($modelName)))
+            ];
         }
 
         return [
@@ -120,6 +151,14 @@ class ResourceMakeCommand extends Command
             $lcName = Str::lower(Str::snake($name));
             $fileName = $lcName;
             return $this->laravel->basePath("$basePath/$fileName.php");
+        } elseif (str_contains($type, 'Test')) {
+            if($type == 'modelTest') {
+                $fileName = str_replace('{{ name }}', $name, $this->fileNames[$type]);
+                return $this->laravel->basePath("$basePath/$fileName.php");
+            } else {
+                $fileName = "$name/" . str_replace('{{ name }}', $name, $this->fileNames[$type]);
+                return $this->laravel->basePath("$basePath/$fileName.php");
+            }
         } elseif($type == 'get') {
             $pluralName = Str::plural($name);
             $filePath = "$name/"; 
@@ -136,6 +175,14 @@ class ResourceMakeCommand extends Command
         $basePath = $this->basePaths[$type] . '/' . $name . '/';
 
         if($type == 'routes') {
+            if(!$this->files->exists($this->laravel->basePath($basePath))) {
+                $this->files->makeDirectory($this->laravel->basePath($basePath));
+                $this->info("Creando directorio para $type");
+            }
+            return;
+        }
+
+        if(str_contains($type, 'Test')) {
             if(!$this->files->exists($this->laravel->basePath($basePath))) {
                 $this->files->makeDirectory($this->laravel->basePath($basePath));
                 $this->info("Creando directorio para $type");
@@ -200,7 +247,7 @@ class ResourceMakeCommand extends Command
             
             $replace = $this->resolveStrReplace($file, $name);
             
-            if(!in_array($file, ['model', 'routes'])) {
+            if(!in_array($file, ['model', 'routes', 'modelTest'])) {
                 $this->createDir($file, $name);
             }
 

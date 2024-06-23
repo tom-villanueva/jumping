@@ -1,0 +1,71 @@
+<?php
+
+namespace Tests\Feature;
+
+use App\Models\{{ name }};
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+use Tests\WithStubUserEmpleado;
+
+class Update{{ name }}ControllerTest extends TestCase
+{
+	use RefreshDatabase, WithStubUserEmpleado;
+
+    public function test_validation_fails_{{ nameLowerCase }}_update()
+    {
+        // Arrange
+		$user = $this->createStubUser();
+
+        ${{ nameLowerCase }} = {{ name }}::factory()->create();
+        ${{ nameLowerCase }}2 = {{ name }}::factory()->create();
+
+        $data = [
+            // ejemplo unique descripcion
+            'descripcion' => ${{ nameLowerCase }}->descripcion,
+        ];
+
+        // Act
+        $response = $this->actingAs($user, $user->getModelGuard())
+                         ->putJson("api/{{ namePluralLowerCase }}/{${{ nameLowerCase }}2->id}", $data);
+
+        // Assert
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['descripcion']);
+    }
+
+    public function test_unauthorized_user_can_not_update_{{ nameLowerCase }}()
+    {
+        ${{ nameLowerCase }} = {{ name }}::factory()->create();
+
+        $data = [
+            /* rellenar */
+        ];
+
+        $response = $this->putJson("/api/{{ namePluralLowerCase }}/{${{ nameLowerCase }}->id}", $data);
+
+        $response->assertStatus(401);
+    }
+
+    public function test_user_can_update_{{ nameLowerCase }}()
+    {
+        $user = $this->createStubUser();
+
+        ${{ nameLowerCase }} = {{ name }}::factory()->create();
+
+        $data = [
+            /* rellenar */
+        ];
+
+        $response = $this->actingAs($user, $user->getModelGuard())
+                        ->putJson("/api/{{ namePluralLowerCase }}/{${{ nameLowerCase }}->id}", $data);
+
+        $response->assertStatus(200);
+        $response->assertJson([
+            /* rellenar */
+        ]);
+        
+        $this->assertDatabaseHas('{{ nameLowerCase }}', [
+            "id" => $response['id'],
+        ]);
+    }
+}

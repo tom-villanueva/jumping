@@ -1,0 +1,58 @@
+<?php
+
+namespace Tests\Feature;
+
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+use Tests\WithStubUserEmpleado;
+
+class Store{{ name }}ControllerTest extends TestCase
+{
+	use RefreshDatabase, WithStubUserEmpleado;
+
+	public function test_validation_fails_{{ nameLowerCase }}()
+    {
+        // Arrange
+		$user = $this->createStubUser();
+
+        $data = [
+            /* rellenar */
+        ];
+
+        // Act
+        $response = $this->actingAs($user, $user->getModelGuard())->postJson('api/{{ namePluralLowerCase }}', $data);
+
+        // Assert
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors([ /* rellenar */ ]);
+    }
+
+	public function test_unauthorized_user_cannot_store_{{ nameLowerCase }}()
+	{
+		$response = $this->postJson('/api/{{ namePluralLowerCase }}', [
+            /* rellenar */
+        ]);
+
+        $response->assertStatus(401); // Unauthorized
+	}
+
+	public function test_user_can_store_{{ nameLowerCase }}()
+    {
+        $user = $this->createStubUser();
+
+        $data = [
+            /* rellenar */
+        ];
+
+        $response = $this->actingAs($user, $user->getModelGuard())->postJson("/api/{{ namePluralLowerCase }}", $data);
+
+        $response->assertStatus(201);
+        $response->assertJson([
+            "id" => $data['id'],
+        ]);
+        
+        $this->assertDatabaseHas('{{ nameLowerCase }}', [
+            "id" => $response['id'],
+        ]);
+    }
+}

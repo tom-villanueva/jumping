@@ -3,9 +3,13 @@
 namespace App\Models;
 
 use App\Core\BaseModel;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-class {{ name }} extends BaseModel
+class {{ className }} extends BaseModel
 {
+    use SoftDeletes, HasFactory;
+
     protected $table = '{{ tableName }}';
 
     protected $fillable = [
