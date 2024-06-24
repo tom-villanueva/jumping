@@ -24,8 +24,9 @@ class UpdateDescuentoRequest extends FormRequest
      */
     public function rules()
     {
+        $descuento_id = $this->route('id');
         return [
-            'valor' => 'required|unique:descuentos,valor|numeric|min:0',
+            'valor' => "required|unique:descuentos,valor,{$descuento_id}|numeric|min:0",
             'descripcion' => 'nullable|string',
             'tipo_descuento' => 'required|boolean'
         ];
