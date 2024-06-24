@@ -154,7 +154,7 @@ class ResourceMakeCommand2 extends Command
                 ];
             } else {
                 $replacements = [
-                    '{{ className }}' => "{$classNameType}{$name}Test",
+                    '{{ className }}' => "{$classNameType}{$name}ControllerTest",
                     '{{ name }}' => $name,
                     '{{ nameLowerCase }}' => Str::lower(Str::snake($name)),
                     '{{ namePluralLowerCase }}' => Str::plural(Str::lower(Str::snake($name)))

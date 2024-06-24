@@ -64,7 +64,7 @@ class Update{{ name }}ControllerTest extends TestCase
             /* rellenar */
         ]);
         
-        $this->assertDatabaseHas('{{ nameLowerCase }}', [
+        $this->assertDatabaseHas('{{ namePluralLowerCase }}', [
             "id" => $response['id'],
         ]);
     }

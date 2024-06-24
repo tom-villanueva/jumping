@@ -31,7 +31,7 @@ class Delete{{ name }}ControllerTest extends TestCase
 
         $response->assertStatus(200);
         
-        $this->assertSoftDeleted('{{ nameLowerCase }}', [
+        $this->assertSoftDeleted('{{ namePluralLowerCase }}', [
             'id' => ${{ nameLowerCase }}->id,
         ]);
     }

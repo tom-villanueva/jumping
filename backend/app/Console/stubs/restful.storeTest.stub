@@ -51,7 +51,7 @@ class Store{{ name }}ControllerTest extends TestCase
             "id" => $data['id'],
         ]);
         
-        $this->assertDatabaseHas('{{ nameLowerCase }}', [
+        $this->assertDatabaseHas('{{ namePluralLowerCase }}', [
             "id" => $response['id'],
         ]);
     }
