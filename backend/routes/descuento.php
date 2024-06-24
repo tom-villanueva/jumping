@@ -6,7 +6,7 @@ use App\Http\Controllers\Descuento\StoreDescuentoController;
 use App\Http\Controllers\Descuento\UpdateDescuentoController;
 use App\Http\Controllers\Descuento\DeleteDescuentoController;
 
-Route::group(['prefix' => 'descuentos'], function () {
+Route::group(['prefix' => 'descuentos', 'middleware' => 'auth:empleado'], function () {
     Route::get('/', GetDescuentosController::class);
     Route::get('/{id}', GetDescuentoByIdController::class);
     Route::post('/', StoreDescuentoController::class);

@@ -10,7 +10,7 @@ use App\Http\Controllers\EquipoDescuento\DeleteEquipoDescuentoController;
 use App\Http\Controllers\EquipoDescuento\StoreEquipoDescuentoController;
 use App\Http\Controllers\EquipoDescuento\UpdateEquipoDescuentoController;
 
-Route::group(['prefix' => 'equipos'], function () {
+Route::group(['prefix' => 'equipos', 'middleware' => 'auth:empleado'], function () {
     Route::get('/', GetEquiposController::class);
     Route::get('/{id}', GetEquipoByIdController::class);
     Route::post('/', StoreEquipoController::class);

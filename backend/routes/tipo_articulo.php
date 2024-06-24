@@ -6,7 +6,7 @@ use App\Http\Controllers\TipoArticulo\StoreTipoArticuloController;
 use App\Http\Controllers\TipoArticulo\UpdateTipoArticuloController;
 use App\Http\Controllers\TipoArticulo\DeleteTipoArticuloController;
 
-Route::group(['prefix' => 'tipo-articulos'], function () {
+Route::group(['prefix' => 'tipo-articulos', 'middleware' => 'auth:empleado'], function () {
     Route::get('/', GetTipoArticulosController::class);
     Route::get('/{id}', GetTipoArticuloByIdController::class);
     Route::post('/', StoreTipoArticuloController::class);

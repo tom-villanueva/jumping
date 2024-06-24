@@ -4,10 +4,11 @@ namespace App\Models;
 
 use App\Core\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Descuento extends BaseModel
 {
-    use HasFactory;
+    use SoftDeletes, HasFactory;
     
     protected $table = 'descuentos';
 
