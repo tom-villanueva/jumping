@@ -20,3 +20,4 @@ require __DIR__.'/talle.php';
 require __DIR__.'/equipo.php';
 require __DIR__.'/articulo.php';
 require __DIR__.'/descuento.php';
+require __DIR__.'/Traslado.php';
