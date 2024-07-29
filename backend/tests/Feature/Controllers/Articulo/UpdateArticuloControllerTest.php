@@ -30,7 +30,8 @@ class UpdateArticuloControllerTest extends TestCase
             'descripcion' => $articulo->descripcion,
             'codigo' => $articulo->codigo,
             'observacion' => '',
-            'tipo_articulo_talle_id' => $tipoArticuloTalle->id
+            'tipo_articulo_talle_id' => $tipoArticuloTalle->id,
+            'nro_serie' => $articulo->nro_serie
         ];
 
         // Act
@@ -39,7 +40,7 @@ class UpdateArticuloControllerTest extends TestCase
 
         // Assert
         $response->assertStatus(422);
-        $response->assertJsonValidationErrors(['codigo', 'descripcion']);
+        $response->assertJsonValidationErrors(['codigo', 'descripcion', 'nro_serie']);
     }
 
     public function test_unauthorized_user_can_not_update_articulo()
@@ -76,7 +77,9 @@ class UpdateArticuloControllerTest extends TestCase
             'descripcion' => 'Probando cambio',
             'codigo' => $articulo->codigo,
             'observacion' => $articulo->observacion,
-            'tipo_articulo_talle_id' => $tipoArticuloTalle2->id
+            'tipo_articulo_talle_id' => $tipoArticuloTalle2->id,
+            'nro_serie' => 123,
+            'disponible' => true
         ];
 
         $response = $this->actingAs($user, $user->getModelGuard())
@@ -87,14 +90,18 @@ class UpdateArticuloControllerTest extends TestCase
             "descripcion" => $data['descripcion'],
             "codigo" => $data['codigo'],
             "observacion" => null,
-            "tipo_articulo_talle_id" => $data['tipo_articulo_talle_id']
+            "tipo_articulo_talle_id" => $data['tipo_articulo_talle_id'],
+            "nro_serie" => $data['nro_serie'],
+            "disponible" => $data['disponible'],
         ]);
         
         $this->assertDatabaseHas('articulo', [
             "id" => $response['id'],
             "descripcion" => $data['descripcion'],
             "codigo" => $data['codigo'],
-            "tipo_articulo_talle_id" => $data['tipo_articulo_talle_id']
+            "tipo_articulo_talle_id" => $data['tipo_articulo_talle_id'],
+            "nro_serie" => $data['nro_serie'],
+            "disponible" => $data['disponible'],
         ]);
     }
 }

@@ -17,7 +17,9 @@ class Articulo extends BaseModel
         'descripcion',
         'codigo',
         'observacion',
-        'tipo_articulo_talle_id'
+        'tipo_articulo_talle_id',
+        'nro_serie',
+        'disponible'
     ];
 
     /**

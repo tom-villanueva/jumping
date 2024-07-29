@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Articulo;
 use App\Models\TipoArticuloTalle;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -16,11 +17,14 @@ class StoreArticuloControllerTest extends TestCase
         // Arrange
 		$user = $this->createStubUser();
 
+        $articulo = Articulo::factory()->create();
+
         $data = [
             'codigo' => '', // Invalid data (codigo is required)
             'descripcion' => '',
 			'observacion' => '',
-			'tipo_articulo_talle_id' => 1
+			'tipo_articulo_talle_id' => 10,
+            'nro_serie' => $articulo->nro_serie,
         ];
 
         // Act
@@ -28,7 +32,7 @@ class StoreArticuloControllerTest extends TestCase
 
         // Assert
         $response->assertStatus(422);
-        $response->assertJsonValidationErrors(['codigo', 'descripcion', 'tipo_articulo_talle_id']);
+        $response->assertJsonValidationErrors(['codigo', 'descripcion', 'tipo_articulo_talle_id', 'nro_serie']);
     }
 
 	public function test_unauthorized_user_cannot_store_articulo()
@@ -54,7 +58,9 @@ class StoreArticuloControllerTest extends TestCase
             'descripcion' => 'Articulo test',
             'codigo' => 1,
             'observacion' => "",
-            'tipo_articulo_talle_id' => $tipoArticuloTalle->id
+            'tipo_articulo_talle_id' => $tipoArticuloTalle->id,
+            'nro_serie' => 123,
+            'disponible' => true
         ];
 
         // ES NECESARIO EN EL ACTING AS PONERLE EL GUARD, SINO VA AL DEFAULT (OBVIO xD)
@@ -65,13 +71,17 @@ class StoreArticuloControllerTest extends TestCase
             "descripcion" => $data['descripcion'],
             "codigo" => $data['codigo'],
             "observacion" => null,
-            "tipo_articulo_talle_id" => $data['tipo_articulo_talle_id']
+            "tipo_articulo_talle_id" => $data['tipo_articulo_talle_id'],
+            "nro_serie" => $data['nro_serie'],
+            "disponible" => $data['disponible'],
         ]);
         
         $this->assertDatabaseHas('articulo', [
             "id" => $response['id'],
             "descripcion" => $data['descripcion'],
             "codigo" => $data['codigo'],
+            "nro_serie" => $data['nro_serie'],
+            "disponible" => $data['disponible'],
         ]);
     }
 }

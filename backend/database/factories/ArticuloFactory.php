@@ -21,7 +21,8 @@ class ArticuloFactory extends Factory
             'descripcion' => fake()->word(),
             'codigo' => fake()->unique()->randomDigit(),
             'observacion' => "",
-            'tipo_articulo_talle_id' => TipoArticuloTalle::factory()->create()->id
+            'tipo_articulo_talle_id' => TipoArticuloTalle::factory()->create()->id,
+            'nro_serie' => fake()->unique()->randomDigit()
         ];
     }
 }

@@ -28,7 +28,9 @@ class StoreArticuloRequest extends FormRequest
             'codigo' => 'required|unique:articulo,codigo',
             'descripcion' => 'required|unique:articulo,descripcion',
             'observacion' => 'nullable',
-            'tipo_articulo_talle_id' => 'required|exists:tipo_articulo_talle,id'
+            'tipo_articulo_talle_id' => 'required|exists:tipo_articulo_talle,id',
+            'nro_serie' => 'nullable|unique:articulo,nro_serie',
+            'disponible' => 'nullable'
         ];
     }
 
