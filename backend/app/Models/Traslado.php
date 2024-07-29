@@ -13,7 +13,19 @@ class Traslado extends BaseModel
     protected $table = 'traslados';
 
     protected $fillable = [
+        'direccion',
+        'fecha_desde',
+        'fecha_hasta',
+        'reserva_id'
     ];
+
+    /**
+     * Relaciones
+     */
+    public function reserva() 
+    {
+        return $this->belongsTo(Reserva::class, 'reserva_id');
+    }
 
     /**
      * query builder options
@@ -21,6 +33,7 @@ class Traslado extends BaseModel
     public function allowedFilters()
     {
         return [
+            'reserva_id'
         ];
     }
 

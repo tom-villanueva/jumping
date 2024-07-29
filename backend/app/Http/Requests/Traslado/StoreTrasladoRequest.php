@@ -25,6 +25,10 @@ class StoreTrasladoRequest extends FormRequest
     public function rules()
     {
         return [
+            'direccion' => 'required',
+            'fecha_desde' => 'required|date_format:Y-m-d|after_or_equal:today',
+            'fecha_hasta' => 'required|date_format:Y-m-d|after_or_equal:fecha_desde',
+            'reserva_id' => 'required|exists:reservas,id'
         ];
     }
 

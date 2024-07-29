@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Traslado;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use Tests\WithStubUserEmpleado;
@@ -17,20 +18,24 @@ class UpdateTrasladoControllerTest extends TestCase
 		$user = $this->createStubUser();
 
         $traslado = Traslado::factory()->create();
-        $traslado2 = Traslado::factory()->create();
+
+        $today = Carbon::now()->format('Y-m-d');
+        $todaySubOneDay = Carbon::now()->subDay()->format('Y-m-d');
 
         $data = [
-            // ejemplo unique descripcion
-            'descripcion' => $traslado->descripcion,
+            'direccion' => 'prueba',
+            'fecha_desde' => $today,
+            'fecha_hasta' => $todaySubOneDay,
+            'reserva_id' => 11
         ];
 
         // Act
         $response = $this->actingAs($user, $user->getModelGuard())
-                         ->putJson("api/traslados/{$traslado2->id}", $data);
+                         ->putJson("api/traslados/{$traslado->id}", $data);
 
         // Assert
         $response->assertStatus(422);
-        $response->assertJsonValidationErrors(['descripcion']);
+        $response->assertJsonValidationErrors(['fecha_hasta', 'reserva_id']);
     }
 
     public function test_unauthorized_user_can_not_update_traslado()
@@ -53,7 +58,10 @@ class UpdateTrasladoControllerTest extends TestCase
         $traslado = Traslado::factory()->create();
 
         $data = [
-            /* rellenar */
+            'direccion' => 'nueva direccion',
+            'fecha_desde' => $traslado->fecha_desde,
+            'fecha_hasta' => $traslado->fecha_hasta,
+            'reserva_id' => $traslado->reserva_id
         ];
 
         $response = $this->actingAs($user, $user->getModelGuard())
@@ -61,7 +69,7 @@ class UpdateTrasladoControllerTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertJson([
-            /* rellenar */
+            'direccion' => $data['direccion']
         ]);
         
         $this->assertDatabaseHas('traslados', [

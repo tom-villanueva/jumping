@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\Models\Reserva;
 use App\Models\Traslado;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\ModelTestCase;
@@ -15,7 +16,10 @@ class TrasladoTest extends ModelTestCase
         $this->runConfigurationAssertions(
             new Traslado(), 
             fillable: [
-                'id',
+                'direccion',
+                'fecha_desde',
+                'fecha_hasta',
+                'reserva_id'
             ],
             casts: [
                 'id' => 'int', 
@@ -26,4 +30,17 @@ class TrasladoTest extends ModelTestCase
     }
 
     /* Tests de relaciones */
+    public function test_traslado_reserva_relation_is_ok()
+    {
+        $traslado = new Traslado();
+        $reserva = new Reserva();
+        $relation = $traslado->reserva();
+
+        $this->assertBelongsToRelation(
+            $relation,
+            $traslado,
+            $reserva,
+            'reserva_id'
+        );
+    }
 }

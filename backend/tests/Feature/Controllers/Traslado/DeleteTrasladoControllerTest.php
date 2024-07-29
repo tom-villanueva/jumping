@@ -31,7 +31,7 @@ class DeleteTrasladoControllerTest extends TestCase
 
         $response->assertStatus(200);
         
-        $this->assertSoftDeleted('traslado', [
+        $this->assertSoftDeleted('traslados', [
             'id' => $traslado->id,
         ]);
     }

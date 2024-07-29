@@ -38,6 +38,11 @@ class Reserva extends BaseModel
         return $this->belongsTo(Estado::class, 'estado_id');
     }
 
+    public function traslados() 
+    {
+        return $this->hasMany(Traslado::class, 'reserva_id');
+    }
+
     /**
      * query builder options
      */
@@ -57,6 +62,7 @@ class Reserva extends BaseModel
     public function allowedIncludes()
     {
         return [
+            'estado'
         ];
     }
 }
