@@ -12,7 +12,7 @@ Del modelo usando el ModelTestCase.php
 
 -   Hacer un test para que la configuración esté ok: fillables, casts, etc
 -   Hacer un test para cada una de las relaciones y verificar que están bien seteadas.
--   Hacer un test para cada una de las relaciones y verificar que la relación contains el modelo, que lo devuelve, que devuelve la clase de modelo correcta, en caso de que haya pivot que estén bien seteados
+-   Hacer un test para cada una de las relaciones y verificar que la relación contains el modelo, que lo devuelve, que devuelve la clase de modelo correcta, en caso de que haya pivot que estén bien seteados. Ejemplo DescuentoTest
 
 ## De Integración
 
@@ -23,6 +23,18 @@ De los controllers
 -   Hacer un test para ver que un usuario autorizado pueda acceder al endpoint y efectivamente se crea/edita/elimina el recurso
 
 # SAIL commands
+
+## Para testear
+
+sail test --testsuite Feature --filter NombreModelo
+
+sail test --filter NombreTest
+
+sail test
+
+### Si no agarra los cambios en las rutas, ejecutar:
+
+sail artisan route:clear && sail artisan route:cache
 
 ## To start Docker containers
 

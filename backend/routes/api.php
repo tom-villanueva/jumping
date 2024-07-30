@@ -23,3 +23,4 @@ require __DIR__.'/descuento.php';
 require __DIR__.'/Traslado.php';
 require __DIR__.'/Reserva.php';
 require __DIR__.'/Estado.php';
+require __DIR__.'/ReservaEquipo.php';
