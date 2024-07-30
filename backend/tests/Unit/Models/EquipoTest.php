@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use App\Models\Descuento;
 use App\Models\Equipo;
 use App\Models\EquipoPrecio;
+use App\Models\Reserva;
 use App\Models\TipoArticulo;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -222,5 +223,33 @@ class EquipoTest extends ModelTestCase
         // Test without any precio
         $equipoWithoutPrecio = Equipo::factory()->create();
         $this->assertNull($equipoWithoutPrecio->precio_vigente);
+    }
+
+    public function test_equipo_reserva_relation_is_ok()
+    {
+        $equipo = New Equipo();
+        $reserva = new Reserva();
+
+        $relation = $equipo->reservas();
+
+        $this->assertBelongsToManyRelation(
+            $relation,
+            $equipo,
+            $reserva,
+            "reserva_equipo",
+            "equipo_id",
+            "reserva_id",
+            "id",
+            "id",
+            function($query, $model, BelongsToMany $relation) {
+                $this->assertTrue($query->getQuery()->wheres[1]['type'] === 'Null');
+                $this->assertTrue($query->getQuery()->wheres[1]['column'] === 'reserva_equipo.deleted_at');
+
+                $pivotColumns = ['id', 'altura', 'peso', 'nombre', 'apellido', 'num_calzado'];
+                foreach ($pivotColumns as $column) {
+                    $this->assertContains($column, $relation->getPivotColumns());
+                }
+            }
+        );
     }
 }

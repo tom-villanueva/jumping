@@ -2,10 +2,13 @@
 
 namespace Tests\Unit;
 
+use App\Models\Equipo;
 use App\Models\Estado;
 use App\Models\Reserva;
 use App\Models\Traslado;
 use App\Models\User;
+use App\Repositories\Reserva\ReservaRepository;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\ModelTestCase;
 
@@ -79,5 +82,71 @@ class ReservaTest extends ModelTestCase
             $traslado,
             'reserva_id'
         );
+    }
+
+    public function test_reserva_equipo_relation_is_ok()
+    {
+        $reserva = new Reserva();
+        $equipo = New Equipo();
+
+        $relation = $reserva->equipos();
+
+        $this->assertBelongsToManyRelation(
+            $relation,
+            $reserva,
+            $equipo,
+            "reserva_equipo",
+            "reserva_id",
+            "equipo_id",
+            "id",
+            "id",
+            function($query, $model, BelongsToMany $relation) {
+                $this->assertTrue($query->getQuery()->wheres[1]['type'] === 'Null');
+                $this->assertTrue($query->getQuery()->wheres[1]['column'] === 'reserva_equipo.deleted_at');
+
+                $pivotColumns = ['id', 'altura', 'peso', 'nombre', 'apellido', 'num_calzado'];
+                foreach ($pivotColumns as $column) {
+                    $this->assertContains($column, $relation->getPivotColumns());
+                }
+            }
+        );
+    }
+
+    public function test_can_get_reservas_with_scope_dates()
+    {
+        $reserva1 = Reserva::factory()->create([
+            'fecha_desde' => '2024-07-15',
+            'fecha_hasta' => '2024-07-20'
+        ]);
+        $reserva2 = Reserva::factory()->create([
+            'fecha_desde' => '2024-07-15',
+            'fecha_hasta' => '2024-07-20'
+        ]);
+        $reserva3 = Reserva::factory()->create([
+            'fecha_desde' => '2024-07-10',
+            'fecha_hasta' => '2024-07-14'
+        ]);
+        $reserva4 = Reserva::factory()->create([
+            'fecha_desde' => '2024-07-13',
+            'fecha_hasta' => '2024-07-17'
+        ]);
+
+        $repository = new ReservaRepository(new Reserva(), request());
+
+        $result1 = $repository->get([
+            'filter' => [
+                'fecha_desde_after' => '2024-07-15'
+            ]
+        ]);
+
+        $this->assertCount(2, $result1);
+        
+        $result2 = $repository->get([
+            'filter' => [
+                'fecha_desde_between' => '2024-07-13,2024-07-15'
+            ]
+        ]);
+        
+        $this->assertCount(3, $result2);
     }
 }

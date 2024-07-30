@@ -35,6 +35,7 @@ class Equipo extends BaseModel implements HasMedia
         return $this->belongsToMany(TipoArticulo::class, 'equipo_tipo_articulo', 'equipo_id', 'tipo_articulo_id');
     }
 
+    // precios
     public function equipo_precio() 
     {
         return $this->hasMany(EquipoPrecio::class, 'equipo_id');
@@ -45,6 +46,7 @@ class Equipo extends BaseModel implements HasMedia
         return $this->equipo_precio()->orderBy('created_at', 'desc');
     }
 
+    // descuentos
     public function equipo_descuento() 
     {
         return $this->belongsToMany(Descuento::class, 'equipo_descuento', 'equipo_id', 'descuento_id')
@@ -66,6 +68,15 @@ class Equipo extends BaseModel implements HasMedia
         return $this->equipo_descuento()
             ->whereDate('fecha_hasta', '>=', $today)
             ->orderBy("fecha_hasta", 'asc');
+    }
+
+    // reservas 
+    public function reservas()
+    {
+        return $this->belongsToMany(Reserva::class, 'reserva_equipo', 'equipo_id', 'reserva_id')
+            ->withPivot(['id', 'altura', 'peso', 'nombre', 'apellido', 'num_calzado'])
+            ->wherePivotNull('deleted_at')
+            ->withTimestamps();
     }
 
     /**
@@ -110,7 +121,8 @@ class Equipo extends BaseModel implements HasMedia
             'equipo_tipo_articulo',
             'equipo_precio',
             'precios', 'equipo_descuento',
-            'descuentos_vigentes'
+            'descuentos_vigentes',
+            'reservas'
         ];
     }
 
