@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use App\Models\Equipo;
 use App\Models\Reserva;
 use App\Models\ReservaEquipo;
+use App\Models\ReservaEquipoArticulo;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\ModelTestCase;
 
@@ -59,6 +60,21 @@ class ReservaEquipoTest extends ModelTestCase
             $reserva_equipo,
             $equipo,
             'equipo_id'
+        );
+    }
+
+    public function test_reserva_reserva_equipo_articulo_relation_is_ok()
+    {
+        $reserva_equipo = new ReservaEquipo();
+        $articulo = new ReservaEquipoArticulo();
+
+        $relation = $reserva_equipo->articulos();
+
+        $this->assertHasManyRelation(
+            $relation,
+            $reserva_equipo,
+            $articulo,
+            'reserva_equipo_id'
         );
     }
 }
