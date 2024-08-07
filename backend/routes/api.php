@@ -25,3 +25,4 @@ require __DIR__.'/Reserva.php';
 require __DIR__.'/Estado.php';
 require __DIR__.'/ReservaEquipo.php';
 require __DIR__.'/ReservaEquipoArticulo.php';
+require __DIR__.'/ReservaEquipoEquipoPrecio.php';

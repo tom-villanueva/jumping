@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Equipo;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,6 +18,7 @@ class EquipoPrecioFactory extends Factory
     public function definition(): array
     {
         return [
+            'equipo_id' => Equipo::factory()->create()->id,
             'precio' => fake()->randomNumber(3)
         ];
     }
