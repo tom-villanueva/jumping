@@ -38,6 +38,16 @@ class ReservaEquipo extends BaseModel
         return $this->hasMany(ReservaEquipoArticulo::class, 'reserva_equipo_id');
     }
 
+    public function precio()
+    {
+        return $this->belongsTo(EquipoPrecio::class, 'equipo_precio_id');
+    }
+
+    public function descuento()
+    {
+        return $this->belongsTo(EquipoDescuento::class, 'equipo_descuento_id');
+    }
+
     /**
      * query builder options
      */

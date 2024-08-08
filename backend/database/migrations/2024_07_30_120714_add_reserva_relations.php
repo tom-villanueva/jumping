@@ -24,8 +24,16 @@ return new class extends Migration
             $table->foreignId('reserva_id')->references('id')->on('reservas')->onDelete('cascade');
             $table->index('reserva_id');
 
-            $table->foreignId('equipo_id')->references('id')->on('equipo')->onDelete('cascade');
+            $table->foreignId('equipo_id')->references('id')->on('equipo')->restrictOnDelete();
             $table->index('equipo_id');
+
+            // estas son redundantes pero es para evitar tener que buscar por fecha
+            // cuáles eran los precios y descuentos vigentes.
+            $table->foreignId('equipo_precio_id')->references('id')->on('equipo_precio')->nullOnDelete();
+            $table->index('equipo_precio_id');
+
+            $table->foreignId('equipo_descuento_id')->nullable()->references('id')->on('equipo_descuento')->nullOnDelete();
+            $table->index('equipo_descuento_id');
 
             $table->timestamps();
             $table->softDeletes();
@@ -45,23 +53,6 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
-
-        Schema::create('reserva_equipo_equipo_precio', function(Blueprint $table) {
-            $table->id();
-
-            // relaciones
-            $table->foreignId('reserva_equipo_id')->references('id')->on('reserva_equipo')->onDelete('cascade');
-            $table->index('reserva_equipo_id');
-
-            $table->foreignId('equipo_precio_id')->references('id')->on('equipo_precio')->onDelete('cascade');
-            $table->index('equipo_precio_id');
-
-            $table->foreignId('equipo_descuento_id')->nullable()->references('id')->on('equipo_descuento')->onDelete('cascade');
-            $table->index('equipo_descuento_id');
-
-            $table->timestamps();
-            $table->softDeletes();
-        });
     }
 
     /**
@@ -69,7 +60,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::drop("reserva_equipo_equipo_precio");
         Schema::drop("reserva_equipo_articulo");
         Schema::drop("reserva_equipo");
     }

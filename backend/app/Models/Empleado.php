@@ -21,6 +21,7 @@ class Empleado extends Authenticatable
         'name',
         'email',
         'password',
+        'isAdmin'
     ];
 
     /**
