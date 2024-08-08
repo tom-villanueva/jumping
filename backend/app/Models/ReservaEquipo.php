@@ -20,7 +20,9 @@ class ReservaEquipo extends BaseModel
         'nombre',
         'apellido',
         'reserva_id',
-        'equipo_id'
+        'equipo_id',
+        'equipo_precio_id',
+        'equipo_descuento_id'
     ];
 
     public function reserva()
@@ -70,7 +72,9 @@ class ReservaEquipo extends BaseModel
         return [
             'reserva',
             'equipo',
-            'articulos'
+            'articulos',
+            'precio',
+            'descuento'
         ];
     }
 }

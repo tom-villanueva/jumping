@@ -3,6 +3,8 @@
 namespace Tests\Unit;
 
 use App\Models\Equipo;
+use App\Models\EquipoDescuento;
+use App\Models\EquipoPrecio;
 use App\Models\Reserva;
 use App\Models\ReservaEquipo;
 use App\Models\ReservaEquipoArticulo;
@@ -24,7 +26,9 @@ class ReservaEquipoTest extends ModelTestCase
                 'nombre',
                 'apellido',
                 'reserva_id',
-                'equipo_id'
+                'equipo_id',
+                'equipo_precio_id',
+                'equipo_descuento_id'
             ],
             casts: [
                 'id' => 'int', 
@@ -75,6 +79,34 @@ class ReservaEquipoTest extends ModelTestCase
             $reserva_equipo,
             $articulo,
             'reserva_equipo_id'
+        );
+    }
+
+    public function test_reserva_equipo_equipo_precio_relation_is_ok()
+    {
+        $reserva_equipo = new ReservaEquipo();
+        $equipo_precio = new EquipoPrecio();
+        $relation = $reserva_equipo->precio();
+
+        $this->assertBelongsToRelation(
+            $relation,
+            $reserva_equipo,
+            $equipo_precio,
+            'equipo_precio_id'
+        );
+    }
+
+    public function test_reserva_equipo_equipo_descuento_relation_is_ok()
+    {
+        $reserva_equipo = new ReservaEquipo();
+        $equipo_descuento = new EquipoDescuento();
+        $relation = $reserva_equipo->descuento();
+
+        $this->assertBelongsToRelation(
+            $relation,
+            $reserva_equipo,
+            $equipo_descuento,
+            'equipo_descuento_id'
         );
     }
 }
