@@ -6,7 +6,6 @@ import ResponsiveNavLink, {
   ResponsiveNavButton,
 } from '@/components/ResponsiveNavLink'
 import { DropdownButton } from '@/components/DropdownLink'
-import { useAuth } from '@/hooks/auth-empleados'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 
@@ -21,10 +20,9 @@ function capitalize(word) {
   return word.charAt(0).toUpperCase() + word.slice(1)
 }
 
-const Navigation = ({ user }) => {
-  const { logout } = useAuth()
-
+const Navigation = ({ user, logout }) => {
   const [open, setOpen] = useState(false)
+  const pathname = usePathname()
 
   return (
     <nav className="border-b border-gray-100 bg-slate-700">
@@ -45,7 +43,7 @@ const Navigation = ({ user }) => {
                 <NavLink
                   key={route.id}
                   href={`/empleados/${route.name}`}
-                  active={usePathname() === `/empleados/${route.name}`}>
+                  active={pathname === `/empleados/${route.name}`}>
                   {capitalize(route.name)}
                 </NavLink>
               ))}
@@ -116,19 +114,19 @@ const Navigation = ({ user }) => {
       {/* Responsive Navigation Menu */}
       {open && (
         <div className="block sm:hidden">
-          <div className="space-y-1 pt-2 pb-3">
+          <div className="space-y-1 pb-3 pt-2">
             {routes.map(route => (
               <ResponsiveNavLink
                 key={route.id}
                 href={`/empleados/${route.name}`}
-                active={usePathname() === `/empleados/${route.name}`}>
+                active={pathname === `/empleados/${route.name}`}>
                 {capitalize(route.name)}
               </ResponsiveNavLink>
             ))}
           </div>
 
           {/* Responsive Settings Options */}
-          <div className="border-t border-gray-200 pt-4 pb-1">
+          <div className="border-t border-gray-200 pb-1 pt-4">
             <div className="flex items-center px-4">
               <div className="flex-shrink-0">
                 <svg

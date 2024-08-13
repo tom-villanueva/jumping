@@ -5,7 +5,7 @@ import Navigation from '@/app/empleados/(app)/Navigation'
 import Loading from '@/app/(app)/Loading'
 
 const AppLayout = ({ children, header }) => {
-  const { user } = useAuth({ middleware: 'auth' })
+  const { user, logout } = useAuth({ middleware: 'auth' })
 
   if (!user) {
     return <Loading />
@@ -13,7 +13,7 @@ const AppLayout = ({ children, header }) => {
 
   return (
     <div className="min-h-screen bg-slate-900">
-      <Navigation user={user} />
+      <Navigation user={user} logout={logout} />
 
       <main>{children}</main>
     </div>
