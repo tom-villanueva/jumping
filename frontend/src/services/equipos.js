@@ -41,30 +41,3 @@ export function useEquipos({ params } = {}) {
     ...rest,
   }
 }
-
-export async function uploadEquipoThumbnail(id, data) {
-  return axios.post(`/api/equipos/${id}/upload-thumbnail`, data)
-}
-
-// export async function uploadEquipoThumbnail(id, data) {
-//   const xsrf = cookies().get('XSRF-TOKEN')
-
-//   const res = await fetch(`${baseUrl}/api/equipos/${id}/upload-thumbnail`, {
-//     method: 'POST',
-//     body: data,
-//     headers: {
-//       'X-XSRF-TOKEN': xsrf.value,
-//       Accept: 'application/json',
-//     },
-//     credentials: 'include',
-//   })
-
-//   if (!res.ok) {
-//     const json = await res.json()
-//     throw new CustomValidationError(json?.message, json?.errors ?? [])
-//   }
-
-//   const json = await res.json()
-
-//   return json
-// }
