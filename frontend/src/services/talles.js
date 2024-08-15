@@ -1,29 +1,44 @@
 import axios from '@/lib/axios'
-import { cookies } from 'next/headers'
+// import { cookies } from 'next/headers'
+import useSWR from 'swr'
 
-const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL
+// const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL
 
-export async function getTalles({ params } = {}) {
+// export async function getTalles({ params } = {}) {
+//   const queryParams = new URLSearchParams(params)
+
+//   const xsrf = cookies().get('XSRF-TOKEN')
+
+//   const res = await fetch(`${baseUrl}/api/talles?${queryParams}`, {
+//     headers: {
+//       'X-XSRF-TOKEN': xsrf.value,
+//       Accept: 'application/json',
+//     },
+//     credentials: 'include',
+//     next: { tags: 'talles' },
+//   })
+
+//   if (!res.ok) {
+//     throw new Error('Error cargando los talles')
+//   }
+
+//   const json = await res.json()
+
+//   return json
+// }
+
+export function useTalles({ params } = {}) {
   const queryParams = new URLSearchParams(params)
 
-  const xsrf = cookies().get('XSRF-TOKEN')
+  const qs = queryParams.toString()
 
-  const res = await fetch(`${baseUrl}/api/talles?${queryParams}`, {
-    headers: {
-      'X-XSRF-TOKEN': xsrf.value,
-      Accept: 'application/json',
-    },
-    credentials: 'include',
-    next: { tags: 'talles' },
-  })
+  const { data, error, isLoading } = useSWR(['/api/talles', qs])
 
-  if (!res.ok) {
-    throw new Error('Error cargando los talles')
+  return {
+    talles: data,
+    isLoading,
+    isError: error,
   }
-
-  const json = await res.json()
-
-  return json
 }
 
 export async function storeTalle(data) {

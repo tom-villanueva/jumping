@@ -3,6 +3,8 @@
 import { useAuth } from '@/hooks/auth-empleados'
 import Navigation from '@/app/empleados/(app)/Navigation'
 import Loading from '@/app/(app)/Loading'
+import { SWRConfig } from 'swr'
+import { fetcher } from '@/lib/utils'
 
 const AppLayout = ({ children, header }) => {
   const { user, logout } = useAuth({ middleware: 'auth' })
@@ -15,7 +17,12 @@ const AppLayout = ({ children, header }) => {
     <div className="min-h-screen bg-slate-900">
       <Navigation user={user} logout={logout} />
 
-      <main>{children}</main>
+      <SWRConfig
+        value={{
+          fetcher: fetcher,
+        }}>
+        <main>{children}</main>
+      </SWRConfig>
     </div>
   )
 }

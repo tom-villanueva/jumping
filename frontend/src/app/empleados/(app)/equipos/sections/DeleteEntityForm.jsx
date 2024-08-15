@@ -1,5 +1,5 @@
 'use client'
-import { useFormState } from 'react-dom'
+
 import {
   Dialog,
   DialogContent,
@@ -7,36 +7,47 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { EMPTY_FORM_STATE } from '@/lib/utils'
-import { useEffect } from 'react'
-import SubmitButton from '@/components/SubmitButton'
 import { useToast } from '@/components/ui/use-toast'
+import useSWRMutation from 'swr/mutation'
+import { useSWRConfig } from 'swr'
+import { Button } from '@/components/ui/button'
+import { deleteFetcher } from '@/lib/utils'
 
 export default function DeleteEntityForm({
   openDeleteForm,
   setOpenDeleteForm,
   entity,
-  serverAction,
+  apiKey,
+  mutateKey,
   name,
 }) {
-  const [formState, action] = useFormState(serverAction, EMPTY_FORM_STATE)
   const { toast } = useToast()
+  const { mutate } = useSWRConfig()
 
-  useEffect(() => {
-    if (formState.status === 'SUCCESS') {
+  const { trigger, isMutating } = useSWRMutation(apiKey, deleteFetcher, {
+    onSuccess() {
       toast({
-        title: `😄 ${formState.message}`,
+        title: `😄 ${name} eliminado con éxito`,
       })
-      setOpenDeleteForm(false)
-    } else if (formState.status === 'ERROR') {
+
+      mutate(key => Array.isArray(key) && key[0] === (mutateKey ?? apiKey))
+    },
+    onError(err) {
+      console.log(err)
       toast({
-        title: `🥲 ${formState.message}`,
+        title: `🥲 Ocurrió un error`,
         description: 'Intente de nuevo más tarde.',
         variant: 'destructive',
       })
-      setOpenDeleteForm(false)
-    }
-  }, [formState])
+    },
+  })
+
+  function handleOnSubmit(e) {
+    e.preventDefault()
+
+    trigger({ id: entity?.id })
+    setOpenDeleteForm(false)
+  }
 
   return (
     <Dialog
@@ -49,13 +60,10 @@ export default function DeleteEntityForm({
             Se eliminará permanentemente el {name}.
           </DialogDescription>
         </DialogHeader>
-        <form action={action}>
-          <input type="hidden" name="entityId" value={entity?.id} />
-          <SubmitButton
-            variant="destructive"
-            label="Confirmar"
-            className="w-full"
-          />
+        <form onSubmit={handleOnSubmit}>
+          <Button variant="destructive" className="w-full" type="submit">
+            {isMutating ? 'Eliminando...' : 'Confirmar'}
+          </Button>
         </form>
       </DialogContent>
     </Dialog>

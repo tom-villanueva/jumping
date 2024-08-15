@@ -1,29 +1,45 @@
 import axios from '@/lib/axios'
-import { cookies } from 'next/headers'
+// import { cookies } from 'next/headers'
+import useSWR from 'swr'
 
-const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL
+// const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL
 
-export async function getDescuentos({ params } = {}) {
+// export async function getDescuentos({ params } = {}) {
+//   const queryParams = new URLSearchParams(params)
+
+//   const xsrf = cookies().get('XSRF-TOKEN')
+
+//   const res = await fetch(`${baseUrl}/api/descuentos?${queryParams}`, {
+//     headers: {
+//       'X-XSRF-TOKEN': xsrf.value,
+//       Accept: 'application/json',
+//     },
+//     credentials: 'include',
+//     next: { tags: 'descuentos' },
+//   })
+
+//   if (!res.ok) {
+//     throw new Error('Error cargando los descuentos')
+//   }
+
+//   const json = await res.json()
+
+//   return json
+// }
+
+export function useDescuentos({ params } = {}) {
   const queryParams = new URLSearchParams(params)
 
-  const xsrf = cookies().get('XSRF-TOKEN')
+  const qs = queryParams.toString()
 
-  const res = await fetch(`${baseUrl}/api/descuentos?${queryParams}`, {
-    headers: {
-      'X-XSRF-TOKEN': xsrf.value,
-      Accept: 'application/json',
-    },
-    credentials: 'include',
-    next: { tags: 'descuentos' },
-  })
+  // const { data, error, isLoading } = useSWR(`/api/descuentos?${queryParams}`)
+  const { data, error, isLoading } = useSWR(['/api/descuentos', qs])
 
-  if (!res.ok) {
-    throw new Error('Error cargando los descuentos')
+  return {
+    descuentos: data,
+    isLoading,
+    isError: error,
   }
-
-  const json = await res.json()
-
-  return json
 }
 
 export async function storeDescuento(data) {

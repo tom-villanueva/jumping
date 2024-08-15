@@ -1,7 +1,8 @@
-import axios from 'axios'
+// import axios from 'axios'
 import { clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 import { ZodError } from 'zod'
+import axios from './axios'
 
 export function cn(...inputs) {
   return twMerge(clsx(inputs))
@@ -34,41 +35,41 @@ export class CustomValidationError extends Error {
   }
 }
 
-export const fromErrorToFormState = error => {
-  // validación de Next
-  if (error instanceof ZodError) {
-    return {
-      status: 'ERROR',
-      message: '',
-      fieldErrors: error.flatten().fieldErrors,
-      timestamp: Date.now(),
-    }
-    // validación de Laravel desde axios
-  } else if (axios.isAxiosError(error)) {
-    return {
-      status: 'ERROR',
-      message: error?.response?.data?.message ?? error?.message,
-      fieldErrors: error?.response?.data?.errors ?? {},
-      timestamp: Date.now(),
-    }
-    // validación de Laravel pero desde fetch
-  } else if (error instanceof CustomValidationError) {
-    return {
-      status: 'ERROR',
-      message: error.message,
-      fieldErrors: error.errors,
-      timestamp: Date.now(),
-    }
-    // Se chingó otra cosa
-  } else {
-    return {
-      status: 'ERROR',
-      message: 'Ha ocurrido un error inesperado.',
-      fieldErrors: {},
-      timestamp: Date.now(),
-    }
-  }
-}
+// export const fromErrorToFormState = error => {
+//   // validación de Next
+//   if (error instanceof ZodError) {
+//     return {
+//       status: 'ERROR',
+//       message: '',
+//       fieldErrors: error.flatten().fieldErrors,
+//       timestamp: Date.now(),
+//     }
+//     // validación de Laravel desde axios
+//   } else if (axios.isAxiosError(error)) {
+//     return {
+//       status: 'ERROR',
+//       message: error?.response?.data?.message ?? error?.message,
+//       fieldErrors: error?.response?.data?.errors ?? {},
+//       timestamp: Date.now(),
+//     }
+//     // validación de Laravel pero desde fetch
+//   } else if (error instanceof CustomValidationError) {
+//     return {
+//       status: 'ERROR',
+//       message: error.message,
+//       fieldErrors: error.errors,
+//       timestamp: Date.now(),
+//     }
+//     // Se chingó otra cosa
+//   } else {
+//     return {
+//       status: 'ERROR',
+//       message: 'Ha ocurrido un error inesperado.',
+//       fieldErrors: {},
+//       timestamp: Date.now(),
+//     }
+//   }
+// }
 
 export const formatDate = date => {
   const year = date.getFullYear()
@@ -82,4 +83,22 @@ export const convertToUTC = date => {
   const offset = localDate.getTimezoneOffset()
   const utcTimestamp = localDate.getTime() + offset * 60 * 1000
   return new Date(utcTimestamp)
+}
+
+export const fetcher = ([url, qs]) =>
+  axios.get(`${url}?${qs}`).then(res => {
+    return res.data
+  })
+
+// https://swr.vercel.app/docs/mutation#useswrmutation
+export async function storeFetcher(url, { arg }) {
+  await axios.post(url, arg.data)
+}
+
+export async function updateFetcher(url, { arg }) {
+  await axios.put(`${url}/${arg.id}`, arg.data)
+}
+
+export async function deleteFetcher(url, { arg }) {
+  await axios.delete(`${url}/${arg.id}`)
 }

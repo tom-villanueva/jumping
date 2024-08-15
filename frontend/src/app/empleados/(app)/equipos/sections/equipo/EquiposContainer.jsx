@@ -139,7 +139,8 @@ export default function EquiposContainer({
   useEffect(() => {
     // Esto lo hice para que se recargue la imagen al subirla
     // funciona, no sé si es la mejor solución
-    if (selectedEquipo.hasOwnProperty('id')) {
+    // también sirve para cuando se cargan descuentos a un equipo
+    if (selectedEquipo?.hasOwnProperty('id')) {
       const newSelectedEquipo = equipos.find(
         equipo => equipo.id === selectedEquipo.id,
       )
@@ -153,7 +154,7 @@ export default function EquiposContainer({
         openDeleteForm={openDeleteForm}
         setOpenDeleteForm={setOpenDeleteForm}
         entity={selectedEquipo}
-        serverAction={removeEquipo}
+        apiKey="/api/equipos"
         name="equipo"
       />
       <EquipoDescuentoFormModal

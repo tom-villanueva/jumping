@@ -5,9 +5,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { EMPTY_FORM_STATE, convertToUTC, formatDate } from '@/lib/utils'
+import { convertToUTC, formatDate, updateFetcher } from '@/lib/utils'
 import { useEffect } from 'react'
-import { useFormState } from 'react-dom'
 import { useForm } from 'react-hook-form'
 import {
   Form,
@@ -15,14 +14,42 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { editEquipoDescuento } from '../../equipos-actions'
 import { useToast } from '@/components/ui/use-toast'
-import SubmitButton from '@/components/SubmitButton'
-import InputError from '@/components/InputError'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+import useSWRMutation from 'swr/mutation'
+import { useSWRConfig } from 'swr'
+import { Button } from '@/components/ui/button'
 
 const today = formatDate(convertToUTC(new Date().setHours(0, 0, 0, 0)))
+
+const equipoDescuentoEditSchema = z
+  .object({
+    equipo_id: z.number(),
+    fecha_desde: z
+      .string({
+        required_error: 'Se requiere fecha inicio',
+      })
+      .date('Se requiere fecha inicio')
+      .refine(data => convertToUTC(data) >= new Date().setHours(0, 0, 0, 0), {
+        message: 'Fecha inicio tiene que ser igual o mayor a hoy.',
+      }),
+    fecha_hasta: z
+      .string({
+        required_error: 'Se requiere fecha fin',
+      })
+      .date('Se requiere fecha fin'),
+  })
+  .refine(
+    data => convertToUTC(data.fecha_hasta) >= convertToUTC(data.fecha_desde),
+    {
+      message: 'Fecha fin no puede ser menor a fecha inicio',
+      path: ['fecha_hasta'],
+    },
+  )
 
 export default function EquipoDescuentoUpdateFormModal({
   openForm,
@@ -32,39 +59,68 @@ export default function EquipoDescuentoUpdateFormModal({
   equipo,
 }) {
   const { toast } = useToast()
-  const [formState, action] = useFormState(
-    editEquipoDescuento,
-    EMPTY_FORM_STATE,
+  const { mutate } = useSWRConfig()
+
+  const { trigger, isMutating } = useSWRMutation(
+    '/api/equipos/descuentos',
+    updateFetcher,
+    {
+      onSuccess() {
+        toast({
+          title: `😄 Descuento modificado con éxito`,
+        })
+        form.reset()
+        onFormSubmit()
+        mutate(key => Array.isArray(key) && key[0] === '/api/equipos')
+      },
+      onError(err) {
+        if (axios.isAxiosError(err)) {
+          if (err.response.status === 422) {
+            const errors = err.response.data.errors ?? {}
+
+            for (const [key, value] of Object.entries(errors)) {
+              form.setError(key, { type: 'manual', message: value.join(', ') })
+            }
+          } else {
+            form.setError('root.serverError', {
+              type: 'server',
+              message: err.response.data.message,
+            })
+          }
+        } else {
+          toast({
+            title: `🥲 Ocurrió un error ${err.message}`,
+            description: 'Intente de nuevo más tarde.',
+            variant: 'destructive',
+          })
+        }
+      },
+    },
   )
+
   const form = useForm({
+    resolver: zodResolver(equipoDescuentoEditSchema),
     defaultValues: {
+      equipo_id: equipo?.id,
       fecha_desde: '',
       fecha_hasta: '',
     },
   })
 
   useEffect(() => {
-    if (formState?.status === 'SUCCESS') {
-      toast({
-        title: `😄 ${formState?.message}`,
-      })
-      onFormSubmit()
-    } else if (
-      formState?.status === 'ERROR' &&
-      Object.keys(formState?.fieldErrors).length == 0
-    ) {
-      toast({
-        title: `🥲 ${formState?.message}`,
-        description: 'Intente de nuevo.',
-        variant: 'destructive',
-      })
-    }
-  }, [formState])
-
-  useEffect(() => {
+    form.setValue('equipo_id', equipo?.id)
     form.setValue('fecha_desde', descuento?.pivot?.fecha_desde)
     form.setValue('fecha_hasta', descuento?.pivot?.fecha_hasta)
-  }, [descuento])
+  }, [descuento, equipo])
+
+  function onSubmit(values) {
+    const data = {
+      id: descuento?.pivot?.id,
+      descuento_id: descuento?.id,
+      ...values,
+    }
+    trigger({ id: descuento?.pivot?.id, data })
+  }
 
   return (
     <Dialog open={openForm} onOpenChange={() => setOpenForm(!openForm)}>
@@ -73,7 +129,9 @@ export default function EquipoDescuentoUpdateFormModal({
           <DialogTitle>Cambiar fechas a descuento</DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form action={action} className="grid w-full grid-cols-12 gap-2">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="grid w-full grid-cols-12 gap-2">
             <FormField
               name="fecha_desde"
               control={form.control}
@@ -88,10 +146,7 @@ export default function EquipoDescuentoUpdateFormModal({
                       {...field}
                     />
                   </FormControl>
-                  <InputError
-                    messages={formState?.fieldErrors?.fecha_desde}
-                    className="col-span-12"
-                  />
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -109,33 +164,33 @@ export default function EquipoDescuentoUpdateFormModal({
                       {...field}
                     />
                   </FormControl>
-                  <InputError
-                    messages={formState?.fieldErrors?.fecha_hasta}
-                    className="col-span-12"
-                  />
+                  <FormMessage />
                 </FormItem>
               )}
             />
-            <SubmitButton
-              label="Guardar"
-              loading="Guardando..."
-              className="col-span-12"
+
+            <Button type="submit" className="col-span-12 sm:col-span-2">
+              {isMutating ? 'Guardando...' : 'Guardar'}
+            </Button>
+
+            <FormField
+              control={form.control}
+              name="equipo_id"
+              render={({ field }) => (
+                <FormItem className="col-span-12">
+                  <FormControl>
+                    <Input type="hidden" name="equipo_id" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            <input
-              type="hidden"
-              name="descuentoId"
-              value={descuento?.id ?? ''}
-            />
-            <input
-              type="hidden"
-              name="equipoDescuentoId"
-              value={descuento?.pivot?.id ?? ''}
-            />
-            <input type="hidden" name="equipoId" value={equipo?.id ?? ''} />
-            <InputError
-              messages={formState?.fieldErrors?.equipo_id}
-              className="col-span-12"
-            />
+
+            {form.formState.errors.root && (
+              <p className="col-span-12 text-sm text-red-500">
+                {form.formState.errors.root.serverError.message}
+              </p>
+            )}
           </form>
         </Form>
       </DialogContent>

@@ -1,4 +1,5 @@
-import { useFormState } from 'react-dom'
+'use client'
+
 import { useForm } from 'react-hook-form'
 import {
   Form,
@@ -6,6 +7,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from '@/components/ui/form'
 import {
   Select,
@@ -15,49 +17,104 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Input } from '@/components/ui/input'
-import { EMPTY_FORM_STATE, convertToUTC, formatDate } from '@/lib/utils'
+import { convertToUTC, formatDate, storeFetcher } from '@/lib/utils'
 import { useToast } from '@/components/ui/use-toast'
-import { addEquipoDescuento } from '../../equipos-actions'
-import { useEffect } from 'react'
-import InputError from '@/components/InputError'
-import SubmitButton from '@/components/SubmitButton'
+import useSWRMutation from 'swr/mutation'
+import { useSWRConfig } from 'swr'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+import { Button } from '@/components/ui/button'
+import axios from 'axios'
 
 const today = formatDate(convertToUTC(new Date().setHours(0, 0, 0, 0)))
 
+const equipoDescuentoSchema = z
+  .object({
+    equipo_id: z.number(),
+    descuento_id: z
+      .string({
+        required_error: 'Debe elegir un descuento',
+      })
+      .min(1, 'Debe elegir un descuento'),
+    fecha_desde: z
+      .string({
+        required_error: 'Se requiere fecha inicio',
+      })
+      .date('Se requiere fecha inicio')
+      .refine(data => convertToUTC(data) >= new Date().setHours(0, 0, 0, 0), {
+        message: 'Fecha inicio tiene que ser igual o mayor a hoy.',
+      }),
+    fecha_hasta: z
+      .string({
+        required_error: 'Se requiere fecha fin',
+      })
+      .date('Se requiere fecha fin'),
+  })
+  .refine(
+    data => convertToUTC(data.fecha_hasta) >= convertToUTC(data.fecha_desde),
+    {
+      message: 'Fecha fin no puede ser menor a fecha inicio',
+      path: ['fecha_hasta'],
+    },
+  )
+
 export default function EquipoDescuentoForm({ equipo, descuentos }) {
   const { toast } = useToast()
-  const [formState, action] = useFormState(addEquipoDescuento, EMPTY_FORM_STATE)
+  const { mutate } = useSWRConfig()
 
   const form = useForm({
+    resolver: zodResolver(equipoDescuentoSchema),
     defaultValues: {
+      equipo_id: equipo?.id,
       descuento_id: '',
       fecha_desde: '',
       fecha_hasta: '',
     },
   })
 
-  useEffect(() => {
-    if (formState.status === 'SUCCESS') {
-      toast({
-        title: `😄 ${formState?.message}`,
-      })
-      form.reset()
-    } else if (
-      formState.status === 'ERROR' &&
-      Object.keys(formState?.fieldErrors).length == 0
-    ) {
-      toast({
-        title: `🥲 ${formState?.message}`,
-        description: 'Intente de nuevo.',
-        variant: 'destructive',
-      })
-    }
-  }, [formState])
+  const { trigger, isMutating } = useSWRMutation(
+    '/api/equipos/descuentos',
+    storeFetcher,
+    {
+      onSuccess() {
+        toast({
+          title: `😄 Descuento agregado con éxito`,
+        })
+        form.reset()
+        mutate(key => Array.isArray(key) && key[0] === '/api/equipos')
+      },
+      onError(err) {
+        if (axios.isAxiosError(err)) {
+          if (err.response.status === 422) {
+            const errors = err.response.data.errors ?? {}
+            for (const [key, value] of Object.entries(errors)) {
+              form.setError(key, { type: 'manual', message: value.join(', ') })
+            }
+          } else {
+            form.setError('root.serverError', {
+              type: 'server',
+              message: err.response.data.message,
+            })
+          }
+        } else {
+          toast({
+            title: `🥲 Ocurrió un error ${err.message}`,
+            description: 'Intente de nuevo más tarde.',
+            variant: 'destructive',
+          })
+        }
+      },
+    },
+  )
+
+  function onSubmit(values) {
+    trigger({ data: values })
+  }
 
   return (
     <Form {...form}>
       <form
-        action={action}
+        onSubmit={form.handleSubmit(onSubmit)}
         className="grid w-full grid-cols-12 items-end gap-4 pb-4">
         <FormField
           control={form.control}
@@ -81,11 +138,7 @@ export default function EquipoDescuentoForm({ equipo, descuentos }) {
                   ))}
                 </SelectContent>
               </Select>
-              <input type="hidden" name="descuentoId" value={field.value} />
-              <InputError
-                messages={formState?.fieldErrors?.descuento_id}
-                className="col-span-12"
-              />
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -98,10 +151,7 @@ export default function EquipoDescuentoForm({ equipo, descuentos }) {
               <FormControl>
                 <Input type="date" name="fecha_desde" min={today} {...field} />
               </FormControl>
-              <InputError
-                messages={formState?.fieldErrors?.fecha_desde}
-                className="col-span-12"
-              />
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -114,23 +164,32 @@ export default function EquipoDescuentoForm({ equipo, descuentos }) {
               <FormControl>
                 <Input type="date" name="fecha_hasta" min={today} {...field} />
               </FormControl>
-              <InputError
-                messages={formState?.fieldErrors?.fecha_hasta}
-                className="col-span-12"
-              />
+              <FormMessage />
             </FormItem>
           )}
         />
-        <SubmitButton
-          label="Guardar"
-          loading="Guardando..."
-          className="col-span-12 sm:col-span-2"
+        <Button type="submit" className="col-span-12 sm:col-span-2">
+          {isMutating ? 'Guardando...' : 'Guardar'}
+        </Button>
+
+        <FormField
+          control={form.control}
+          name="equipo_id"
+          render={({ field }) => (
+            <FormItem className="col-span-12">
+              <FormControl>
+                <Input type="hidden" name="equipo_id" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-        <input type="hidden" name="equipoId" value={equipo?.id ?? ''} />
-        <InputError
-          messages={formState?.fieldErrors?.equipo_id}
-          className="col-span-12"
-        />
+
+        {form.formState.errors.root && (
+          <p className="col-span-12 text-sm text-red-500">
+            {form.formState.errors.root.serverError.message}
+          </p>
+        )}
       </form>
     </Form>
   )

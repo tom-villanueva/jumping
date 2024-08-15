@@ -118,7 +118,8 @@ export default function EquipoDescuentoTable({ descuentos, equipo }) {
           ...selectedDescuento,
           id: selectedDescuento?.pivot?.id ?? '',
         }}
-        serverAction={removeEquipoDescuento}
+        apiKey="/api/equipos/descuentos"
+        mutateKey="/api/equipos"
         name="descuento"
       />
       <EquipoDescuentoUpdateFormModal
