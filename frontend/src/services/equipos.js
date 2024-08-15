@@ -1,4 +1,3 @@
-import axios from '@/lib/axios'
 import useSWR from 'swr'
 
 // const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL

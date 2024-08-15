@@ -189,7 +189,7 @@ export default function EquiposContainer({
           <EquipoFormContent
             onFormSubmit={() => setOpenForm(!openForm)}
             equipo={selectedEquipo}
-            serverAction={editing ? editEquipo : saveEquipo}
+            editing={editing}
           />
         </SelectManyEntitiesContextProvider>
       </CreateEditEntityModal>

@@ -19,9 +19,7 @@ import { Button } from '@/components/ui/button'
 import SelectManyEntitiesContext from '../SelectManyEntitiesContext'
 
 export default function EquipoTipoArticuloTable() {
-  const { selected, entities, deleteEntity } = useContext(
-    SelectManyEntitiesContext,
-  )
+  const { selected, deleteEntity } = useContext(SelectManyEntitiesContext)
 
   const columns = [
     {
