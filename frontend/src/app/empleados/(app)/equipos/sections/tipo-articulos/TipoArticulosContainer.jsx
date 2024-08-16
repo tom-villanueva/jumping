@@ -90,7 +90,7 @@ export default function TipoArticulosContainer({ tipoArticulos, talles }) {
         openDeleteForm={openDeleteForm}
         setOpenDeleteForm={setOpenDeleteForm}
         entity={selectedTipoArticulo}
-        serverAction={removeTipoArticulo}
+        apiKey="/api/tipo-articulos"
         name="tipo de artículo"
       />
       <div className="flex w-full justify-end pb-4">
@@ -117,7 +117,7 @@ export default function TipoArticulosContainer({ tipoArticulos, talles }) {
           <TipoArticuloFormContent
             onFormSubmit={() => setOpenForm(!openForm)}
             tipoArticulo={selectedTipoArticulo}
-            serverAction={editing ? editTipoArticulo : saveTipoArticulo}
+            editing={editing}
           />
         </SelectManyEntitiesContextProvider>
       </CreateEditEntityModal>

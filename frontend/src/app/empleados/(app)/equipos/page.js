@@ -74,8 +74,8 @@ const Equipos = () => {
       <Tabs defaultValue="equipos" className="">
         <TabsList>
           <TabsTrigger value="equipos">Equipos</TabsTrigger>
-          {/* <TabsTrigger value="tipo_articulos">Tipos de Artículos</TabsTrigger>
-          <TabsTrigger value="talles">Talles</TabsTrigger>
+          <TabsTrigger value="tipo_articulos">Tipos de Artículos</TabsTrigger>
+          {/* <TabsTrigger value="talles">Talles</TabsTrigger>
           <TabsTrigger value="descuentos">Descuentos</TabsTrigger> */}
         </TabsList>
         <TabsContent value="equipos">
@@ -85,13 +85,13 @@ const Equipos = () => {
             descuentos={descuentos}
           />
         </TabsContent>
-        {/* <TabsContent value="tipo_articulos">
+        <TabsContent value="tipo_articulos">
           <TipoArticulosContainer
             tipoArticulos={tipoArticulos}
             talles={talles}
           />
         </TabsContent>
-        <TabsContent value="talles">
+        {/* <TabsContent value="talles">
           <TallesContainer talles={talles} tipoArticulos={tipoArticulos} />
         </TabsContent>
         <TabsContent value="descuentos">

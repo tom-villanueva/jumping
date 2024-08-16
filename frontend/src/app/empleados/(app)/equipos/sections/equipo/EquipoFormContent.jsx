@@ -57,7 +57,9 @@ export default function EquipoFormContent({ onFormSubmit, equipo, editing }) {
     {
       onSuccess() {
         toast({
-          title: `😄 Descuento agregado con éxito`,
+          title: editing
+            ? `😄 Equipo modificado con éxito`
+            : `😄 Equipo agregado con éxito`,
         })
         form.reset()
         mutate(key => Array.isArray(key) && key[0] === '/api/equipos')

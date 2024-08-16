@@ -64,7 +64,7 @@ export default function TipoArticuloTalleForm() {
 
   return (
     <Form {...form}>
-      <div className="grid grid-cols-12 items-center gap-4 pb-4">
+      <div className="grid grid-cols-12 items-end gap-4 pb-4">
         <FormField
           control={form.control}
           name="talle_id"
