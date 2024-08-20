@@ -1,10 +1,5 @@
 'use client'
 import { useState } from 'react'
-import {
-  editDescuento,
-  removeDescuento,
-  saveDescuento,
-} from '../../descuentos-actions'
 import DeleteEntityForm from '../DeleteEntityForm'
 import { DataTable } from '../data-table'
 import { Button } from '@/components/ui/button'
@@ -86,7 +81,7 @@ export default function DescuentosContainer({ descuentos }) {
         openDeleteForm={openDeleteForm}
         setOpenDeleteForm={setOpenDeleteForm}
         entity={selectedDescuento}
-        serverAction={removeDescuento}
+        apiKey="/api/descuentos"
         name="descuento"
       />
       <div className="flex w-full justify-end pb-4">
@@ -107,7 +102,7 @@ export default function DescuentosContainer({ descuentos }) {
         <DescuentoFormContent
           onFormSubmit={() => setOpenForm(!openForm)}
           descuento={selectedDescuento}
-          serverAction={editing ? editDescuento : saveDescuento}
+          editing={editing}
         />
       </CreateEditEntityModal>
       <DataTable columns={columns} data={descuentos} />

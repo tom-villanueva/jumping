@@ -17,7 +17,6 @@ import { convertToUTC } from '@/lib/utils'
 import { Edit, Save, Trash } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import DeleteEntityForm from '../DeleteEntityForm'
-import { removeEquipoDescuento } from '../../equipos-actions'
 import EquipoDescuentoUpdateFormModal from './EquipoDescuentoUpdateFormModal'
 
 export default function EquipoDescuentoTable({ descuentos, equipo }) {

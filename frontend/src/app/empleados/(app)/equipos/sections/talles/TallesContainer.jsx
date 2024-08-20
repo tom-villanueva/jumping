@@ -1,6 +1,5 @@
 'use client'
 import { useState } from 'react'
-import { editTalle, removeTalle, saveTalle } from '../../talles-actions'
 import DeleteEntityForm from '../DeleteEntityForm'
 import { DataTable } from '../data-table'
 import { Button } from '@/components/ui/button'
@@ -82,7 +81,7 @@ export default function TallesContainer({ talles }) {
         openDeleteForm={openDeleteForm}
         setOpenDeleteForm={setOpenDeleteForm}
         entity={selectedTalle}
-        serverAction={removeTalle}
+        apiKey="/api/talles"
         name="talle"
       />
       <div className="flex w-full justify-end pb-4">
@@ -103,7 +102,7 @@ export default function TallesContainer({ talles }) {
         <TalleFormContent
           onFormSubmit={() => setOpenForm(!openForm)}
           talle={selectedTalle}
-          serverAction={editing ? editTalle : saveTalle}
+          editing={editing}
         />
       </CreateEditEntityModal>
       <DataTable columns={columns} data={talles} />

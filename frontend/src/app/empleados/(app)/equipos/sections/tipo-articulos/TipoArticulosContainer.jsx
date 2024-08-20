@@ -4,11 +4,6 @@ import { Button } from '@/components/ui/button'
 import { DataTable } from '../data-table'
 import { Edit, Trash } from 'lucide-react'
 import DeleteEntityForm from '../DeleteEntityForm'
-import {
-  editTipoArticulo,
-  removeTipoArticulo,
-  saveTipoArticulo,
-} from '../../tipo-articulos-actions'
 import CreateEditEntityModal from '../CreateEditEntityModal'
 import { SelectManyEntitiesContextProvider } from '../SelectManyEntitiesContext'
 import TipoArticuloFormContent from './TipoArticuloFormContent'
