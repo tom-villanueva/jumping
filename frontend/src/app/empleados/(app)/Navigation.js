@@ -14,6 +14,7 @@ const routes = [
   { id: 2, name: 'equipos' },
   { id: 3, name: 'reservas' },
   { id: 4, name: 'usuarios' },
+  { id: 5, name: 'articulos' },
 ]
 
 function capitalize(word) {
