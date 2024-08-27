@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Core\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\QueryBuilder\AllowedFilter;
 
 class Articulo extends BaseModel
 {
@@ -35,6 +36,10 @@ class Articulo extends BaseModel
     public function allowedFilters()
     {
         return [
+            AllowedFilter::beginsWithStrict('nro_serie'),
+            AllowedFilter::beginsWithStrict('descripcion'),
+            AllowedFilter::exact('tipo_articulo_talle.talle.id'),
+            AllowedFilter::exact('tipo_articulo_talle.tipo_articulo.id')
         ];
     }
 

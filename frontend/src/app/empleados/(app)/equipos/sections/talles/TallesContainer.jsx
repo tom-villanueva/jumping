@@ -1,11 +1,11 @@
 'use client'
 import { useState } from 'react'
-import DeleteEntityForm from '../DeleteEntityForm'
+import DeleteEntityForm from '../../../../../../components/crud/DeleteEntityForm'
 import { DataTable } from '../data-table'
 import { Button } from '@/components/ui/button'
 import { Edit, Trash } from 'lucide-react'
 import TalleFormContent from './TalleFormContent'
-import CreateEditEntityModal from '../CreateEditEntityModal'
+import CreateEditEntityModal from '../../../../../../components/crud/CreateEditEntityModal'
 
 const TALLE_DEFAULT_VALUES = {
   descripcion: '',

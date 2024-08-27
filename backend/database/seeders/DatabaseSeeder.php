@@ -45,6 +45,7 @@ class DatabaseSeeder extends Seeder
         ]);
         $this->call(Talles::class);
         $this->call(TipoArticulos::class);
-        $this->call(Equipos::class);;
+        $this->call(Equipos::class);
+        $this->call(Articulos::class);
     }
 }

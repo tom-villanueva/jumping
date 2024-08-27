@@ -30,7 +30,9 @@ class UpdateArticuloControllerTest extends TestCase
             'descripcion' => $articulo->descripcion,
             'codigo' => $articulo->codigo,
             'observacion' => '',
-            'tipo_articulo_talle_id' => $tipoArticuloTalle->id,
+            'talle_id' => $tipoArticuloTalle->talle->id,
+            'tipo_articulo_id' => $tipoArticuloTalle->tipo_articulo->id,
+            // 'tipo_articulo_talle_id' => $tipoArticuloTalle->id,
             'nro_serie' => $articulo->nro_serie
         ];
 
@@ -77,7 +79,9 @@ class UpdateArticuloControllerTest extends TestCase
             'descripcion' => 'Probando cambio',
             'codigo' => $articulo->codigo,
             'observacion' => $articulo->observacion,
-            'tipo_articulo_talle_id' => $tipoArticuloTalle2->id,
+            'talle_id' => $tipoArticuloTalle2->talle->id,
+            'tipo_articulo_id' => $tipoArticuloTalle2->tipo_articulo->id,
+            // 'tipo_articulo_talle_id' => $tipoArticuloTalle2->id,
             'nro_serie' => 123,
             'disponible' => true
         ];
@@ -90,7 +94,7 @@ class UpdateArticuloControllerTest extends TestCase
             "descripcion" => $data['descripcion'],
             "codigo" => $data['codigo'],
             "observacion" => null,
-            "tipo_articulo_talle_id" => $data['tipo_articulo_talle_id'],
+            "tipo_articulo_talle_id" => $tipoArticuloTalle2->id,
             "nro_serie" => $data['nro_serie'],
             "disponible" => $data['disponible'],
         ]);
@@ -99,7 +103,8 @@ class UpdateArticuloControllerTest extends TestCase
             "id" => $response['id'],
             "descripcion" => $data['descripcion'],
             "codigo" => $data['codigo'],
-            "tipo_articulo_talle_id" => $data['tipo_articulo_talle_id'],
+            // "tipo_articulo_talle_id" => $data['tipo_articulo_talle_id'],
+            "tipo_articulo_talle_id" => $tipoArticuloTalle2->id,
             "nro_serie" => $data['nro_serie'],
             "disponible" => $data['disponible'],
         ]);

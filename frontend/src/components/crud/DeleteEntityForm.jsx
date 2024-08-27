@@ -33,7 +33,6 @@ export default function DeleteEntityForm({
       mutate(key => Array.isArray(key) && key[0] === (mutateKey ?? apiKey))
     },
     onError(err) {
-      console.log(err)
       toast({
         title: `🥲 Ocurrió un error`,
         description: 'Intente de nuevo más tarde.',

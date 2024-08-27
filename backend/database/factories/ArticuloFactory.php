@@ -19,10 +19,10 @@ class ArticuloFactory extends Factory
     {
         return [
             'descripcion' => fake()->word(),
-            'codigo' => fake()->unique()->randomDigit(),
+            'codigo' => fake()->unique()->randomNumber(5, true),
             'observacion' => "",
-            'tipo_articulo_talle_id' => TipoArticuloTalle::factory()->create()->id,
-            'nro_serie' => fake()->unique()->randomDigit()
+            //'tipo_articulo_talle_id' => TipoArticuloTalle::factory()->create()->id,
+            'nro_serie' => fake()->unique()->randomNumber(5, true)
         ];
     }
 }

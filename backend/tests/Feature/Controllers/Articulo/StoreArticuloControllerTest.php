@@ -23,7 +23,9 @@ class StoreArticuloControllerTest extends TestCase
             'codigo' => '', // Invalid data (codigo is required)
             'descripcion' => '',
 			'observacion' => '',
-			'tipo_articulo_talle_id' => 10,
+            'tipo_articulo_id' => 25,
+            'talle_id' => 25,
+			// 'tipo_articulo_talle_id' => 10,
             'nro_serie' => $articulo->nro_serie,
         ];
 
@@ -32,7 +34,7 @@ class StoreArticuloControllerTest extends TestCase
 
         // Assert
         $response->assertStatus(422);
-        $response->assertJsonValidationErrors(['codigo', 'descripcion', 'tipo_articulo_talle_id', 'nro_serie']);
+        $response->assertJsonValidationErrors(['codigo', 'descripcion', 'tipo_articulo_id', 'talle_id', 'nro_serie']);
     }
 
 	public function test_unauthorized_user_cannot_store_articulo()
@@ -58,7 +60,8 @@ class StoreArticuloControllerTest extends TestCase
             'descripcion' => 'Articulo test',
             'codigo' => 1,
             'observacion' => "",
-            'tipo_articulo_talle_id' => $tipoArticuloTalle->id,
+            'talle_id' => $tipoArticuloTalle->talle->id,
+            'tipo_articulo_id' => $tipoArticuloTalle->tipo_articulo->id,
             'nro_serie' => 123,
             'disponible' => true
         ];
@@ -71,7 +74,7 @@ class StoreArticuloControllerTest extends TestCase
             "descripcion" => $data['descripcion'],
             "codigo" => $data['codigo'],
             "observacion" => null,
-            "tipo_articulo_talle_id" => $data['tipo_articulo_talle_id'],
+            "tipo_articulo_talle_id" => $tipoArticuloTalle->id,
             "nro_serie" => $data['nro_serie'],
             "disponible" => $data['disponible'],
         ]);
@@ -82,6 +85,7 @@ class StoreArticuloControllerTest extends TestCase
             "codigo" => $data['codigo'],
             "nro_serie" => $data['nro_serie'],
             "disponible" => $data['disponible'],
+            "tipo_articulo_talle_id" => $tipoArticuloTalle->id
         ]);
     }
 }

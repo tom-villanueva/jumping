@@ -32,7 +32,7 @@ return new class extends Migration
             $table->foreignId('equipo_precio_id')->references('id')->on('equipo_precio')->nullOnDelete();
             $table->index('equipo_precio_id');
 
-            $table->foreignId('equipo_descuento_id')->nullable()->references('id')->on('equipo_descuento')->nullOnDelete();
+            $table->foreignId('equipo_descuento_id')->nullable()->references('id')->on('equipo_descuento')->restrictOnDelete();
             $table->index('equipo_descuento_id');
 
             $table->timestamps();
