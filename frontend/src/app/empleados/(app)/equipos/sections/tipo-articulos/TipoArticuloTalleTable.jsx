@@ -1,5 +1,5 @@
 'use client'
-import { useContext, useState } from 'react'
+import { useContext } from 'react'
 import {
   flexRender,
   getCoreRowModel,
@@ -13,17 +13,15 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Edit, Save, Trash } from 'lucide-react'
+import { Trash } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import SelectManyEntitiesContext from '../SelectManyEntitiesContext'
 import TipoArticuloTalleForm from './TipoArticuloTalleForm'
 
 export default function TipoArticuloTalleTable() {
-  const { selected, updateEntity, deleteEntity } = useContext(
-    SelectManyEntitiesContext,
-  )
-  const [isEditing, setIsEditing] = useState(false)
-  const [selectedTalleId, setSelectedTalleId] = useState(null)
+  const { selected, deleteEntity } = useContext(SelectManyEntitiesContext)
+  // const [isEditing, setIsEditing] = useState(false)
+  // const [selectedTalleId, setSelectedTalleId] = useState(null)
 
   const columns = [
     {
@@ -37,38 +35,38 @@ export default function TipoArticuloTalleTable() {
     {
       accessorKey: 'stock',
       header: 'Stock Total',
-      cell: ({ row }) => {
-        const talle = row.original
-        const talleId = row.getValue('id')
+      // cell: ({ row }) => {
+      //   const talle = row.original
+      //   const talleId = row.getValue('id')
 
-        if (isEditing && talleId === selectedTalleId) {
-          return (
-            <input
-              autoFocus
-              className="max-w-[64px] text-black"
-              id="stock"
-              name="stock"
-              type="number"
-              placeholder="stock..."
-              defaultValue={talle.stock}
-              min="0"
-              onChange={e => {
-                if (Number(e.target.value) < 0) return
-                updateEntity({ ...talle, stock: Number(e.target.value) })
-              }}
-              onKeyDown={e => {
-                e.stopPropagation()
-                if (e.key === 'Enter' || e.key === 'Escape') {
-                  setIsEditing(!isEditing)
-                  setSelectedTalleId(null)
-                }
-              }}
-            />
-          )
-        } else {
-          return <span>{talle.stock}</span>
-        }
-      },
+      //   if (isEditing && talleId === selectedTalleId) {
+      //     return (
+      //       <input
+      //         autoFocus
+      //         className="max-w-[64px] text-black"
+      //         id="stock"
+      //         name="stock"
+      //         type="number"
+      //         placeholder="stock..."
+      //         defaultValue={talle.stock}
+      //         min="0"
+      //         onChange={e => {
+      //           if (Number(e.target.value) < 0) return
+      //           updateEntity({ ...talle, stock: Number(e.target.value) })
+      //         }}
+      //         onKeyDown={e => {
+      //           e.stopPropagation()
+      //           if (e.key === 'Enter' || e.key === 'Escape') {
+      //             setIsEditing(!isEditing)
+      //             setSelectedTalleId(null)
+      //           }
+      //         }}
+      //       />
+      //     )
+      //   } else {
+      //     return <span>{talle.stock}</span>
+      //   }
+      //   },
     },
     {
       accessorKey: 'acciones',
@@ -78,7 +76,7 @@ export default function TipoArticuloTalleTable() {
 
         return (
           <div className="flex flex-row gap-2">
-            <Button
+            {/* <Button
               variant="outline"
               type="button"
               onClick={() => {
@@ -90,7 +88,7 @@ export default function TipoArticuloTalleTable() {
               ) : (
                 <Edit className="h-4 w-4" />
               )}
-            </Button>
+            </Button> */}
             <Button
               variant="destructive"
               type="button"

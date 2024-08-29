@@ -20,7 +20,6 @@ import {
 import { Plus } from 'lucide-react'
 import { useContext } from 'react'
 import SelectManyEntitiesContext from '../SelectManyEntitiesContext'
-import { Input } from '@/components/ui/input'
 
 const schema = z.object({
   talle_id: z
@@ -28,12 +27,12 @@ const schema = z.object({
       required_error: 'Debe elegir un talle',
     })
     .min(1, 'Debe elegir un talle'),
-  stock: z
-    .number({
-      required_error: 'Se requiere stock',
-      invalid_type_error: 'Tiene que ser un número',
-    })
-    .nonnegative('No puede ser negativo'),
+  // stock: z
+  //   .number({
+  //     required_error: 'Se requiere stock',
+  //     invalid_type_error: 'Tiene que ser un número',
+  //   })
+  //   .nonnegative('No puede ser negativo'),
 })
 
 function toDesiredShape(entity, stock) {
@@ -51,14 +50,12 @@ export default function TipoArticuloTalleForm() {
     resolver: zodResolver(schema),
     defaultValues: {
       talle_id: '',
-      stock: 0,
+      // stock: 0,
     },
   })
 
   function onSubmit(data) {
-    addEntity(Number(data.talle_id), entity =>
-      toDesiredShape(entity, Number(data.stock)),
-    )
+    addEntity(Number(data.talle_id), entity => toDesiredShape(entity, 0))
     form.reset()
   }
 
@@ -89,7 +86,7 @@ export default function TipoArticuloTalleForm() {
             </FormItem>
           )}
         />
-        <FormField
+        {/* <FormField
           control={form.control}
           name="stock"
           render={({ field }) => (
@@ -106,7 +103,7 @@ export default function TipoArticuloTalleForm() {
               <FormMessage />
             </FormItem>
           )}
-        />
+        /> */}
         <Button
           className="col-span-2"
           variant="outline"
