@@ -88,4 +88,19 @@ class StoreArticuloControllerTest extends TestCase
             "tipo_articulo_talle_id" => $tipoArticuloTalle->id
         ]);
     }
+
+    public function test_articulo_observer_updates_stock_on_create()
+    {
+        $tipoArticuloTalle = TipoArticuloTalle::factory()->create(['stock' => 0]);
+
+        $articulo = Articulo::factory()->create([
+            'tipo_articulo_talle_id' => $tipoArticuloTalle->id,
+        ]);
+
+        // Check if the stock was incremented by 1
+        $this->assertDatabaseHas('tipo_articulo_talle', [
+            'id' => $tipoArticuloTalle->id,
+            'stock' => 1
+        ]);
+    }
 }

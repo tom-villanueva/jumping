@@ -109,4 +109,36 @@ class UpdateArticuloControllerTest extends TestCase
             "disponible" => $data['disponible'],
         ]);
     }
+
+    public function test_articulo_observer_updates_stock_on_disponible_change()
+    {
+        // Create a TipoArticuloTalle with an initial stock
+        $tipoArticuloTalle = TipoArticuloTalle::factory()->create(['stock' => 10]);
+
+        // Create an Articulo with disponible set to false
+        $articulo = Articulo::factory()->create([
+            'tipo_articulo_talle_id' => $tipoArticuloTalle->id,
+            'disponible' => false,
+        ]);
+
+        // Change "disponible" to true
+        $articulo->disponible = true;
+        $articulo->save();
+
+        // Check that the stock was incremented by 1
+        $this->assertDatabaseHas('tipo_articulo_talle', [
+            'id' => $tipoArticuloTalle->id,
+            'stock' => 11,
+        ]);
+
+        // Change "disponible" back to false
+        $articulo->disponible = false;
+        $articulo->save();
+
+        // Check that the stock was decremented by 1
+        $this->assertDatabaseHas('tipo_articulo_talle', [
+            'id' => $tipoArticuloTalle->id,
+            'stock' => 10,
+        ]);
+    }
 }

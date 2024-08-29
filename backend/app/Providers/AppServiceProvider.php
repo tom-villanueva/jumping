@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Articulo;
+use App\Observers\ArticuloObserver;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\ServiceProvider;
 
@@ -28,5 +30,7 @@ class AppServiceProvider extends ServiceProvider
             
             return config('app.frontend_url')."/password-reset/$token?email={$notifiable->getEmailForPasswordReset()}";
         });
+
+        Articulo::observe(ArticuloObserver::class);
     }
 }
