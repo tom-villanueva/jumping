@@ -47,5 +47,6 @@ class DatabaseSeeder extends Seeder
         $this->call(TipoArticulos::class);
         $this->call(Equipos::class);
         $this->call(Articulos::class);
+        $this->call(Estados::class);
     }
 }

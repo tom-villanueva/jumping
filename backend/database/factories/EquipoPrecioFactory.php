@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Equipo;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,7 +20,8 @@ class EquipoPrecioFactory extends Factory
     {
         return [
             'equipo_id' => Equipo::factory()->create()->id,
-            'precio' => fake()->randomNumber(3)
+            'precio' => fake()->randomNumber(3),
+            'fecha_efectiva' => Carbon::now()->format('Y-m-d')
         ];
     }
 }

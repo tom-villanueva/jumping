@@ -5,24 +5,28 @@ namespace App\Models;
 use App\Core\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class EquipoPrecio extends BaseModel
+class ReservaEquipoPrecio extends BaseModel
 {
     use HasFactory;
-    
-    protected $table = 'equipo_precio';
+
+    protected $table = 'reserva_equipo_precio';
 
     protected $fillable = [
-        'equipo_id',
-        'precio',
-        'fecha_efectiva'
+        'reserva_equipo_id',
+        'equipo_precio_id',
     ];
-    
+
     /**
      * Relaciones
      */
-    public function equipo() 
+    public function reserva_equipo()
     {
-        return $this->belongsTo(Equipo::class, 'equipo_id');
+        return $this->belongsTo(ReservaEquipo::class, 'reserva_equipo_id');
+    }
+
+    public function equipo_precio()
+    {
+        return $this->belongsTo(EquipoPrecio::class, 'equipo_precio_id');
     }
 
     /**
@@ -43,7 +47,8 @@ class EquipoPrecio extends BaseModel
     public function allowedIncludes()
     {
         return [
-            'equipo'
+            'reserva_equipo',
+            'equipo_precio'
         ];
     }
 }

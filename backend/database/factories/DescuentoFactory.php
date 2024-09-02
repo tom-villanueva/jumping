@@ -17,7 +17,7 @@ class DescuentoFactory extends Factory
     public function definition(): array
     {
         return [
-            'valor' => fake()->randomNumber(3, false),
+            'valor' => fake()->numberBetween(0, 100),
             'descripcion' => fake()->word(),
             'tipo_descuento' => true
         ];
