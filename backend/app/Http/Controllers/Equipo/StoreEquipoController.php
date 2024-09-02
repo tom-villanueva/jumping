@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Repositories\Equipo\EquipoRepository;
 use App\Http\Requests\Equipo\StoreEquipoRequest;
 use App\Repositories\Equipo\EquipoPrecioRepository;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class StoreEquipoController extends Controller
@@ -38,6 +39,7 @@ class StoreEquipoController extends Controller
         $equipoPrecio = [
             "equipo_id" => $new_entity->id,
             "precio" => $request->precio,
+            "fecha_efectiva" => Carbon::now()->format('Y-m-d')
         ];
 
         $this->equipoPrecioRepository->create($equipoPrecio);

@@ -43,7 +43,7 @@ class Equipo extends BaseModel implements HasMedia
     
     public function precios() 
     {
-        return $this->equipo_precio()->orderBy('created_at', 'desc');
+        return $this->equipo_precio()->orderBy('fecha_efectiva', 'desc');
     }
 
     // descuentos

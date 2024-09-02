@@ -47,7 +47,8 @@ class UpdateEquipoController extends Controller
 
             $newEquipoPrecio = [
                 "equipo_id" => $result->id,
-                "precio" => $request->precio
+                "precio" => $request->precio,
+                "fecha_efectiva" => Carbon::now()->format('Y-m-d')
             ];
 
             $this->equipoPrecioRepository->create($newEquipoPrecio);
