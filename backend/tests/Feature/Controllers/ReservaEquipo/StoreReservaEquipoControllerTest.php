@@ -46,57 +46,100 @@ class StoreReservaEquipoControllerTest extends TestCase
 
 	public function test_user_can_store_reserva_equipo()
     {
+         // Create stub user
         $user = $this->createStubUser();
 
+        // Create Reserva and Equipo
+        $reserva = Reserva::factory()->create([
+            'fecha_desde' => Carbon::now()->format('Y-m-d'),
+            'fecha_hasta' => Carbon::now()->addDays(5)->format('Y-m-d')
+        ]);
+
         $equipo = Equipo::factory()->create();
-        $descuento = Descuento::factory()->create();
 
-        $equipo_descuento = EquipoDescuento::factory()->create([
+        // Create overlapping EquipoPrecio and EquipoDescuento
+        $precio0 = EquipoPrecio::factory()->create([
             'equipo_id' => $equipo->id,
-            'descuento_id' => $descuento->id
-        ]);
-        $equipo_descuento2 = EquipoDescuento::factory()->create([
-            'equipo_id' => $equipo->id,
-            'descuento_id' => $descuento->id,
-            'fecha_desde' => Carbon::now()->addDays(10)->format('Y-m-d'),
-            'fecha_hasta' => Carbon::now()->addDays(15)->format('Y-m-d')
+            'fecha_desde' => Carbon::now()->subDays(10),
+            'fecha_hasta' => Carbon::now()->subDays(2)
         ]);
 
-        $equipo_precio = EquipoPrecio::factory()->create([
-            'equipo_id' => $equipo->id
-        ]);
-        $equipo_precio2 = EquipoPrecio::factory()->create([
+        $precio1 = EquipoPrecio::factory()->create([
             'equipo_id' => $equipo->id,
-            'created_at' => Carbon::now()->addDay() // más nuevo
+            'fecha_desde' => Carbon::now()->subDays(1),
+            'fecha_hasta' => Carbon::now()->addDays(2)
         ]);
 
+        $precio2 = EquipoPrecio::factory()->create([
+            'equipo_id' => $equipo->id,
+            'fecha_desde' => Carbon::now()->addDays(3),
+            'fecha_hasta' => null
+        ]);
+
+        $descuento0 = EquipoDescuento::factory()->create([
+            'equipo_id' => $equipo->id,
+            'fecha_desde' => Carbon::now()->subDays(10),
+            'fecha_hasta' => Carbon::now()->subDays(1)
+        ]);
+
+        $descuento1 = EquipoDescuento::factory()->create([
+            'equipo_id' => $equipo->id,
+            'fecha_desde' => Carbon::now()->subDay(),
+            'fecha_hasta' => Carbon::now()->addDays(2)
+        ]);
+
+        $descuento2 = EquipoDescuento::factory()->create([
+            'equipo_id' => $equipo->id,
+            'fecha_desde' => Carbon::now()->addDays(3),
+            'fecha_hasta' => Carbon::now()->addDays(10)
+        ]);
+
+        // Prepare request data
         $data = [
             'altura' => 178,
             'peso' => 86,
             'num_calzado' => 42,
             'nombre' => "Tom",
             'apellido' => "Villanueva",
-            'reserva_id' => Reserva::factory()->create()->id,
+            'reserva_id' => $reserva->id,
             'equipo_id' => $equipo->id
         ];
 
-        $response = $this->actingAs($user, $user->getModelGuard())->postJson("/api/reserva-equipos", $data);
-        
+        // Perform the request
+        $response = $this->actingAs($user, $user->getModelGuard())
+            ->postJson("/api/reserva-equipos", $data);
+
         $response->assertStatus(201);
         $response->assertJson([
-            "reserva_id" => $data['reserva_id'],
-            "equipo_id" => $data['equipo_id'],
-            "altura" => $data['altura'],
-            "peso" => $data['peso'],
-            "num_calzado" => $data['num_calzado'],
-            "nombre" => $data['nombre'],
-            "apellido" => $data['apellido'],
-            "equipo_precio_id" => $equipo_precio2->id,
-            "equipo_descuento_id" => $equipo_descuento->id
+            'reserva_id' => $reserva->id,
+            'equipo_id' => $equipo->id,
         ]);
-        
+
+        // Assert that the ReservaEquipo is created
         $this->assertDatabaseHas('reserva_equipo', [
-            "id" => $response['id'],
+            'id' => $response['id'],
+            'reserva_id' => $reserva->id,
+            'equipo_id' => $equipo->id
+        ]);
+
+        // Assert that the correct ReservaEquipoPrecio records are created
+        $this->assertDatabaseHas('reserva_equipo_precio', [
+            'reserva_equipo_id' => $response['id'],
+            'equipo_precio_id' => $precio1->id,
+        ]);
+        $this->assertDatabaseHas('reserva_equipo_precio', [
+            'reserva_equipo_id' => $response['id'],
+            'equipo_precio_id' => $precio2->id,
+        ]);
+
+        // Assert that the correct ReservaEquipoDescuento records are created
+        $this->assertDatabaseHas('reserva_equipo_descuento', [
+            'reserva_equipo_id' => $response['id'],
+            'equipo_descuento_id' => $descuento1->id,
+        ]);
+        $this->assertDatabaseHas('reserva_equipo_descuento', [
+            'reserva_equipo_id' => $response['id'],
+            'equipo_descuento_id' => $descuento2->id,
         ]);
     }
 }

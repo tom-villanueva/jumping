@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Equipo;
 use App\Models\EquipoPrecio;
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 
 class Equipos extends Seeder
@@ -29,7 +30,8 @@ class Equipos extends Seeder
 
             $equipoPrecio = EquipoPrecio::updateOrCreate([
                 "precio" => 20000,
-                "equipo_id" => $model->id
+                "equipo_id" => $model->id,
+                "fecha_desde" => Carbon::now()->format('Y-m-d')
             ]);
             
             $model->equipo_tipo_articulo()->attach($equipo['ids']);

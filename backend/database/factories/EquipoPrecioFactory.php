@@ -21,7 +21,8 @@ class EquipoPrecioFactory extends Factory
         return [
             'equipo_id' => Equipo::factory()->create()->id,
             'precio' => fake()->randomNumber(3),
-            'fecha_efectiva' => Carbon::now()->format('Y-m-d')
+            'fecha_desde' => Carbon::now()->format('Y-m-d'),
+            'fecha_hasta' => null
         ];
     }
 }

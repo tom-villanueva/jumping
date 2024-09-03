@@ -21,8 +21,6 @@ class ReservaEquipo extends BaseModel
         'apellido',
         'reserva_id',
         'equipo_id',
-        'equipo_precio_id',
-        'equipo_descuento_id'
     ];
 
     public function reserva()
@@ -40,14 +38,14 @@ class ReservaEquipo extends BaseModel
         return $this->hasMany(ReservaEquipoArticulo::class, 'reserva_equipo_id');
     }
 
-    public function precio()
+    public function precios()
     {
-        return $this->belongsTo(EquipoPrecio::class, 'equipo_precio_id');
+        return $this->hasMany(ReservaEquipoPrecio::class, 'reserva_equipo_id');
     }
 
-    public function descuento()
+    public function descuentos()
     {
-        return $this->belongsTo(EquipoDescuento::class, 'equipo_descuento_id');
+        return $this->hasMany(ReservaEquipoDescuento::class, 'reserva_equipo_id');
     }
 
     /**
