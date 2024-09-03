@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Core\BaseModel;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -41,9 +42,31 @@ class Equipo extends BaseModel implements HasMedia
         return $this->hasMany(EquipoPrecio::class, 'equipo_id');
     }
     
-    public function precios() 
+    public function precios_vigentes() 
     {
-        return $this->equipo_precio()->orderBy('fecha_efectiva', 'desc');
+        $today = Carbon::now()->format('Y-m-d');
+        return $this->equipo_precio()
+             ->where(function ($query) use ($today) {
+                $query->whereDate('fecha_hasta', '>=', $today)
+                    ->orWhereNull('fecha_hasta');
+            })
+            ->orderBy('fecha_hasta', 'asc');
+    }
+
+    public function precios_vigentes_en_rango($startDate, $endDate)
+    {
+        return $this->equipo_precio()
+            ->where(function ($query) use ($startDate, $endDate) {
+                $query->where(function ($query) use ($startDate, $endDate) {
+                    $query->whereDate('fecha_desde', '<=', $endDate)
+                        ->whereDate('fecha_hasta', '>=', $startDate);
+                })
+                ->orWhere(function ($query) use ($startDate, $endDate) {
+                    $query->whereDate('fecha_desde', '<=', $endDate)
+                        ->whereNull('fecha_hasta');
+                });
+            })
+            ->orderBy('fecha_hasta', 'asc');
     }
 
     // descuentos
@@ -68,6 +91,18 @@ class Equipo extends BaseModel implements HasMedia
         return $this->equipo_descuento()
             ->whereDate('fecha_hasta', '>=', $today)
             ->orderBy("fecha_hasta", 'asc');
+    }
+
+    public function descuentos_vigentes_en_rango($startDate, $endDate)
+    {
+        return $this->equipo_descuento()
+            ->where(function ($query) use ($startDate, $endDate) {
+                $query->where(function ($query) use ($startDate, $endDate) {
+                    $query->whereDate('fecha_desde', '<=', $endDate)
+                        ->whereDate('fecha_hasta', '>=', $startDate);
+                });
+            })
+            ->orderBy('fecha_hasta', 'asc');
     }
 
     // reservas 
@@ -96,7 +131,7 @@ class Equipo extends BaseModel implements HasMedia
     public function getPrecioVigenteAttribute()
     {
         return $this->equipo_precio()
-            ->orderBy('created_at', 'desc')
+            ->whereNull('fecha_hasta')
             ->first();
     }
 
@@ -120,7 +155,8 @@ class Equipo extends BaseModel implements HasMedia
         return [
             'equipo_tipo_articulo',
             'equipo_precio',
-            'precios', 'equipo_descuento',
+            'precios_vigentes', 
+            'equipo_descuento',
             'descuentos_vigentes',
             'reservas'
         ];

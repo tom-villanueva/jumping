@@ -43,7 +43,8 @@ return new class extends Migration
         });
 
         Schema::table('equipo_precio', function (Blueprint $table) {
-            $table->date('fecha_efectiva');
+            $table->date('fecha_desde');
+            $table->date('fecha_hasta')->nullable()->default(null);
         });
     }
 
@@ -63,7 +64,8 @@ return new class extends Migration
         Schema::dropIfExists('reserva_equipo_precio');
         Schema::dropIfExists('reserva_equipo_descuento');
         Schema::table('equipo_precio', function (Blueprint $table) {
-            $table->dropColumn('fecha_efectiva');
+            $table->dropColumn('fecha_desde');
+            $table->dropColumn('fecha_hasta');
         });
     }
 };

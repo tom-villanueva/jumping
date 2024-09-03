@@ -26,35 +26,47 @@ class UpdateEquipoController extends Controller
     public function __invoke(UpdateEquipoRequest $request, $id)
     {
         DB::beginTransaction();
+        try {
+            $result = $this->repository->update($id, $request->all());
 
-        $result = $this->repository->update($id, $request->all());
+            $tipo_articulos = $request->tipo_articulo_ids;
 
-        $tipo_articulos = $request->tipo_articulo_ids;
+            if($tipo_articulos !== null) {
+                $tipo_articulos = array_column($tipo_articulos, 'tipo_articulo_id');
+                
+                $result->equipo_tipo_articulo()->sync($tipo_articulos);
+            }
 
-        if($tipo_articulos !== null) {
-            $tipo_articulos = array_column($tipo_articulos, 'tipo_articulo_id');
-            
-            $result->equipo_tipo_articulo()->sync($tipo_articulos);
+            // agarro el último precio vigente
+            $equipoPrecio = EquipoPrecio::where('equipo_id', '=', $result->id)
+                ->whereNull('fecha_hasta')
+                ->first();
+
+            if($equipoPrecio->precio != $request->precio) {
+
+                $today = Carbon::now()->format('Y-m-d');
+                $fechaDesde = Carbon::now()->addDay()->format('Y-m-d');
+
+                $newEquipoPrecio = [
+                    "equipo_id" => $result->id,
+                    "precio" => $request->precio,
+                    "fecha_desde" => $fechaDesde,
+                    "fecha_hasta" => null
+                ];
+
+                $this->equipoPrecioRepository->update($equipoPrecio->id, [
+                    "fecha_hasta" => $today 
+                ]);
+
+                $this->equipoPrecioRepository->create($newEquipoPrecio);
+            }
+
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
         }
-
-        // agarro el último precio vigente
-        $equipoPrecio = EquipoPrecio::where('equipo_id', '=', $result->id)
-            ->whereDate('created_at', '<=', Carbon::now())
-            ->orderBy('created_at', 'desc')
-            ->first();
-
-        if($equipoPrecio->precio != $request->precio) {
-
-            $newEquipoPrecio = [
-                "equipo_id" => $result->id,
-                "precio" => $request->precio,
-                "fecha_efectiva" => Carbon::now()->format('Y-m-d')
-            ];
-
-            $this->equipoPrecioRepository->create($newEquipoPrecio);
-        }
-
-        DB::commit();
+        
 
         return response()->json($result);
     }

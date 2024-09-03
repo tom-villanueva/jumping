@@ -80,21 +80,72 @@ class EquipoTest extends ModelTestCase
 
         $precio1 = EquipoPrecio::factory()->create([
             'equipo_id' => $equipo->id,
-            'created_at' => now()->subDays(2),
+            'fecha_desde' => now()->subDays(2),
+            'fecha_hasta' => now()->subDay()
         ]);
+
         $precio2 = EquipoPrecio::factory()->create([
             'equipo_id' => $equipo->id,
-            'created_at' => now()->subDay(),
+            'fecha_desde' => now(),
+            'fecha_hasta' => now()
+        ]);
+
+        $precio3 = EquipoPrecio::factory()->create([
+            'equipo_id' => $equipo->id,
+            'fecha_desde' => now()->addDay(),
+            'fecha_hasta' => null
         ]);
 
         // Que hay dos registros
-        $this->assertEquals(2, $equipo->precios->count());
+        $this->assertEquals(2, $equipo->precios_vigentes->count());
         // Que el primero es el más reciente
-        $this->assertEquals($precio2->id, $equipo->precios()->first()->id);
+        $this->assertEquals($precio2->id, $equipo->precios_vigentes()->first()->id);
 
         // Que sin precios no devuelve nada
         $equipoSinPrecio = Equipo::factory()->create();
-        $this->assertEquals(0, $equipoSinPrecio->precios->count());
+        $this->assertEquals(0, $equipoSinPrecio->precios_vigentes->count());
+    }
+
+    public function test_precios_vigentes_returns_correct_equipo_precios_within_date_range()
+    {
+        // Create an Equipo instance
+        $equipo = Equipo::factory()->create();
+
+        // Create several EquipoPrecio instances with different `fecha_efectiva` values
+        $equipoPrecio1 = EquipoPrecio::factory()->create([
+            'equipo_id' => $equipo->id,
+            'fecha_desde' => '2024-08-20',
+            'fecha_hasta' => '2024-08-31'
+        ]);
+
+        $equipoPrecio2 = EquipoPrecio::factory()->create([
+            'equipo_id' => $equipo->id,
+            'fecha_desde' => '2024-09-01',
+            'fecha_hasta' => '2024-09-10'
+        ]);
+
+        $equipoPrecio3 = EquipoPrecio::factory()->create([
+            'equipo_id' => $equipo->id,
+            'fecha_desde' => '2024-09-11',
+            'fecha_hasta' => null
+        ]);
+
+        // Create a Reserva with a date range that should match the second and third EquipoPrecios
+        $reserva = Reserva::factory()->create([
+            'fecha_desde' => '2024-09-05',
+            'fecha_hasta' => '2024-09-12',
+        ]);
+
+        $equipoPrecios = $equipo->precios_vigentes_en_rango(
+            $reserva->fecha_desde, 
+            $reserva->fecha_hasta
+        )->get();
+
+        // Assert that only the correct EquipoPrecios are returned
+        $this->assertCount(2, $equipoPrecios);
+        $this->assertTrue($equipoPrecios->contains($equipoPrecio2));
+        $this->assertTrue($equipoPrecios->contains($equipoPrecio3));
+        $this->assertFalse($equipoPrecios->contains($equipoPrecio1));
     }
 
     public function test_equipo_descuento_relation_is_ok()
@@ -211,11 +262,13 @@ class EquipoTest extends ModelTestCase
         // Create EquipoPrecio records
         $precio1 = EquipoPrecio::factory()->create([
             'equipo_id' => $equipo->id,
-            'created_at' => now()->subDays(2),
+            'fecha_desde' => now()->subDays(2),
+            'fecha_hasta' => now()->subDay()
         ]);
         $precio2 = EquipoPrecio::factory()->create([
             'equipo_id' => $equipo->id,
-            'created_at' => now()->subDay(),
+            'fecha_desde' => now(),
+            'fecha_hasta' => null
         ]);
 
         $this->assertEquals($precio2->id, $equipo->precio_vigente->id);

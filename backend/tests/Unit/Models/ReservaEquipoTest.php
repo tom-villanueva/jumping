@@ -8,6 +8,8 @@ use App\Models\EquipoPrecio;
 use App\Models\Reserva;
 use App\Models\ReservaEquipo;
 use App\Models\ReservaEquipoArticulo;
+use App\Models\ReservaEquipoDescuento;
+use App\Models\ReservaEquipoPrecio;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\ModelTestCase;
 
@@ -27,8 +29,6 @@ class ReservaEquipoTest extends ModelTestCase
                 'apellido',
                 'reserva_id',
                 'equipo_id',
-                'equipo_precio_id',
-                'equipo_descuento_id'
             ],
             casts: [
                 'id' => 'int', 
@@ -85,28 +85,28 @@ class ReservaEquipoTest extends ModelTestCase
     public function test_reserva_equipo_equipo_precio_relation_is_ok()
     {
         $reserva_equipo = new ReservaEquipo();
-        $equipo_precio = new EquipoPrecio();
-        $relation = $reserva_equipo->precio();
+        $equipo_precio = new ReservaEquipoPrecio();
+        $relation = $reserva_equipo->precios();
 
-        $this->assertBelongsToRelation(
+        $this->assertHasManyRelation(
             $relation,
             $reserva_equipo,
             $equipo_precio,
-            'equipo_precio_id'
+            'reserva_equipo_id'
         );
     }
 
     public function test_reserva_equipo_equipo_descuento_relation_is_ok()
     {
         $reserva_equipo = new ReservaEquipo();
-        $equipo_descuento = new EquipoDescuento();
-        $relation = $reserva_equipo->descuento();
+        $equipo_descuento = new ReservaEquipoDescuento();
+        $relation = $reserva_equipo->descuentos();
 
-        $this->assertBelongsToRelation(
+        $this->assertHasManyRelation(
             $relation,
             $reserva_equipo,
             $equipo_descuento,
-            'equipo_descuento_id'
+            'reserva_equipo_id'
         );
     }
 }

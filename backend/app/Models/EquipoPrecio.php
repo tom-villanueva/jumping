@@ -14,7 +14,8 @@ class EquipoPrecio extends BaseModel
     protected $fillable = [
         'equipo_id',
         'precio',
-        'fecha_efectiva'
+        'fecha_desde',
+        'fecha_hasta'
     ];
     
     /**

@@ -39,7 +39,8 @@ class StoreEquipoController extends Controller
         $equipoPrecio = [
             "equipo_id" => $new_entity->id,
             "precio" => $request->precio,
-            "fecha_efectiva" => Carbon::now()->format('Y-m-d')
+            "fecha_desde" => Carbon::now()->format('Y-m-d'),
+            "fecha_hasta" => null
         ];
 
         $this->equipoPrecioRepository->create($equipoPrecio);
