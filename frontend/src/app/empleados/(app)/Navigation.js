@@ -11,10 +11,11 @@ import { useState } from 'react'
 
 const routes = [
   { id: 1, name: 'dashboard' },
-  { id: 2, name: 'equipos' },
-  { id: 3, name: 'reservas' },
-  { id: 4, name: 'usuarios' },
-  { id: 5, name: 'articulos' },
+  { id: 2, name: 'reservas' },
+  { id: 3, name: 'articulos' },
+  { id: 4, name: 'equipos' },
+  { id: 5, name: 'stock' },
+  { id: 6, name: 'usuarios' },
 ]
 
 function capitalize(word) {
@@ -26,7 +27,7 @@ const Navigation = ({ user, logout }) => {
   const pathname = usePathname()
 
   return (
-    <nav className="border-b border-gray-100 bg-slate-700">
+    <nav className="overflow-x-auto overflow-y-hidden border-b border-gray-100 bg-slate-700">
       {/* Primary Navigation Menu */}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 justify-between">

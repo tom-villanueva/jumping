@@ -28,16 +28,6 @@ class DeleteEquipoPrecioController extends Controller
                 throw ValidationException::withMessages([
                     'reserva_equipo_precio_id' => 'El precio ya tiene reservas asociadas tiene reservas asociadas.'
                 ]);
-                // return response()->json([
-                //     [
-                //         'message' => 'El precio ya tiene reservas asociadas.', 
-                //         'errors' => [
-                //             "reserva_equipo_precio_id" => [
-                //                 "El precio ya tiene reservas asociadas tiene reservas asociadas."
-                //             ]
-                //         ]
-                //     ]
-                // ], 422);
             }
 
             $result = $this->repository->delete($id);

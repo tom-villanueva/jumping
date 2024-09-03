@@ -2,8 +2,10 @@
 namespace App\Http\Controllers\EquipoDescuento;
 
 use App\Http\Controllers\Controller;
+use App\Models\ReservaEquipoDescuento;
 use App\Repositories\Equipo\EquipoDescuentoRepository;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class DeleteEquipoDescuentoController extends Controller
 {
@@ -18,17 +20,24 @@ class DeleteEquipoDescuentoController extends Controller
     {
         $descuento = $this->repository->find($equipo_descuento_id);
         $result = $descuento;
-        $tieneReservasAsociadas = $descuento->tieneReservasAsociadas();
-        
-        if($tieneReservasAsociadas) {
-          //soft delete
-          $this->repository->delete($equipo_descuento_id);
-        } else {
-          // hard delete
-          DB::table('equipo_descuento')
-            ->where('id', '=', $equipo_descuento_id)
-            ->delete();
+
+        $reservas = ReservaEquipoDescuento::where('equipo_descuento_id', $equipo_descuento_id)->count();
+
+        if($reservas > 0) {
+            throw ValidationException::withMessages([
+                'reserva_equipo_descuento_id' => 'El descuento ya tiene reservas asociadas.'
+            ]);
         }
+        
+        // if($tieneReservasAsociadas) {
+          //soft delete
+        $this->repository->delete($equipo_descuento_id);
+        // } else {
+        //   // hard delete
+        //   DB::table('equipo_descuento')
+        //     ->where('id', '=', $equipo_descuento_id)
+        //     ->delete();
+        // }
 
         return response()->json($result);
     }
