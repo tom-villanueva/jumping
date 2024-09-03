@@ -27,7 +27,7 @@ class UpdateEquipoRequest extends FormRequest
         $equipo_id = $this->route('id');
         return [
             'descripcion' => 'required|unique:equipo,descripcion,'.$equipo_id,
-            'precio' => 'required|integer|min:0',
+            'precio' => 'nullable|integer|min:0',
             'disponible' => 'required|boolean',
             'tipo_articulo_ids' => 'nullable|array',
             'tipo_articulo_ids.*.tipo_articulo_id' => 'exists:tipo_articulos,id',
