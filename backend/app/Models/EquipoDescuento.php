@@ -30,11 +30,6 @@ class EquipoDescuento extends BaseModel
         return $this->belongsTo(Descuento::class, 'descuento_id');
     }
 
-    public function tieneReservasAsociadas()
-    {
-        return false;
-    }
-
     /**
      * query builder options
      */

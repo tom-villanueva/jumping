@@ -29,7 +29,10 @@ class UpdateEquipoDescuentoController extends Controller
             ]);
 
             $cambioFechas = $this->checkCambioFechas($descuentoEntrante, $descuentoVigente);
-            $tieneReservasAsociadas = $descuentoVigente->tieneReservasAsociadas();
+            
+            $reservas = ReservaEquipoDescuento::where('equipo_descuento_id', $equipo_descuento_id)->count();
+
+            $tieneReservasAsociadas = $reservas > 0;
             $updated_entity = $descuentoVigente;
 
             if($cambioFechas && $tieneReservasAsociadas) {

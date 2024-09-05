@@ -24,10 +24,21 @@ class DeleteEquipoPrecioController extends Controller
             $reservas = ReservaEquipoPrecio::where('equipo_precio_id', $id)
                 ->count();
 
-            if($reservas > 0) {
-                throw ValidationException::withMessages([
-                    'reserva_equipo_precio_id' => 'El precio ya tiene reservas asociadas tiene reservas asociadas.'
-                ]);
+            // if($reservas > 0) {
+            //     throw ValidationException::withMessages([
+            //         'reserva_equipo_precio_id' => 'El precio ya tiene reservas asociadas tiene reservas asociadas.'
+            //     ]);
+            // }
+            $tieneReservasAsociadas = $reservas > 0;
+
+            if($tieneReservasAsociadas) {
+                // soft delete
+                $this->repository->delete($id);
+            } else {
+                // hard delete
+                DB::table('equipo_precio')
+                    ->where('id', '=', $id)
+                    ->delete();
             }
 
             $result = $this->repository->delete($id);
