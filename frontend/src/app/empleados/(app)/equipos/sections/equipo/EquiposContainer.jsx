@@ -2,13 +2,21 @@
 import { DataTable } from '../data-table'
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { Check, Edit, Trash, X } from 'lucide-react'
+import {
+  Check,
+  CircleDollarSign,
+  CirclePercent,
+  Edit,
+  Trash,
+  X,
+} from 'lucide-react'
 import DeleteEntityForm from '../../../../../../components/crud/DeleteEntityForm'
 import CreateEditEntityModal from '../../../../../../components/crud/CreateEditEntityModal'
 import { SelectManyEntitiesContextProvider } from '../SelectManyEntitiesContext'
 import EquipoFormContent from './EquipoFormContent'
 import EquipoThumbnailUploadInput from './EquipoThumbnailUploadInput'
-import EquipoDescuentoFormModal from './EquipoDescuentoFormModal'
+import EquipoDescuentoFormModal from './equipo-descuento/EquipoDescuentoFormModal'
+import EquipoPrecioFormModal from './equipo-precio/EquipoPrecioFormModal'
 
 const EQUIPO_DEFAULT_VALUES = {
   descripcion: '',
@@ -25,6 +33,7 @@ export default function EquiposContainer({
   const [openForm, setOpenForm] = useState(false)
   const [openDeleteForm, setOpenDeleteForm] = useState(false)
   const [openDescuentoForm, setOpenDescuentoForm] = useState(false)
+  const [openPrecioForm, setOpenPrecioForm] = useState(false)
   const [selectedEquipo, setSelectedEquipo] = useState(EQUIPO_DEFAULT_VALUES)
 
   const columns = [
@@ -38,7 +47,7 @@ export default function EquiposContainer({
     },
     {
       accessorKey: 'precio_vigente',
-      header: 'Precio',
+      header: 'Precio Hoy',
       cell: ({ row }) => {
         const precioVigente = row.getValue('precio_vigente')
         const formatted = new Intl.NumberFormat('es-AR', {
@@ -85,6 +94,25 @@ export default function EquiposContainer({
       },
     },
     {
+      accessorKey: 'precios',
+      header: 'Precios',
+      cell: ({ row }) => {
+        const equipo = row.original
+
+        return (
+          <Button
+            variant="outline"
+            type="button"
+            onClick={() => {
+              setSelectedEquipo(equipo)
+              setOpenPrecioForm(true)
+            }}>
+            <CircleDollarSign className="h-4 w-4" />
+          </Button>
+        )
+      },
+    },
+    {
       accessorKey: 'descuentos',
       header: 'Descuentos',
       cell: ({ row }) => {
@@ -98,7 +126,7 @@ export default function EquiposContainer({
               setSelectedEquipo(equipo)
               setOpenDescuentoForm(true)
             }}>
-            <Edit className="h-4 w-4" />
+            <CirclePercent className="h-4 w-4" />
           </Button>
         )
       },
@@ -162,6 +190,12 @@ export default function EquiposContainer({
         equipo={selectedEquipo}
         descuentos={descuentos}
         descuentosVigentes={selectedEquipo?.descuentos_vigentes}
+      />
+      <EquipoPrecioFormModal
+        open={openPrecioForm}
+        onOpenChange={() => setOpenPrecioForm(!openPrecioForm)}
+        equipo={selectedEquipo}
+        preciosVigentes={selectedEquipo?.precios_vigentes}
       />
       <div className="flex w-full justify-end pb-4">
         <Button

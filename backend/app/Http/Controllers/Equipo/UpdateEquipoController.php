@@ -38,28 +38,28 @@ class UpdateEquipoController extends Controller
             }
 
             // agarro el último precio vigente
-            $equipoPrecio = EquipoPrecio::where('equipo_id', '=', $result->id)
-                ->whereNull('fecha_hasta')
-                ->first();
+            // $equipoPrecio = EquipoPrecio::where('equipo_id', '=', $result->id)
+            //     ->whereNull('fecha_hasta')
+            //     ->first();
 
-            if($equipoPrecio->precio != $request->precio) {
+            // if($equipoPrecio->precio != $request->precio) {
 
-                $today = Carbon::now()->format('Y-m-d');
-                $fechaDesde = Carbon::now()->addDay()->format('Y-m-d');
+            //     $today = Carbon::now()->format('Y-m-d');
+            //     $fechaDesde = Carbon::now()->addDay()->format('Y-m-d');
 
-                $newEquipoPrecio = [
-                    "equipo_id" => $result->id,
-                    "precio" => $request->precio,
-                    "fecha_desde" => $fechaDesde,
-                    "fecha_hasta" => null
-                ];
+            //     $newEquipoPrecio = [
+            //         "equipo_id" => $result->id,
+            //         "precio" => $request->precio,
+            //         "fecha_desde" => $fechaDesde,
+            //         "fecha_hasta" => null
+            //     ];
 
-                $this->equipoPrecioRepository->update($equipoPrecio->id, [
-                    "fecha_hasta" => $today 
-                ]);
+            //     $this->equipoPrecioRepository->update($equipoPrecio->id, [
+            //         "fecha_hasta" => $today 
+            //     ]);
 
-                $this->equipoPrecioRepository->create($newEquipoPrecio);
-            }
+            //     $this->equipoPrecioRepository->create($newEquipoPrecio);
+            // }
 
             DB::commit();
         } catch (\Throwable $th) {

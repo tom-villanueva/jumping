@@ -28,7 +28,7 @@ class StoreEquipoDescuentoRequest extends FormRequest
             'equipo_id' => ['required', 'exists:equipo,id', new NoOverlappingDiscounts()],
             'descuento_id' => 'required|exists:descuentos,id',
             'fecha_desde' => 'date_format:Y-m-d|after_or_equal:today',
-            'fecha_hasta' => 'date_format:Y-m-d|after_or_equal:descuentos_ids.*.fecha_desde',
+            'fecha_hasta' => 'date_format:Y-m-d|after_or_equal:fecha_desde',
         ];
     }
 

@@ -3,6 +3,7 @@ namespace App\Http\Controllers\EquipoDescuento;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Equipo\UpdateEquipoDescuentoRequest;
+use App\Models\ReservaEquipoDescuento;
 use App\Repositories\Equipo\EquipoDescuentoRepository;
 use Illuminate\Support\Facades\DB;
 

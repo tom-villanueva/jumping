@@ -17,7 +17,7 @@ const Equipos = () => {
     isError: isErrorEquipos,
   } = useEquipos({
     params: {
-      include: 'equipo_tipo_articulo,descuentos_vigentes',
+      include: 'equipo_tipo_articulo,descuentos_vigentes,precios_vigentes',
       sort: 'id',
     },
   })
