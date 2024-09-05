@@ -9,13 +9,6 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { Input } from '@/components/ui/input'
 import { convertToUTC, formatDate, storeFetcher } from '@/lib/utils'
 import { useToast } from '@/components/ui/use-toast'
@@ -26,7 +19,7 @@ import { z } from 'zod'
 import { Button } from '@/components/ui/button'
 import axios from 'axios'
 
-const today = formatDate(convertToUTC(new Date().setHours(0, 0, 0, 0)))
+// const today = formatDate(convertToUTC(new Date().setHours(0, 0, 0, 0)))
 
 const equipoPrecioSchema = z.object({
   equipo_id: z.number(),
@@ -110,7 +103,12 @@ export default function EquipoPrecioForm({ equipo }) {
             <FormItem className="col-span-12 sm:col-span-5">
               <FormLabel>Fecha Inicio</FormLabel>
               <FormControl>
-                <Input type="date" name="fecha_desde" min={today} {...field} />
+                <Input
+                  type="date"
+                  name="fecha_desde"
+                  min={equipo?.precio_vigente?.fecha_desde}
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

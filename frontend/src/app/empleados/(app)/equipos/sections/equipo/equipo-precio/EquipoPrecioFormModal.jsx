@@ -21,9 +21,9 @@ export default function EquipoPrecioFormModal({
         <DialogHeader>
           <DialogTitle>{`Agregar precio a equipo: ${equipo?.descripcion}`}</DialogTitle>
           <DialogDescription>
-            Completar los datos. Apretar guardar cuando termines. <br /> Si un
-            precio tiene reservas asociadas, al borrarlo la reserva igual
-            mantendrá el precio.
+            Completar los datos. Apretar guardar cuando termines. <br />
+            ⚠️ Si un precio tiene reservas asociadas al momento de borrarlo, la
+            reserva igual mantendrá el precio.
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col justify-between">
