@@ -130,28 +130,30 @@ export default function EquipoFormContent({ onFormSubmit, equipo, editing }) {
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="precio"
-          render={({ field }) => (
-            <FormItem className="col-span-12">
-              <FormLabel>Precio</FormLabel>
-              <FormControl>
-                <Input
-                  id="precio"
-                  name="precio"
-                  type="number"
-                  placeholder="Escriba precio"
-                  className="col-span-12"
-                  min="0"
-                  {...field}
-                  onChange={event => field.onChange(+event.target.value)}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {!editing && (
+          <FormField
+            control={form.control}
+            name="precio"
+            render={({ field }) => (
+              <FormItem className="col-span-12">
+                <FormLabel>Precio</FormLabel>
+                <FormControl>
+                  <Input
+                    id="precio"
+                    name="precio"
+                    type="number"
+                    placeholder="Escriba precio"
+                    className="col-span-12"
+                    min="0"
+                    {...field}
+                    onChange={event => field.onChange(+event.target.value)}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
 
         <FormField
           control={form.control}

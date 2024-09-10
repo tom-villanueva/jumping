@@ -1,6 +1,6 @@
 'use client'
 import { Input } from '@/components/ui/input'
-import { Checkbox } from '@/components/ui/checkbox'
+// import { Checkbox } from '@/components/ui/checkbox'
 import { useToast } from '@/components/ui/use-toast'
 import { useForm } from 'react-hook-form'
 import { useSWRConfig } from 'swr'
@@ -42,7 +42,7 @@ export default function DescuentoFormContent({
     defaultValues: {
       descripcion: descuento?.descripcion ?? '',
       valor: Number(descuento?.valor) ?? 0,
-      tipo_descuento: descuento?.tipo_descuento ?? true,
+      tipo_descuento: true,
     },
   })
 
@@ -147,7 +147,7 @@ export default function DescuentoFormContent({
           )}
         />
 
-        <FormField
+        {/* <FormField
           control={form.control}
           name="tipo_descuento"
           render={({ field }) => (
@@ -168,7 +168,7 @@ export default function DescuentoFormContent({
               </p>
             </FormItem>
           )}
-        />
+        /> */}
 
         <Button type="submit" className="col-span-6">
           {isMutating ? 'Guardando...' : 'Guardar'}
