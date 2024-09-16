@@ -21,6 +21,7 @@ import { DotIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import ArticuloFormContent from './ArticuloFormContent'
 import { Button } from '@/components/ui/button'
+import ArticulosTable from './ArticulosTable'
 
 const ARTICULO_DEFAULT_VALUES = {
   descripcion: '',
@@ -33,38 +34,10 @@ const ARTICULO_DEFAULT_VALUES = {
 }
 
 export default function ArticulosPage() {
-  const [columnFilters, setColumnFilters] = useState([])
-  const debouncedColumnFilters = useDebounce(columnFilters, 1000)
-  const [sorting, setSorting] = useState([])
-  const [pagination, setPagination] = useState({
-    pageIndex: 0, //initial page index
-    pageSize: 10, //default page size
-  })
-
   const [row, setRow] = useState(null)
   const [openDeleteModal, setOpenDeleteModal] = useState(false)
   const [openFormModal, setOpenFormModal] = useState(false)
   const [editing, setEditing] = useState(false)
-
-  // to reset page index to first page
-  useEffect(() => {
-    if (setPagination) {
-      setPagination(pagination => ({
-        pageIndex: 0,
-        pageSize: pagination.pageSize,
-      }))
-    }
-  }, [columnFilters, setPagination])
-
-  const { articulos, isLoading, isError } = useArticulos({
-    params: {
-      page: pagination.pageIndex + 1,
-      page_size: pagination.pageSize,
-      sort: '-id',
-      include: 'tipo_articulo_talle.talle,tipo_articulo_talle.tipo_articulo',
-    },
-    filters: debouncedColumnFilters,
-  })
 
   const { tipoArticulos, isLoading: isLoadingTipoArticulos } = useTipoArticulos(
     {},
@@ -129,37 +102,6 @@ export default function ArticulosPage() {
     },
   ]
 
-  const table = useReactTable({
-    data: articulos?.data || [],
-    columns,
-    state: {
-      pagination,
-      sorting,
-      columnFilters,
-    },
-
-    onPaginationChange: setPagination,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-
-    getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFacetedRowModel: getFacetedRowModel(),
-    getFacetedUniqueValues: getFacetedUniqueValues(),
-
-    rowCount: articulos?.total,
-
-    manualPagination: true,
-    manualSorting: true,
-    manualFiltering: true,
-  })
-
-  if (isError) {
-    return <p>Error cargando los artículos...</p>
-  }
-
   return (
     <div className="container mx-auto py-10">
       <div className="flex w-full justify-end pb-4">
@@ -192,47 +134,7 @@ export default function ArticulosPage() {
           editing={editing}
         />
       </CreateEditEntityModal>
-      <DataTable
-        table={table}
-        columns={columns}
-        isLoading={isLoading}
-        filters={[
-          {
-            type: 'text',
-            columnName: 'descripcion',
-            title: 'descripcion',
-            options: [],
-          },
-          {
-            type: 'text',
-            columnName: 'nro_serie',
-            title: 'Nro. serie',
-            options: [],
-          },
-          {
-            type: 'select',
-            columnName: 'tipo_articulo_talle.tipo_articulo.id',
-            title: 'Tipos',
-            options:
-              tipoArticulos?.map(tipo => ({
-                label: tipo.descripcion,
-                value: tipo.id,
-                icon: DotIcon,
-              })) ?? [],
-          },
-          {
-            type: 'select',
-            columnName: 'tipo_articulo_talle.talle.id',
-            title: 'Talles',
-            options:
-              talles?.map(talle => ({
-                label: talle.descripcion,
-                value: talle.id,
-                icon: DotIcon,
-              })) ?? [],
-          },
-        ]}
-      />
+      <ArticulosTable columns={columns} />
     </div>
   )
 }

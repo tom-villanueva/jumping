@@ -106,7 +106,7 @@ class Reserva extends BaseModel
             AllowedFilter::exact('estado_id'),
             AllowedFilter::exact('user_id'),
             AllowedFilter::beginsWithStrict('apellido'),
-            'email',
+            AllowedFilter::beginsWithStrict('email'),
             'telefono',
             AllowedFilter::scope('fecha_desde_before'),
             AllowedFilter::scope('fecha_desde_after'),
@@ -121,6 +121,8 @@ class Reserva extends BaseModel
     public function allowedSorts()
     {
         return [
+            'fecha_desde',
+            'fecha_hasta'
         ];
     }
 

@@ -38,9 +38,11 @@ class Articulo extends BaseModel
     {
         return [
             AllowedFilter::beginsWithStrict('nro_serie'),
+            AllowedFilter::beginsWithStrict('codigo'),
             AllowedFilter::beginsWithStrict('descripcion'),
             AllowedFilter::exact('tipo_articulo_talle.talle.id'),
-            AllowedFilter::exact('tipo_articulo_talle.tipo_articulo.id')
+            AllowedFilter::exact('tipo_articulo_talle.tipo_articulo.id'),
+            AllowedFilter::exact('disponible')
         ];
     }
 

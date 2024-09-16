@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Core\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\QueryBuilder\AllowedFilter;
 
 class ReservaEquipoArticulo extends BaseModel
 {
@@ -37,6 +38,7 @@ class ReservaEquipoArticulo extends BaseModel
     public function allowedFilters()
     {
         return [
+            AllowedFilter::exact('reserva_equipo_id')
         ];
     }
 
@@ -50,7 +52,8 @@ class ReservaEquipoArticulo extends BaseModel
     {
         return [
             'reserva_equipo',
-            'articulo'
+            'articulo',
+            'articulo.tipo_articulo_talle.tipo_articulo'
         ];
     }
 }

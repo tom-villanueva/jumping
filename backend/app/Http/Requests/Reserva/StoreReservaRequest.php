@@ -32,8 +32,8 @@ class StoreReservaRequest extends FormRequest
             'estado_id' => 'required|exists:estados,id',
             'user_id' => 'nullable|exists:users,id',
             'nombre' => 'nullable',
-            'apellido' => 'nullable',
-            'email' => 'nullable',
+            'apellido' => 'required',
+            'email' => 'required',
             'telefono' => 'nullable'
         ];
     }

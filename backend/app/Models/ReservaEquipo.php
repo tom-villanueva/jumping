@@ -72,7 +72,8 @@ class ReservaEquipo extends BaseModel
             'equipo',
             'articulos',
             'precio',
-            'descuento'
+            'descuento',
+            'equipo.equipo_tipo_articulo'
         ];
     }
 }

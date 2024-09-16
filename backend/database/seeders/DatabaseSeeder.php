@@ -49,5 +49,6 @@ class DatabaseSeeder extends Seeder
         $this->call(Articulos::class);
         $this->call(Estados::class);
         $this->call(Descuentos::class);
+        $this->call(Reservas::class);
     }
 }

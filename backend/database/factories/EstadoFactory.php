@@ -18,7 +18,12 @@ class EstadoFactory extends Factory
     {
         return [
             /* rellenar */
-            'descripcion' => fake()->randomElement(['Pendiente', 'Pagada', 'Extendida'])
+            'descripcion' => fake()->randomElement([
+                "Pendiente",
+                "Pagada",
+                "Cancelada",
+                "Finalizada"
+            ])
         ];
     }
 }

@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\Estado;
 use App\Models\Reserva;
 use Illuminate\Database\Seeder;
 
@@ -17,18 +16,7 @@ class Reservas extends Seeder
         // disable fk check
         Reserva::truncate();
 
-        $talles = [
-            "Pendiente",
-            "Pagada",
-            "Cancelada",
-            "Finalizada"
-        ];
-
-        foreach ($talles as $talle) {
-            Reserva::updateOrCreate([
-                "descripcion" => $talle,
-            ]);
-        }
+        Reserva::factory()->count(10)->create();
 
         // enable fk check
     }

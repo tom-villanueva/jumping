@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Estado;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -18,13 +19,20 @@ class ReservaFactory extends Factory
      */
     public function definition(): array
     {
-        $today = Carbon::now()->format('Y-m-d');
-        $todayPlusOneDay = Carbon::now()->addDay()->format('Y-m-d');
+        // $today = Carbon::now()->format('Y-m-d');
+        // $todayPlusOneDay = Carbon::now()->addDay()->format('Y-m-d');
 
         return [
-            'fecha_desde' => $today,
-            'fecha_hasta' => $todayPlusOneDay,
-            'estado_id' => Estado::factory()->create()->id
+            'fecha_prueba' => $this->faker->dateTimeThisMonth(),
+            'fecha_desde' => Carbon::now()->addDays($this->faker->numberBetween(1, 10)),
+            'fecha_hasta' => Carbon::now()->addDays($this->faker->numberBetween(11, 20)),
+            'comentario' => $this->faker->sentence(),
+            'estado_id' => $this->faker->numberBetween(1, 4),
+            'user_id' => $this->faker->boolean(50) ? User::factory()->create() : null, // assuming you have a User model
+            'nombre' => $this->faker->firstName(),
+            'apellido' => $this->faker->lastName(),
+            'email' => $this->faker->email(),
+            'telefono' => $this->faker->phoneNumber(),
         ];
     }
 }
