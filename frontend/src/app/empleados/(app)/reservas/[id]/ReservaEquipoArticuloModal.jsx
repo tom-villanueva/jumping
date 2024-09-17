@@ -17,6 +17,8 @@ import { PlusCircle, Trash } from 'lucide-react'
 import { useReservaEquipoArticulos } from '@/services/reserva-equipo-articulos'
 import { useMemo, useState } from 'react'
 import DeleteEntityForm from '@/components/crud/DeleteEntityForm'
+import ReservaEquipoArticuloDevolverForm from './ReservaEquipoArticuloDevolverForm'
+import ReservaEquipoArticuloDevolverTodosForm from './ReservaEquipoArticuloDevolverTodosForm'
 
 export default function ReservaEquipoArticuloModal({
   open,
@@ -29,7 +31,7 @@ export default function ReservaEquipoArticuloModal({
   const [openDeleteModal, setOpenDeleteModal] = useState(false)
   const [row, setRow] = useState(null)
 
-  const { reservaEquipoArticulos, isLoading, isError } =
+  const { reservaEquipoArticulos, isLoading, isValidating, isError } =
     useReservaEquipoArticulos({
       params: {
         include: 'articulo.tipo_articulo_talle',
@@ -37,6 +39,11 @@ export default function ReservaEquipoArticuloModal({
       filters: [{ id: 'reserva_equipo_id', value: reservaEquipo?.id ?? '' }],
     })
 
+  /**
+   * Esto es un merge entre tipo artículos del equipo
+   * con los artículos de la reserva.
+   * Cada tipo artículo se corresponde con UN artículo.
+   */
   const tableRows = useMemo(() => {
     if (!tipoArticulos || !reservaEquipoArticulos) return []
 
@@ -68,7 +75,17 @@ export default function ReservaEquipoArticuloModal({
     },
     {
       header: 'Devuelto',
-      cell: ({ row }) => <p>Switch</p>,
+      cell: ({ row }) => (
+        <>
+          {row.original?.reservaEquipo ? (
+            <ReservaEquipoArticuloDevolverForm
+              reservaEquipoArticulo={row.original?.reservaEquipo}
+            />
+          ) : (
+            '-'
+          )}
+        </>
+      ),
     },
     {
       header: 'Artículo',
@@ -113,10 +130,11 @@ export default function ReservaEquipoArticuloModal({
             Gestión de artículos para el equipo.
           </DialogDescription>
         </DialogHeader>
+        <ReservaEquipoArticuloDevolverTodosForm reservaEquipo={reservaEquipo} />
         <DataTable
           table={table}
           columns={columns}
-          isLoading={isLoading}
+          isLoading={isLoading || isValidating}
           filters={[]}
         />
       </DialogContent>
