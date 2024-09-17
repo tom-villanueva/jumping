@@ -15,7 +15,13 @@ import {
 import { DataTablePagination } from './data-table-pagination.jsx'
 import { DataTableToolbar } from './data-table-toolbar.jsx'
 
-export function DataTable({ table, columns, filters = [], isLoading = false }) {
+export function DataTable({
+  table,
+  columns,
+  handleClick = () => {},
+  filters = [],
+  isLoading = false,
+}) {
   return (
     <div className="space-y-4">
       <DataTableToolbar table={table} filters={filters} />
@@ -51,6 +57,7 @@ export function DataTable({ table, columns, filters = [], isLoading = false }) {
             ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map(row => (
                 <TableRow
+                  onClick={() => handleClick(row.original)}
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}>
                   {row.getVisibleCells().map(cell => (

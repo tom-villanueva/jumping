@@ -21,6 +21,7 @@ import { Button } from '@/components/ui/button'
 import CreateEditEntityModal from '@/components/crud/CreateEditEntityModal'
 import DeleteEntityForm from '@/components/crud/DeleteEntityForm'
 import ReservaTableActions from './ReservaTableActions'
+import { useRouter } from 'next/navigation'
 
 const today = formatDate(convertToUTC(new Date().setHours(0, 0, 0, 0)))
 
@@ -49,6 +50,8 @@ export default function ReservasContainer() {
   const [openDeleteModal, setOpenDeleteModal] = useState(false)
   const [openFormModal, setOpenFormModal] = useState(false)
   const [editing, setEditing] = useState(false)
+
+  const router = useRouter()
 
   useEffect(() => {
     if (setPagination) {
@@ -219,6 +222,9 @@ export default function ReservasContainer() {
         />
       </CreateEditEntityModal>
       <DataTable
+        handleClick={row => {
+          router.push(`reservas/${row.id}`)
+        }}
         table={table}
         columns={columns}
         isLoading={isLoading}
