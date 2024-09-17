@@ -130,13 +130,21 @@ export default function ReservaEquipoArticuloModal({
             Gestión de artículos para el equipo.
           </DialogDescription>
         </DialogHeader>
-        <ReservaEquipoArticuloDevolverTodosForm reservaEquipo={reservaEquipo} />
-        <DataTable
-          table={table}
-          columns={columns}
-          isLoading={isLoading || isValidating}
-          filters={[]}
-        />
+        <div className="grid grid-cols-12">
+          <div className="col-span-12">
+            <ReservaEquipoArticuloDevolverTodosForm
+              reservaEquipo={reservaEquipo}
+            />
+          </div>
+          <div className="col-span-12">
+            <DataTable
+              table={table}
+              columns={columns}
+              isLoading={isLoading || isValidating}
+              filters={[]}
+            />
+          </div>
+        </div>
       </DialogContent>
       <DeleteEntityForm
         openDeleteForm={openDeleteModal}

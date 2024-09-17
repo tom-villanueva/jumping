@@ -13,6 +13,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from '@/components/ui/form'
 import { z } from 'zod'
 import axios from 'axios'
@@ -106,6 +107,19 @@ export default function ReservaEquipoArticuloDevolverTodosForm({
                   {isMutating ? 'Marcando...' : 'Aceptar'}
                 </Button>
               </FormControl>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="reserva_equipo_articulos"
+          render={({ field }) => (
+            <FormItem className="col-span-12">
+              <FormControl>
+                {/* <Input type="hidden" {...field} /> */}
+              </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />

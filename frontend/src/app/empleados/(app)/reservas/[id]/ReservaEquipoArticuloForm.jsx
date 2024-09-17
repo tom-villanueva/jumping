@@ -137,23 +137,27 @@ export default function ReservaEquipoArticuloForm({
             Apretar el botón + para agregar.
           </DialogDescription>
         </DialogHeader>
-        <div>
-          {form.formState.errors.root && (
-            <p className="col-span-12 text-sm text-red-500">
-              {form.formState.errors.root.serverError.message}
-            </p>
-          )}
-          <ArticulosTable
-            columns={columns}
-            pageSize={5}
-            defaultFilters={[
-              {
-                id: 'tipo_articulo_talle.tipo_articulo.id',
-                value: [tipoArticuloId],
-              },
-              { id: 'disponible', value: [true] },
-            ]}
-          />
+        <div className="grid grid-cols-12">
+          <div className="col-span-12">
+            {form.formState.errors.root && (
+              <p className="col-span-12 text-sm text-red-500">
+                {form.formState.errors.root.serverError.message}
+              </p>
+            )}
+          </div>
+          <div className="col-span-12">
+            <ArticulosTable
+              columns={columns}
+              pageSize={5}
+              defaultFilters={[
+                {
+                  id: 'tipo_articulo_talle.tipo_articulo.id',
+                  value: [tipoArticuloId],
+                },
+                { id: 'disponible', value: [true] },
+              ]}
+            />
+          </div>
         </div>
       </DialogContent>
     </Dialog>

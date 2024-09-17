@@ -6,6 +6,7 @@ use App\Http\Requests\ReservaEquipoArticulo\DevolverAllReservaEquipoArticuloRequ
 use App\Models\ReservaEquipoArticulo;
 use App\Repositories\ReservaEquipoArticulo\ReservaEquipoArticuloRepository;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class DevolverAllReservaEquipoArticuloController extends Controller
 {
@@ -23,6 +24,12 @@ class DevolverAllReservaEquipoArticuloController extends Controller
         try {
             $reservaEquipoArticulos = ReservaEquipoArticulo::where('reserva_equipo_id', $id)
                 ->get();
+
+            if($reservaEquipoArticulos->count() == 0) {
+                throw ValidationException::withMessages([
+                    'reserva_equipo_articulos' => 'No hay equipos para devolver.'
+                ]);
+            }
 
             foreach ($reservaEquipoArticulos as $reservaEquipoArticulo) {
                 $this->repository->update($reservaEquipoArticulo->id, $request->all());
