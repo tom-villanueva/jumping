@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Core\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\QueryBuilder\AllowedFilter;
 
 class TipoArticuloTalle extends BaseModel
 {
@@ -34,6 +35,8 @@ class TipoArticuloTalle extends BaseModel
     public function allowedFilters()
     {
         return [
+            AllowedFilter::exact('talle.id'),
+            AllowedFilter::exact('tipo_articulo.id')
         ];
     }
 

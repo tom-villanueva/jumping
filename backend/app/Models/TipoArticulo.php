@@ -36,6 +36,8 @@ class TipoArticulo extends BaseModel
     public function allowedFilters()
     {
         return [
+            'tipo_articulo_talle.tipo_articulo_id',
+            'tipo_articulo_talle.talle_id'
         ];
     }
 
