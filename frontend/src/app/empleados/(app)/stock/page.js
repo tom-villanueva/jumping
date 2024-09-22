@@ -1,3 +1,4 @@
+import StockGraphs from './StockGraphs'
 import StockTable from './StockTable'
 
 export default function StockPage() {
@@ -21,6 +22,7 @@ export default function StockPage() {
 
   return (
     <div className="container mx-auto pt-10">
+      <StockGraphs />
       <StockTable columns={columns} />
     </div>
   )

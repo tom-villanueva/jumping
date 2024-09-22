@@ -55,12 +55,10 @@ export default function ArticuloFormContent({
       descripcion: articulo?.descripcion ?? '',
       codigo: articulo?.codigo ?? '',
       observacion: articulo?.observacion ?? '',
-      tipo_articulo_id: articulo?.tipo_articulo_talle
-        ? String(articulo?.tipo_articulo_talle?.tipo_articulo?.id)
+      tipo_articulo_id: articulo?.tipo_articulo
+        ? String(articulo?.tipo_articulo?.id)
         : '',
-      talle_id: articulo?.tipo_articulo_talle
-        ? String(articulo?.tipo_articulo_talle?.talle?.id)
-        : '',
+      talle_id: articulo?.talle ? String(articulo?.talle?.id) : '',
       nro_serie: articulo?.nro_serie ?? '',
       disponible: articulo?.disponible ?? false,
     },

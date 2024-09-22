@@ -45,7 +45,7 @@ export default function ArticulosTable({
       page: pagination.pageIndex + 1,
       page_size: pagination.pageSize,
       sort: '-id',
-      include: 'tipo_articulo_talle.talle,tipo_articulo_talle.tipo_articulo',
+      include: 'talle,tipo_articulo',
     },
     filters: debouncedColumnFilters,
   })
@@ -113,7 +113,7 @@ export default function ArticulosTable({
         },
         {
           type: 'select',
-          columnName: 'tipo_articulo_talle.tipo_articulo.id',
+          columnName: 'tipo_articulo.id',
           title: 'Tipos',
           options:
             tipoArticulos?.map(tipo => ({
@@ -124,7 +124,7 @@ export default function ArticulosTable({
         },
         {
           type: 'select',
-          columnName: 'tipo_articulo_talle.talle.id',
+          columnName: 'talle.id',
           title: 'Talles',
           options:
             talles?.map(talle => ({

@@ -23,7 +23,7 @@ return new class extends Migration
             $table->id();
             $table->string('descripcion')->nullable(false)->unique();
 
-            $table->foreignId('marca_id')->references('id')->on('marca')->cascadeOnDelete();
+            $table->foreignId('marca_id')->references('id')->on('marca')->restrictOnDelete();
             $table->index('marca_id');
 
             $table->timestamps();
@@ -33,16 +33,16 @@ return new class extends Migration
         Schema::table('articulo', function (Blueprint $table) {
             $table->dropColumn('tipo_articulo_talle_id');
 
-            $table->foreignId('tipo_articulo_id')->references('id')->on('tipo_articulos')->cascadeOnDelete();
+            $table->foreignId('tipo_articulo_id')->references('id')->on('tipo_articulos')->restrictOnDelete();
             $table->index('tipo_articulo_id');
 
-            $table->foreignId('talle_id')->references('id')->on('talle')->cascadeOnDelete();
+            $table->foreignId('talle_id')->references('id')->on('talle')->restrictOnDelete();
             $table->index('talle_id');
 
-            $table->foreignId('marca_id')->references('id')->on('marca')->cascadeOnDelete();
+            $table->foreignId('marca_id')->references('id')->on('marca')->restrictOnDelete();
             $table->index('marca_id');
 
-            $table->foreignId('modelo_id')->references('id')->on('modelo')->cascadeOnDelete();
+            $table->foreignId('modelo_id')->references('id')->on('modelo')->restrictOnDelete();
             $table->index('modelo_id');
         });
 
@@ -52,16 +52,16 @@ return new class extends Migration
             $table->id();
             $table->integer('stock')->default(0);
 
-            $table->foreignId('tipo_articulo_id')->references('id')->on('tipo_articulos')->cascadeOnDelete();
+            $table->foreignId('tipo_articulo_id')->references('id')->on('tipo_articulos')->restrictOnDelete();
             $table->index('tipo_articulo_id');
 
-            $table->foreignId('talle_id')->references('id')->on('talle')->cascadeOnDelete();
+            $table->foreignId('talle_id')->references('id')->on('talle')->restrictOnDelete();
             $table->index('talle_id');
 
-            $table->foreignId('marca_id')->references('id')->on('marca')->cascadeOnDelete();
+            $table->foreignId('marca_id')->references('id')->on('marca')->restrictOnDelete();
             $table->index('marca_id');
 
-            $table->foreignId('modelo_id')->references('id')->on('modelo')->cascadeOnDelete();
+            $table->foreignId('modelo_id')->references('id')->on('modelo')->restrictOnDelete();
             $table->index('modelo_id');
 
             $table->unique(['tipo_articulo_id', 'talle_id', 'marca_id', 'modelo_id']);
@@ -78,6 +78,19 @@ return new class extends Migration
     {
         // Drop the 'inventario' table first, because it depends on other tables
         Schema::dropIfExists('inventario');
+
+        Schema::create('tipo_articulo_talle', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('stock')->default(0);
+            $table->foreignId('tipo_articulo_id')->references('id')->on('tipo_articulos')->onDelete('cascade');
+            $table->foreignId('talle_id')->references('id')->on('talle')->onDelete('cascade');
+
+            $table->index('tipo_articulo_id');
+            $table->index('talle_id');
+
+            $table->unique(['tipo_articulo_id', 'talle_id']);
+            $table->timestamps();
+        });
 
         // Modify 'articulo' table: restore 'tipo_articulo_talle_id' and drop new foreign keys and columns
         Schema::table('articulo', function (Blueprint $table) {
@@ -109,18 +122,5 @@ return new class extends Migration
 
         // Drop the 'marca' table
         Schema::dropIfExists('marca');
-
-        Schema::create('tipo_articulo_talle', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('stock')->default(0);
-            $table->foreignId('tipo_articulo_id')->references('id')->on('tipo_articulos')->onDelete('cascade');
-            $table->foreignId('talle_id')->references('id')->on('talle')->onDelete('cascade');
-
-            $table->index('tipo_articulo_id');
-            $table->index('talle_id');
-
-            $table->unique(['tipo_articulo_id', 'talle_id']);
-            $table->timestamps();
-        });
     }
 };

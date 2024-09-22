@@ -3,19 +3,19 @@ import { useState } from 'react'
 import DeleteEntityForm from '../../../../../../components/crud/DeleteEntityForm'
 import { DataTable } from '../data-table'
 import { Button } from '@/components/ui/button'
-import { Edit, Trash } from 'lucide-react'
-import TalleFormContent from './TalleFormContent'
 import CreateEditEntityModal from '../../../../../../components/crud/CreateEditEntityModal'
+import { Edit, Trash } from 'lucide-react'
+import MarcaFormContent from './MarcaFormContent'
 
-const TALLE_DEFAULT_VALUES = {
+const MARCA_DEFAULT_VALUES = {
   descripcion: '',
 }
 
-export default function TallesContainer({ talles }) {
+export default function MarcasContainer({ marcas }) {
   const [editing, setEditing] = useState(false)
   const [openForm, setOpenForm] = useState(false)
   const [openDeleteForm, setOpenDeleteForm] = useState(false)
-  const [selectedTalle, setSelectedTalle] = useState(TALLE_DEFAULT_VALUES)
+  const [selectedMarca, setSelectedMarca] = useState(MARCA_DEFAULT_VALUES)
 
   const columns = [
     {
@@ -30,14 +30,14 @@ export default function TallesContainer({ talles }) {
       accessorKey: 'acciones',
       header: 'Acciones',
       cell: ({ row }) => {
-        const talle = row.original
+        const marca = row.original
         return (
           <div className="flex flex-row gap-2">
             <Button
               variant="outline"
               type="button"
               onClick={() => {
-                setSelectedTalle(talle)
+                setSelectedMarca(marca)
                 setEditing(true)
                 setOpenForm(true)
               }}>
@@ -47,7 +47,7 @@ export default function TallesContainer({ talles }) {
               variant="destructive"
               type="button"
               onClick={() => {
-                setSelectedTalle(talle)
+                setSelectedMarca(marca)
                 setOpenDeleteForm(true)
               }}>
               <Trash className="h-4 w-4" />
@@ -63,32 +63,32 @@ export default function TallesContainer({ talles }) {
       <DeleteEntityForm
         openDeleteForm={openDeleteForm}
         setOpenDeleteForm={setOpenDeleteForm}
-        entity={selectedTalle}
-        apiKey="/api/talles"
-        name="talle"
+        entity={selectedMarca}
+        apiKey="/api/marcas"
+        name="marca"
       />
       <div className="flex w-full justify-end pb-4">
         <Button
           onClick={() => {
-            setSelectedTalle(TALLE_DEFAULT_VALUES)
+            setSelectedMarca(MARCA_DEFAULT_VALUES)
             setEditing(false)
             setOpenForm(true)
           }}>
-          Nuevo Talle
+          Nueva Marca
         </Button>
       </div>
       <CreateEditEntityModal
         open={openForm}
         onOpenChange={() => setOpenForm(!openForm)}
         editing={editing}
-        name="talle">
-        <TalleFormContent
+        name="marca">
+        <MarcaFormContent
           onFormSubmit={() => setOpenForm(!openForm)}
-          talle={selectedTalle}
+          marca={selectedMarca}
           editing={editing}
         />
       </CreateEditEntityModal>
-      <DataTable columns={columns} data={talles} />
+      <DataTable columns={columns} data={marcas} />
     </div>
   )
 }

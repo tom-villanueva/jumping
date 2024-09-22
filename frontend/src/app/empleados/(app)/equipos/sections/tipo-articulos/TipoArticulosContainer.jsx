@@ -12,7 +12,7 @@ const TIPO_ARTICULO_DEFAULT_VALUES = {
   descripcion: '',
 }
 
-export default function TipoArticulosContainer({ tipoArticulos, talles }) {
+export default function TipoArticulosContainer({ tipoArticulos }) {
   const [editing, setEditing] = useState(false)
   const [openForm, setOpenForm] = useState(false)
   const [openDeleteForm, setOpenDeleteForm] = useState(false)
@@ -28,24 +28,6 @@ export default function TipoArticulosContainer({ tipoArticulos, talles }) {
     {
       accessorKey: 'descripcion',
       header: 'Descripción',
-    },
-    {
-      accessorKey: 'tipo_articulo_talle',
-      header: 'Asociado a',
-      cell: ({ row }) => {
-        const talles = row.getValue('tipo_articulo_talle')
-
-        return (
-          <ul>
-            {talles.map(tipo => (
-              <li key={tipo.id} className="flex flex-row gap-1">
-                <p className="font-bold">{tipo.descripcion}:</p>
-                <p>{tipo.pivot.stock}</p>
-              </li>
-            ))}
-          </ul>
-        )
-      },
     },
     {
       accessorKey: 'acciones',
@@ -103,18 +85,11 @@ export default function TipoArticulosContainer({ tipoArticulos, talles }) {
         onOpenChange={() => setOpenForm(!openForm)}
         editing={editing}
         name="tipo de artículo">
-        <SelectManyEntitiesContextProvider
-          entities={talles}
-          defaultSelected={selectedTipoArticulo?.tipo_articulo_talle?.map(
-            // Le saco el atributo pivot
-            ({ pivot, ...rest }) => ({ stock: pivot.stock, ...rest }),
-          )}>
-          <TipoArticuloFormContent
-            onFormSubmit={() => setOpenForm(!openForm)}
-            tipoArticulo={selectedTipoArticulo}
-            editing={editing}
-          />
-        </SelectManyEntitiesContextProvider>
+        <TipoArticuloFormContent
+          onFormSubmit={() => setOpenForm(!openForm)}
+          tipoArticulo={selectedTipoArticulo}
+          editing={editing}
+        />
       </CreateEditEntityModal>
       <DataTable columns={columns} data={tipoArticulos} />
     </div>

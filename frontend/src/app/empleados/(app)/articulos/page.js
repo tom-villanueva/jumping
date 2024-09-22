@@ -1,24 +1,11 @@
 'use client'
 
-import { DataTable } from '@/components/client-table/data-table'
 import { DataTableRowActions } from '@/components/client-table/data-table-row-actions'
 import CreateEditEntityModal from '@/components/crud/CreateEditEntityModal'
 import DeleteEntityForm from '@/components/crud/DeleteEntityForm'
-import { useDebounce } from '@/hooks/useDebounce'
-import { useArticulos } from '@/services/articulos'
 import { useTalles } from '@/services/talles'
 import { useTipoArticulos } from '@/services/tipo-articulos'
-import {
-  getCoreRowModel,
-  getFacetedRowModel,
-  getFacetedUniqueValues,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from '@tanstack/react-table'
-import { DotIcon } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import ArticuloFormContent from './ArticuloFormContent'
 import { Button } from '@/components/ui/button'
 import ArticulosTable from './ArticulosTable'
@@ -64,13 +51,13 @@ export default function ArticulosPage() {
       accessorKey: 'codigo',
     },
     {
-      accessorKey: 'tipo_articulo_talle.tipo_articulo.descripcion',
-      id: 'tipo_articulo_talle.tipo_articulo.id',
+      accessorKey: 'tipo_articulo.descripcion',
+      id: 'tipo_articulo.id',
       header: 'Tipo',
     },
     {
-      accessorKey: 'tipo_articulo_talle.talle.descripcion',
-      id: 'tipo_articulo_talle.talle.id',
+      accessorKey: 'talle.descripcion',
+      id: 'talle.id',
       header: 'Talle',
     },
     {

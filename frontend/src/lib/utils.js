@@ -102,3 +102,26 @@ export async function updateFetcher(url, { arg }) {
 export async function deleteFetcher(url, { arg }) {
   await axios.delete(`${url}/${arg.id}`)
 }
+
+export const chartColors = [
+  '#FF6B6B', // Soft Red
+  '#4ECDC4', // Aqua Blue
+  '#1A535C', // Dark Cyan
+  '#F7FFF7', // Off White
+  '#FFE66D', // Soft Yellow
+  '#FF9F1C', // Bright Orange
+  '#2EC4B6', // Teal
+  '#011627', // Deep Navy
+  '#FF3366', // Vibrant Pink
+  '#33658A', // Deep Sky Blue
+  '#55DDE0', // Cyan
+  '#FFBE0B', // Golden Yellow
+  '#3A86FF', // Bright Blue
+  '#8338EC', // Purple
+  '#FB5607', // Tangerine
+  '#FF006E', // Magenta
+  '#06D6A0', // Mint Green
+  '#FFD166', // Sunset Orange
+  '#118AB2', // Bright Blue
+  '#073B4C', // Dark Teal
+]

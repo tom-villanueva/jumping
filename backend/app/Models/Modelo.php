@@ -42,6 +42,7 @@ class Modelo extends BaseModel
     public function allowedIncludes()
     {
         return [
+            'marca'
         ];
     }
 }

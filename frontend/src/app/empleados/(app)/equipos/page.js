@@ -9,6 +9,10 @@ import { useTalles } from '@/services/talles'
 import { useDescuentos } from '@/services/descuentos'
 import TallesContainer from './sections/talles/TallesContainer'
 import DescuentosContainer from './sections/descuentos/DescuentosContainer'
+import MarcasContainer from './sections/marcas/MarcasContainer'
+import { useMarcas } from '@/services/marcas'
+import { useModelos } from '@/services/modelos'
+import ModelosContainer from './sections/modelos/ModelosContainer'
 
 const Equipos = () => {
   const {
@@ -28,7 +32,6 @@ const Equipos = () => {
     isError: isErrorTipoArticulos,
   } = useTipoArticulos({
     params: {
-      include: 'tipo_articulo_talle',
       sort: 'id',
     },
   })
@@ -39,7 +42,27 @@ const Equipos = () => {
     isError: isErrorTalles,
   } = useTalles({
     params: {
-      include: 'tipo_articulo_talle',
+      sort: 'id',
+    },
+  })
+
+  const {
+    marcas,
+    isLoading: isLoadingMarcas,
+    isError: isErrorMarcas,
+  } = useMarcas({
+    params: {
+      sort: 'id',
+    },
+  })
+
+  const {
+    modelos,
+    isLoading: isLoadingModelos,
+    isError: isErrorModelos,
+  } = useModelos({
+    params: {
+      include: 'marca',
       sort: 'id',
     },
   })
@@ -54,7 +77,9 @@ const Equipos = () => {
     isLoadingEquipos ||
     isLoadingTipoArticulos ||
     isLoadingDescuentos ||
-    isLoadingTalles
+    isLoadingTalles ||
+    isLoadingMarcas ||
+    isLoadingModelos
   ) {
     return <p>Cargando...</p>
   }
@@ -63,7 +88,9 @@ const Equipos = () => {
     isErrorEquipos ||
     isErrorTipoArticulos ||
     isErrorDescuentos ||
-    isErrorTalles
+    isErrorTalles ||
+    isErrorMarcas ||
+    isErrorModelos
   ) {
     return <p>Error cargando los datos</p>
   }
@@ -76,6 +103,8 @@ const Equipos = () => {
           <TabsTrigger value="equipos">Equipos</TabsTrigger>
           <TabsTrigger value="tipo_articulos">Tipos de Artículos</TabsTrigger>
           <TabsTrigger value="talles">Talles</TabsTrigger>
+          <TabsTrigger value="marcas">Marcas</TabsTrigger>
+          <TabsTrigger value="modelos">Modelos</TabsTrigger>
           <TabsTrigger value="descuentos">Descuentos</TabsTrigger>
         </TabsList>
         <TabsContent value="equipos">
@@ -86,13 +115,16 @@ const Equipos = () => {
           />
         </TabsContent>
         <TabsContent value="tipo_articulos">
-          <TipoArticulosContainer
-            tipoArticulos={tipoArticulos}
-            talles={talles}
-          />
+          <TipoArticulosContainer tipoArticulos={tipoArticulos} />
         </TabsContent>
         <TabsContent value="talles">
-          <TallesContainer talles={talles} tipoArticulos={tipoArticulos} />
+          <TallesContainer talles={talles} />
+        </TabsContent>
+        <TabsContent value="marcas">
+          <MarcasContainer marcas={marcas} />
+        </TabsContent>
+        <TabsContent value="modelos">
+          <ModelosContainer modelos={modelos} marcas={marcas} />
         </TabsContent>
         <TabsContent value="descuentos">
           <DescuentosContainer descuentos={descuentos} />

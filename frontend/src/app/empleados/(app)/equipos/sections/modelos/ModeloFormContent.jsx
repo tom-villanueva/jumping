@@ -1,18 +1,11 @@
 'use client'
-
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Separator } from '@/components/ui/separator'
-import { storeFetcher, updateFetcher } from '@/lib/utils'
-import { useContext } from 'react'
 import { useToast } from '@/components/ui/use-toast'
-import SelectManyEntitiesContext from '../SelectManyEntitiesContext'
-import TipoArticuloTalleTable from './TipoArticuloTalleTable'
 import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { useSWRConfig } from 'swr'
 import useSWRMutation from 'swr/mutation'
-import { z } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { storeFetcher, updateFetcher } from '@/lib/utils'
 import {
   Form,
   FormControl,
@@ -22,39 +15,49 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Button } from '@/components/ui/button'
+import { z } from 'zod'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 
-const tipoArticuloSchema = z.object({
+const modeloSchema = z.object({
   descripcion: z.string().min(1, 'Se requiere descripcion'),
-  // talle_ids: z.array(talleSchema).nullable(),
+  marca_id: z.string().min(1, 'Se requiere descripcion'),
 })
 
-export default function TipoArticuloFormContent({
+export default function ModeloFormContent({
   onFormSubmit,
-  tipoArticulo,
+  modelo,
   editing,
+  marcas,
 }) {
   const { toast } = useToast()
   const { mutate } = useSWRConfig()
 
   const form = useForm({
-    resolver: zodResolver(tipoArticuloSchema),
+    resolver: zodResolver(modeloSchema),
     defaultValues: {
-      descripcion: tipoArticulo?.descripcion ?? '',
+      descripcion: modelo?.descripcion ?? '',
+      marca_id: String(modelo?.marca_id) ?? '',
     },
   })
 
   const { trigger, isMutating } = useSWRMutation(
-    '/api/tipo-articulos',
+    '/api/modelos',
     editing ? updateFetcher : storeFetcher,
     {
       onSuccess() {
         toast({
           title: editing
-            ? `😄 Tipo de artículo modificado con éxito`
-            : `😄 Tipo de artículo agregado con éxito`,
+            ? `😄 Modelo modificado con éxito`
+            : `😄 Modelo agregado con éxito`,
         })
         form.reset()
-        mutate(key => Array.isArray(key) && key[0] === '/api/tipo-articulos')
+        mutate(key => Array.isArray(key) && key[0] === '/api/modelos')
         onFormSubmit()
       },
       onError(err) {
@@ -62,7 +65,10 @@ export default function TipoArticuloFormContent({
           if (err.response.status === 422) {
             const errors = err.response.data.errors ?? {}
             for (const [key, value] of Object.entries(errors)) {
-              form.setError(key, { type: 'manual', message: value.join(', ') })
+              form.setError(key, {
+                type: 'manual',
+                message: value.join(', '),
+              })
             }
           } else {
             form.setError('root.serverError', {
@@ -87,7 +93,7 @@ export default function TipoArticuloFormContent({
     }
 
     if (editing) {
-      trigger({ id: tipoArticulo?.id, data })
+      trigger({ id: modelo?.id, data })
     } else {
       trigger({ data })
     }
@@ -103,7 +109,7 @@ export default function TipoArticuloFormContent({
           name="descripcion"
           render={({ field }) => (
             <FormItem className="col-span-12">
-              <FormLabel>Descripcion</FormLabel>
+              <FormLabel>Descripción</FormLabel>
               <FormControl>
                 <Input
                   id="descripcion"
@@ -113,6 +119,31 @@ export default function TipoArticuloFormContent({
                   {...field}
                 />
               </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="marca_id"
+          render={({ field }) => (
+            <FormItem className="col-span-12">
+              <FormLabel>Marca</FormLabel>
+              <Select onValueChange={field.onChange} value={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleccione una marca" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {marcas?.map(marca => (
+                    <SelectItem key={marca?.id} value={String(marca?.id)}>
+                      {marca?.descripcion}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )}
