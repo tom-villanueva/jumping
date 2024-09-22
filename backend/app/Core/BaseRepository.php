@@ -94,7 +94,7 @@ class BaseRepository implements Repository
     public function update(int $id, array $data)
     {
         $model = $this->model->findOrFail($id);
-        $model->updateOrFail($data);
+        $model->update($data);
         return $model;
     }
 

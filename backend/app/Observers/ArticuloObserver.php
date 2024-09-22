@@ -45,21 +45,11 @@ class ArticuloObserver implements ShouldHandleEventsAfterCommit
         if ($articulo->wasChanged($fieldsToCheck)) {
             // Create a temporary Articulo model from the original values
             $originalArticulo = new Articulo($articulo->getOriginal());
-
             // Call updateStock with the old values (before the update)
             $this->updateStock($originalArticulo, -1);
 
             // Call updateStock with the new values (after the update)
             $this->updateStock($articulo, 1);
-            // Call updateStock with the old values (before the update)
-            // DB::afterCommit(function () use ($originalArticulo) {
-            //     $this->updateStock($originalArticulo, -1);
-            // });
-
-            // // Call updateStock with the new values (after the update)
-            // DB::afterCommit(function () use ($articulo) {
-            //     $this->updateStock($articulo, 1);
-            // });
         }
     }
 

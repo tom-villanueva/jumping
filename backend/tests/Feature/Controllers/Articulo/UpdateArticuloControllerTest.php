@@ -185,4 +185,61 @@ class UpdateArticuloControllerTest extends TestCase
             'stock' => 11,
         ]);
     }
+
+    public function test_articulo_observer_updates_stock_on_update()
+    {
+        $user = $this->createStubUser();
+
+        $tipo_articulo = TipoArticulo::factory()->create();
+        $talle = Talle::factory()->create();
+        $marca =  Marca::factory()->create();
+        $modelo =  Modelo::factory()->create([
+            'marca_id' => $marca->id
+        ]);
+
+        $modelo2 = Modelo::factory()->create([
+            'marca_id' => $marca->id
+        ]);
+
+        $articulo = Articulo::factory()->create([
+            'descripcion' => 'primera desc',
+            'talle_id' => $talle->id,
+            'tipo_articulo_id' => $tipo_articulo->id,
+            'marca_id' => $marca->id,
+            'modelo_id' => $modelo->id,
+        ]);
+
+        // acá el inventario se crea con stock 1
+
+        $data = [
+            'descripcion' => 'Probando cambio',
+            'codigo' => $articulo->codigo,
+            'observacion' => $articulo->observacion,
+            'talle_id' => $talle->id,
+            'tipo_articulo_id' => $tipo_articulo->id,
+            'marca_id' => $marca->id,
+            'modelo_id' => $modelo2->id,
+            'nro_serie' => 123,
+            'disponible' => true
+        ];
+
+        $response = $this->actingAs($user, $user->getModelGuard())
+                        ->putJson("/api/articulos/{$articulo->id}", $data);
+
+        $this->assertDatabaseHas('inventario', [
+            'talle_id' => $talle->id,
+            'tipo_articulo_id' => $tipo_articulo->id,
+            'marca_id' => $marca->id,
+            'modelo_id' => $modelo2->id,
+            'stock' => 1
+        ]);
+
+        $this->assertDatabaseHas('inventario', [
+            'talle_id' => $talle->id,
+            'tipo_articulo_id' => $tipo_articulo->id,
+            'marca_id' => $marca->id,
+            'modelo_id' => $modelo->id,
+            'stock' => 0
+        ]);
+    }
 }

@@ -17,14 +17,13 @@ class UpdateArticuloController extends Controller
 
     public function __invoke(UpdateArticuloRequest $request, $id)
     {
-        DB::beginTransaction();
+        // DB::beginTransaction();
 
         try {
             $result = $this->repository->update($id, $request->all());
-
-            DB::commit();
+            // DB::commit();
         } catch (\Throwable $th) {
-            DB::rollBack();
+            // DB::rollBack();
             throw $th;
         }    
 
