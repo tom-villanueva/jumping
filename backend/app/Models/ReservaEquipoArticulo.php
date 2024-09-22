@@ -53,7 +53,6 @@ class ReservaEquipoArticulo extends BaseModel
         return [
             'reserva_equipo',
             'articulo',
-            'articulo.tipo_articulo_talle.tipo_articulo'
         ];
     }
 }

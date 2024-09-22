@@ -21,20 +21,6 @@ class UpdateTipoArticuloController extends Controller
 
         $result = $this->repository->update($id, $request->all());
 
-        $talles = $request->talle_ids;
-
-        if($talles !== null) {
-            $res = [];
-
-            foreach($talles as $talle) {
-                $res[$talle['talle_id']] = ['stock' => $talle['stock']];
-            }
-
-            $talles = $res;
-            
-            $result->tipo_articulo_talle()->sync($talles);
-        }
-
         $equipos = $request->equipo_ids;
 
         if($equipos !== null) {

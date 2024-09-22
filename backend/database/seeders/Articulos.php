@@ -16,17 +16,11 @@ class Articulos extends Seeder
         // disable fk check
         Articulo::truncate();
 
-        $tipoArticuloTalle = [
-            1,6,17
-        ];
 
-        foreach ($tipoArticuloTalle as $tat) {
-            for ($i=0; $i < 10; $i++) { 
-                Articulo::factory()->create([
-                    'tipo_articulo_talle_id' => $tat
-                ]); 
-            }
+        for ($i=0; $i < 10; $i++) { 
+            Articulo::factory()->create(); 
         }
+        
 
         // enable fk check
     }

@@ -19,7 +19,10 @@ class Articulo extends BaseModel
         'descripcion',
         'codigo',
         'observacion',
-        'tipo_articulo_talle_id',
+        'tipo_articulo_id',
+        'talle_id',
+        'marca_id',
+        'modelo_id',
         'nro_serie',
         'disponible'
     ];
@@ -27,8 +30,24 @@ class Articulo extends BaseModel
     /**
      * Relaciones
      */
-    public function tipo_articulo_talle() {
-        return $this->belongsTo(TipoArticuloTalle::class, 'tipo_articulo_talle_id');
+    public function tipo_articulo() 
+    {
+        return $this->belongsTo(TipoArticulo::class, 'tipo_articulo_id');
+    }
+
+    public function talle() 
+    {
+        return $this->belongsTo(Talle::class, 'talle_id');
+    }
+
+    public function marca() 
+    {
+        return $this->belongsTo(Marca::class, 'marca_id');
+    }
+
+    public function modelo() 
+    {
+        return $this->belongsTo(Modelo::class, 'modelo_id');
     }
 
     /**
@@ -40,8 +59,10 @@ class Articulo extends BaseModel
             AllowedFilter::beginsWithStrict('nro_serie'),
             AllowedFilter::beginsWithStrict('codigo'),
             AllowedFilter::beginsWithStrict('descripcion'),
-            AllowedFilter::exact('tipo_articulo_talle.talle.id'),
-            AllowedFilter::exact('tipo_articulo_talle.tipo_articulo.id'),
+            AllowedFilter::exact('tipo_articulo_id'),
+            AllowedFilter::exact('talle_id'),
+            AllowedFilter::exact('marca_id'),
+            AllowedFilter::exact('modelo_id'),
             AllowedFilter::exact('disponible')
         ];
     }
@@ -55,9 +76,10 @@ class Articulo extends BaseModel
     public function allowedIncludes()
     {
         return [
-            'tipo_articulo_talle',
-            'tipo_articulo_talle.talle',
-            'tipo_articulo_talle.tipo_articulo'
+            'tipo_articulo',
+            'talle',
+            'marca',
+            'modelo'
         ];
     }
 }

@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -29,7 +30,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Juan Perez',
             'email' => 'juanperez@gmail.com',
             'email_verified_at' => now(),
-            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',  //password
+            'password' => Hash::make('password'),//'$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',  //password
             // 'password' => '$2a$12$BSycJGxQJUmz2rSyn9Wv2.BpmKRV3Fjfw2DzEPHlKF4dDULvUjiPS', //123
             'remember_token' => Str::random(10),
         ]);
@@ -38,17 +39,19 @@ class DatabaseSeeder extends Seeder
             'name' => 'admin',
             'email' => 'admin@jumping.com',
             // 'email_verified_at' => now(),
-            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',  //password
+            'password' => Hash::make('password'),  //password
             'isAdmin' => true,
             // 'password' => '$2a$12$BSycJGxQJUmz2rSyn9Wv2.BpmKRV3Fjfw2DzEPHlKF4dDULvUjiPS', //123
             'remember_token' => Str::random(10),
         ]);
         $this->call(Talles::class);
         $this->call(TipoArticulos::class);
+        $this->call(Marcas::class);
+        $this->call(Modelos::class);
         $this->call(Equipos::class);
-        $this->call(Articulos::class);
+        // $this->call(Articulos::class);
         $this->call(Estados::class);
         $this->call(Descuentos::class);
-        $this->call(Reservas::class);
+        // $this->call(Reservas::class);
     }
 }

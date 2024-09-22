@@ -21,12 +21,6 @@ class StoreTalleController extends Controller
         
         $new_entity = $this->repository->create($request->all());
 
-        $tipo_articulos = $request->tipo_articulo_ids;
-
-        if($tipo_articulos != null) {
-            $new_entity->tipo_articulo_talle()->attach($tipo_articulos);
-        }
-
         DB::commit();
 
         return response()->json($new_entity, 201);

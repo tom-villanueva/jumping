@@ -29,34 +29,6 @@ class TipoArticuloTest extends ModelTestCase
         );
     }
 
-    public function test_tipo_articulo_talle_relation_is_ok()
-    {
-        $tipoArticulo = new TipoArticulo();
-        $talle = new Talle();
-
-        $relation = $tipoArticulo->tipo_articulo_talle();
-
-        $this->assertBelongsToManyRelation(
-            $relation,
-            $tipoArticulo,
-            $talle,
-            'tipo_articulo_talle',
-            'tipo_articulo_id',
-            'talle_id',
-            'id',
-            'id',
-            function($query, $model, BelongsToMany $relation) {
-                /**
-                 * Esta parte del código es verificar que la relación tiene esas columnas pivot
-                 */
-                $pivotColumns = ['stock'];
-                foreach ($pivotColumns as $column) {
-                    $this->assertContains($column, $relation->getPivotColumns());
-                }
-            }
-        );
-    }
-
     public function test_equipo_tipo_articulo_relation_is_ok()
     {
         $tipoArticulo = new TipoArticulo();
@@ -74,23 +46,5 @@ class TipoArticuloTest extends ModelTestCase
             'id',
             'id'
         );
-    }
-
-    public function test_tipo_articulo_belongs_to_many_talle()
-    {
-        $tipoArticulo = TipoArticulo::factory()->create();
-        $talle = Talle::factory()->create();
-
-        $stock = 10;
-        $tipoArticulo->tipo_articulo_talle()->attach($talle, ['stock' => $stock]);
-
-        // Que lo tiene
-        $this->assertTrue($tipoArticulo->tipo_articulo_talle->contains($talle));
-        // Que lo devuelve
-        $this->assertEquals(1, $tipoArticulo->tipo_articulo_talle->count());
-        // Que efectivamente es el modelo que tiene que ser
-        $this->assertInstanceOf(Talle::class, $tipoArticulo->tipo_articulo_talle()->first());
-        // Que los valores del pivot se setean
-        $this->assertEquals($stock, $tipoArticulo->tipo_articulo_talle()->first()->pivot->stock);
     }
 }

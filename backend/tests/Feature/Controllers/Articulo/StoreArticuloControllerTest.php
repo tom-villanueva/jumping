@@ -3,7 +3,10 @@
 namespace Tests\Feature;
 
 use App\Models\Articulo;
-use App\Models\TipoArticuloTalle;
+use App\Models\Marca;
+use App\Models\Modelo;
+use App\Models\Talle;
+use App\Models\TipoArticulo;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use Tests\WithStubUserEmpleado;
@@ -25,7 +28,8 @@ class StoreArticuloControllerTest extends TestCase
 			'observacion' => '',
             'tipo_articulo_id' => 25,
             'talle_id' => 25,
-			// 'tipo_articulo_talle_id' => 10,
+			'marca_id' => 25,
+            'modelo_id' => 25,
             'nro_serie' => $articulo->nro_serie,
         ];
 
@@ -34,19 +38,20 @@ class StoreArticuloControllerTest extends TestCase
 
         // Assert
         $response->assertStatus(422);
-        $response->assertJsonValidationErrors(['codigo', 'descripcion', 'tipo_articulo_id', 'talle_id', 'nro_serie']);
+        $response->assertJsonValidationErrors([
+            'codigo', 
+            'descripcion',
+            'tipo_articulo_id', 
+            'talle_id', 
+            'nro_serie',
+            'marca_id',
+            'modelo_id'
+        ]);
     }
 
 	public function test_unauthorized_user_cannot_store_articulo()
 	{
-		$tipoArticuloTalle = TipoArticuloTalle::factory()->create();
-
-		$response = $this->postJson('/api/articulos', [
-            'descripcion' => 'Test Article',
-            'codigo' => 1,
-            'observacion' => "",
-            'tipo_articulo_talle_id' => $tipoArticuloTalle->id
-        ]);
+		$response = $this->postJson('/api/articulos', []);
 
         $response->assertStatus(401); // Unauthorized
 	}
@@ -54,14 +59,22 @@ class StoreArticuloControllerTest extends TestCase
 	public function test_user_can_store_articulo()
     {
         $user = $this->createStubUser();
-        $tipoArticuloTalle = TipoArticuloTalle::factory()->create();
+
+        $tipo_articulo = TipoArticulo::factory()->create();
+        $talle = Talle::factory()->create();
+        $marca =  Marca::factory()->create();
+        $modelo =  Modelo::factory()->create([
+            'marca_id' => $marca->id
+        ]);
 
         $data = [
             'descripcion' => 'Articulo test',
             'codigo' => 1,
             'observacion' => "",
-            'talle_id' => $tipoArticuloTalle->talle->id,
-            'tipo_articulo_id' => $tipoArticuloTalle->tipo_articulo->id,
+            'talle_id' => $talle->id,
+            'tipo_articulo_id' => $tipo_articulo->id,
+            'marca_id' => $marca->id,
+            'modelo_id' => $modelo->id,
             'nro_serie' => 123,
             'disponible' => true
         ];
@@ -74,7 +87,10 @@ class StoreArticuloControllerTest extends TestCase
             "descripcion" => $data['descripcion'],
             "codigo" => $data['codigo'],
             "observacion" => null,
-            "tipo_articulo_talle_id" => $tipoArticuloTalle->id,
+            'talle_id' => $talle->id,
+            'tipo_articulo_id' => $tipo_articulo->id,
+            'marca_id' => $marca->id,
+            'modelo_id' => $modelo->id,
             "nro_serie" => $data['nro_serie'],
             "disponible" => $data['disponible'],
         ]);
@@ -85,21 +101,35 @@ class StoreArticuloControllerTest extends TestCase
             "codigo" => $data['codigo'],
             "nro_serie" => $data['nro_serie'],
             "disponible" => $data['disponible'],
-            "tipo_articulo_talle_id" => $tipoArticuloTalle->id
+            'talle_id' => $talle->id,
+            'tipo_articulo_id' => $tipo_articulo->id,
+            'marca_id' => $marca->id,
+            'modelo_id' => $modelo->id,
         ]);
     }
 
     public function test_articulo_observer_updates_stock_on_create()
     {
-        $tipoArticuloTalle = TipoArticuloTalle::factory()->create(['stock' => 0]);
+        $tipo_articulo = TipoArticulo::factory()->create();
+        $talle = Talle::factory()->create();
+        $marca =  Marca::factory()->create();
+        $modelo =  Modelo::factory()->create([
+            'marca_id' => $marca->id
+        ]);
 
         $articulo = Articulo::factory()->create([
-            'tipo_articulo_talle_id' => $tipoArticuloTalle->id,
+            'talle_id' => $talle->id,
+            'tipo_articulo_id' => $tipo_articulo->id,
+            'marca_id' => $marca->id,
+            'modelo_id' => $modelo->id,
         ]);
 
         // Check if the stock was incremented by 1
-        $this->assertDatabaseHas('tipo_articulo_talle', [
-            'id' => $tipoArticuloTalle->id,
+        $this->assertDatabaseHas('inventario', [
+            'talle_id' => $talle->id,
+            'tipo_articulo_id' => $tipo_articulo->id,
+            'marca_id' => $marca->id,
+            'modelo_id' => $modelo->id,
             'stock' => 1
         ]);
     }

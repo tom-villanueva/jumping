@@ -26,16 +26,16 @@ class StoreTalleRequest extends FormRequest
     {
         return [
             'descripcion' => 'required|unique:talle,descripcion',
-            'tipo_articulo_ids' => 'nullable|array',
-            'tipo_articulo_ids.*.tipo_articulo_id' => 'exists:tipo_articulos,id',
-            'tipo_articulo_ids.*.stock' => 'integer|min:0'
+            // 'tipo_articulo_ids' => 'nullable|array',
+            // 'tipo_articulo_ids.*.tipo_articulo_id' => 'exists:tipo_articulos,id',
+            // 'tipo_articulo_ids.*.stock' => 'integer|min:0'
         ];
     }
 
     public function messages()
     {
         return [
-            'tipo_articulo_ids.*.tipo_articulo_id.exists' => 'El tipo artículo en posición :position no existe en la BD.' 
+            // 'tipo_articulo_ids.*.tipo_articulo_id.exists' => 'El tipo artículo en posición :position no existe en la BD.' 
         ];
     }
 }

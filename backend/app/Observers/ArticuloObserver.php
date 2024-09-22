@@ -3,8 +3,9 @@
 namespace App\Observers;
 
 use App\Models\Articulo;
-use App\Models\TipoArticuloTalle;
+use App\Models\Inventario;
 use Illuminate\Contracts\Events\ShouldHandleEventsAfterCommit;
+use Illuminate\Support\Facades\DB;
 
 class ArticuloObserver implements ShouldHandleEventsAfterCommit
 {
@@ -16,9 +17,9 @@ class ArticuloObserver implements ShouldHandleEventsAfterCommit
      */
     public function created(Articulo $articulo)
     {
-        if($articulo->disponible) {
+        // if($articulo->disponible) {
             $this->updateStock($articulo, 1);
-        }
+        // }
     }
 
     /**
@@ -29,22 +30,36 @@ class ArticuloObserver implements ShouldHandleEventsAfterCommit
      */
     public function deleted(Articulo $articulo)
     {
-        if($articulo->disponible) {
+        // if($articulo->disponible) {
             $this->updateStock($articulo, -1);
-        }
+        // }
     }
 
+    
     public function updated(Articulo $articulo)
     {
-        if ($articulo->isDirty('disponible')) {
-            // If "disponible" was false and is now true, add 1 to stock
-            if (!$articulo->getOriginal('disponible') && $articulo->disponible) {
-                $this->updateStock($articulo, 1);
-            }
-            // If "disponible" was true and is now false, subtract 1 from stock
-            elseif ($articulo->getOriginal('disponible') && !$articulo->disponible) {
-                $this->updateStock($articulo, -1);
-            }
+        // Define the fields to monitor for changes
+        $fieldsToCheck = ['tipo_articulo_id', 'talle_id', 'marca_id', 'modelo_id'];
+
+        // Check if any of these fields have changed
+        if ($articulo->wasChanged($fieldsToCheck)) {
+            // Create a temporary Articulo model from the original values
+            $originalArticulo = new Articulo($articulo->getOriginal());
+
+            // Call updateStock with the old values (before the update)
+            $this->updateStock($originalArticulo, -1);
+
+            // Call updateStock with the new values (after the update)
+            $this->updateStock($articulo, 1);
+            // Call updateStock with the old values (before the update)
+            // DB::afterCommit(function () use ($originalArticulo) {
+            //     $this->updateStock($originalArticulo, -1);
+            // });
+
+            // // Call updateStock with the new values (after the update)
+            // DB::afterCommit(function () use ($articulo) {
+            //     $this->updateStock($articulo, 1);
+            // });
         }
     }
 
@@ -57,11 +72,16 @@ class ArticuloObserver implements ShouldHandleEventsAfterCommit
      */
     protected function updateStock(Articulo $articulo, int $amount)
     {
-        $tipoArticuloTalle = TipoArticuloTalle::find($articulo->tipo_articulo_talle_id);
+        $inventario = Inventario::firstOrCreate([
+            'tipo_articulo_id' => $articulo->tipo_articulo_id,
+            'talle_id' => $articulo->talle_id,
+            'marca_id' => $articulo->marca_id,
+            'modelo_id' => $articulo->modelo_id,
+        ], [
+            'stock' => 0
+        ]);
 
-        if ($tipoArticuloTalle) {
-            $tipoArticuloTalle->stock += $amount;
-            $tipoArticuloTalle->save();
-        }
+        $inventario->stock += $amount;
+        $inventario->save();
     }
 }

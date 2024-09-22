@@ -17,7 +17,7 @@ class TalleFactory extends Factory
     public function definition(): array
     {
         return [
-            'descripcion' => fake()->unique()->randomElement(['XS', 'LG', 'MD', 'XL', 'XXL'])
+            'descripcion' => fake()->unique()->word()
         ];
     }
 }

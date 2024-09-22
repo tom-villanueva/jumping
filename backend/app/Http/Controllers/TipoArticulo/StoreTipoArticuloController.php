@@ -21,12 +21,6 @@ class StoreTipoArticuloController extends Controller
 
         $new_entity = $this->repository->create($request->all());
 
-        $talles = $request->talle_ids;
-
-        if($talles != null) {
-            $new_entity->tipo_articulo_talle()->attach($talles);
-        }
-
         $equipos = $request->equipo_ids;
 
         if($equipos != null) {

@@ -21,14 +21,6 @@ class UpdateTalleController extends Controller
 
         $result = $this->repository->update($id, $request->all());
 
-        $tipo_articulos = $request->tipo_articulo_ids;
-
-        if($tipo_articulos !== null) {
-            $tipo_articulos = array_column($tipo_articulos, 'tipo_articulo_id');
-            
-            $result->tipo_articulo_talle()->sync($tipo_articulos);
-        }
-
         DB::commit();
 
         return response()->json($result);

@@ -26,4 +26,6 @@ require __DIR__.'/Estado.php';
 require __DIR__.'/ReservaEquipo.php';
 require __DIR__.'/ReservaEquipoArticulo.php';
 require __DIR__.'/EquipoPrecio.php';
-require __DIR__.'/TipoArticuloTalle.php';
+require __DIR__.'/Inventario.php';
+require __DIR__.'/Marca.php';
+require __DIR__.'/Modelo.php';

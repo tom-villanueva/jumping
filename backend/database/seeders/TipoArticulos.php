@@ -3,9 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\TipoArticulo;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class TipoArticulos extends Seeder
 {
@@ -29,7 +27,6 @@ class TipoArticulos extends Seeder
             $model = TipoArticulo::updateOrCreate([
                 "descripcion" => $tipo,
             ]);
-            $model->tipo_articulo_talle()->attach([1,2,3,4,5], ['stock' => 120]);
         }
 
         // enable fk check

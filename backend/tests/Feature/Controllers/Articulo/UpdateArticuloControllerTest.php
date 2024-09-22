@@ -3,7 +3,11 @@
 namespace Tests\Feature;
 
 use App\Models\Articulo;
-use App\Models\TipoArticuloTalle;
+use App\Models\Inventario;
+use App\Models\Marca;
+use App\Models\Modelo;
+use App\Models\Talle;
+use App\Models\TipoArticulo;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use Tests\WithStubUserEmpleado;
@@ -17,22 +21,34 @@ class UpdateArticuloControllerTest extends TestCase
         // Arrange
 		$user = $this->createStubUser();
 
-        $tipoArticuloTalle = TipoArticuloTalle::factory()->create();
+        $tipo_articulo = TipoArticulo::factory()->create();
+        $talle = Talle::factory()->create();
+        $marca =  Marca::factory()->create();
+        $modelo =  Modelo::factory()->create([
+            'marca_id' => $marca->id
+        ]);
 
         $articulo = Articulo::factory()->create([
-            'tipo_articulo_talle_id' => $tipoArticuloTalle->id
+            'talle_id' => $talle->id,
+            'tipo_articulo_id' => $tipo_articulo->id,
+            'marca_id' => $marca->id,
+            'modelo_id' => $modelo->id,
         ]);
         $articulo2 = Articulo::factory()->create([
-            'tipo_articulo_talle_id' => $tipoArticuloTalle->id
+            'talle_id' => $talle->id,
+            'tipo_articulo_id' => $tipo_articulo->id,
+            'marca_id' => $marca->id,
+            'modelo_id' => $modelo->id,
         ]);
 
         $data = [
             'descripcion' => $articulo->descripcion,
             'codigo' => $articulo->codigo,
             'observacion' => '',
-            'talle_id' => $tipoArticuloTalle->talle->id,
-            'tipo_articulo_id' => $tipoArticuloTalle->tipo_articulo->id,
-            // 'tipo_articulo_talle_id' => $tipoArticuloTalle->id,
+            'talle_id' => $talle->id,
+            'tipo_articulo_id' => $tipo_articulo->id,
+            'marca_id' => $marca->id,
+            'modelo_id' => $modelo->id,
             'nro_serie' => $articulo->nro_serie
         ];
 
@@ -47,18 +63,9 @@ class UpdateArticuloControllerTest extends TestCase
 
     public function test_unauthorized_user_can_not_update_articulo()
     {
-        $tipoArticuloTalle = TipoArticuloTalle::factory()->create();
+        $articulo = Articulo::factory()->create();
 
-        $articulo = Articulo::factory()->create([
-            'tipo_articulo_talle_id' => $tipoArticuloTalle->id
-        ]);
-
-        $data = [
-            'descripcion' => 'Probando cambio',
-            'codigo' => $articulo->codigo,
-            'observacion' => $articulo->observacion,
-            'tipo_articulo_talle_id' => $tipoArticuloTalle->id
-        ];
+        $data = [];
 
         $response = $this->putJson("/api/articulos/{$articulo->id}", $data);
 
@@ -68,20 +75,31 @@ class UpdateArticuloControllerTest extends TestCase
     public function test_user_can_update_articulo()
     {
         $user = $this->createStubUser();
-        $tipoArticuloTalle = TipoArticuloTalle::factory()->create();
-        $tipoArticuloTalle2 = TipoArticuloTalle::factory()->create();
+
+        $tipo_articulo = TipoArticulo::factory()->create();
+        $talle = Talle::factory()->create();
+        $marca =  Marca::factory()->create();
+        $modelo =  Modelo::factory()->create([
+            'marca_id' => $marca->id
+        ]);
+
+        $tipo_articulo2 = TipoArticulo::factory()->create();
 
         $articulo = Articulo::factory()->create([
-            'tipo_articulo_talle_id' => $tipoArticuloTalle->id
+            'talle_id' => $talle->id,
+            'tipo_articulo_id' => $tipo_articulo->id,
+            'marca_id' => $marca->id,
+            'modelo_id' => $modelo->id,
         ]);
 
         $data = [
             'descripcion' => 'Probando cambio',
             'codigo' => $articulo->codigo,
             'observacion' => $articulo->observacion,
-            'talle_id' => $tipoArticuloTalle2->talle->id,
-            'tipo_articulo_id' => $tipoArticuloTalle2->tipo_articulo->id,
-            // 'tipo_articulo_talle_id' => $tipoArticuloTalle2->id,
+            'talle_id' => $talle->id,
+            'tipo_articulo_id' => $tipo_articulo2->id,
+            'marca_id' => $marca->id,
+            'modelo_id' => $modelo->id,
             'nro_serie' => 123,
             'disponible' => true
         ];
@@ -94,7 +112,10 @@ class UpdateArticuloControllerTest extends TestCase
             "descripcion" => $data['descripcion'],
             "codigo" => $data['codigo'],
             "observacion" => null,
-            "tipo_articulo_talle_id" => $tipoArticuloTalle2->id,
+            "talle_id" => $talle->id,
+            "tipo_articulo_id" => $tipo_articulo2->id,
+            "marca_id" => $marca->id,
+            "modelo_id" => $modelo->id,
             "nro_serie" => $data['nro_serie'],
             "disponible" => $data['disponible'],
         ]);
@@ -103,8 +124,10 @@ class UpdateArticuloControllerTest extends TestCase
             "id" => $response['id'],
             "descripcion" => $data['descripcion'],
             "codigo" => $data['codigo'],
-            // "tipo_articulo_talle_id" => $data['tipo_articulo_talle_id'],
-            "tipo_articulo_talle_id" => $tipoArticuloTalle2->id,
+            "talle_id" => $talle->id,
+            "tipo_articulo_id" => $tipo_articulo2->id,
+            "marca_id" => $marca->id,
+            "modelo_id" => $modelo->id,
             "nro_serie" => $data['nro_serie'],
             "disponible" => $data['disponible'],
         ]);
@@ -112,33 +135,54 @@ class UpdateArticuloControllerTest extends TestCase
 
     public function test_articulo_observer_updates_stock_on_disponible_change()
     {
-        // Create a TipoArticuloTalle with an initial stock
-        $tipoArticuloTalle = TipoArticuloTalle::factory()->create(['stock' => 10]);
+        $tipo_articulo = TipoArticulo::factory()->create();
+        $talle = Talle::factory()->create();
+        $marca =  Marca::factory()->create();
+        $modelo =  Modelo::factory()->create([
+            'marca_id' => $marca->id
+        ]);
 
-        // Create an Articulo with disponible set to false
+        $tipo_articulo2 = TipoArticulo::factory()->create();
+
+        $inventario = Inventario::factory()->create([
+            'talle_id' => $talle->id,
+            'tipo_articulo_id' => $tipo_articulo->id,
+            'marca_id' => $marca->id,
+            'modelo_id' => $modelo->id,
+            'stock' => 9
+        ]);
+
+        $inventario2 = Inventario::factory()->create([
+            'talle_id' => $talle->id,
+            'tipo_articulo_id' => $tipo_articulo2->id,
+            'marca_id' => $marca->id,
+            'modelo_id' => $modelo->id,
+            'stock' => 10
+        ]);
+        
         $articulo = Articulo::factory()->create([
-            'tipo_articulo_talle_id' => $tipoArticuloTalle->id,
-            'disponible' => false,
+            'talle_id' => $talle->id,
+            'tipo_articulo_id' => $tipo_articulo->id,
+            'marca_id' => $marca->id,
+            'modelo_id' => $modelo->id,
         ]);
 
-        // Change "disponible" to true
-        $articulo->disponible = true;
-        $articulo->save();
+        // Al crearse nuevo articulo inventario tiene stock 10 ahora
 
-        // Check that the stock was incremented by 1
-        $this->assertDatabaseHas('tipo_articulo_talle', [
-            'id' => $tipoArticuloTalle->id,
-            'stock' => 11,
-        ]);
-
-        // Change "disponible" back to false
-        $articulo->disponible = false;
+        // Ahora pertenece a inventario2
+        $articulo->tipo_articulo_id = $tipo_articulo2->id;
         $articulo->save();
 
         // Check that the stock was decremented by 1
-        $this->assertDatabaseHas('tipo_articulo_talle', [
-            'id' => $tipoArticuloTalle->id,
-            'stock' => 10,
+        $this->assertDatabaseHas('inventario', [
+            'id' => $inventario->id,
+            'stock' => 9,
+        ]);
+
+        // Check that the stock was incremented by 1
+        $this->assertDatabaseHas('inventario', [
+            'id' => $inventario2->id,
+            'stock' => 11,
         ]);
     }
 }
