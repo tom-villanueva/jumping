@@ -28,6 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { useMemo } from 'react'
 
 const equipoSchema = z.object({
   descripcion: z.string().min(1, 'Se requiere descripcion'),
@@ -35,6 +36,8 @@ const equipoSchema = z.object({
   observacion: z.string().nullable(),
   tipo_articulo_id: z.string().min(1, 'Se requiere tipo artículo'),
   talle_id: z.string().min(1, 'Se requiere talle'),
+  marca_id: z.string().min(1, 'Se requiere marca'),
+  modelo_id: z.string().min(1, 'Se requiere modelo'),
   nro_serie: z.string().nullable(),
   disponible: z.boolean(),
 })
@@ -44,6 +47,8 @@ export default function ArticuloFormContent({
   articulo,
   tipoArticulos,
   talles,
+  marcas,
+  modelos,
   editing,
 }) {
   const { toast } = useToast()
@@ -59,10 +64,20 @@ export default function ArticuloFormContent({
         ? String(articulo?.tipo_articulo?.id)
         : '',
       talle_id: articulo?.talle ? String(articulo?.talle?.id) : '',
+      marca_id: articulo?.marca ? String(articulo?.marca?.id) : '',
+      modelo_id: articulo?.modelo ? String(articulo?.modelo?.id) : '',
       nro_serie: articulo?.nro_serie ?? '',
       disponible: articulo?.disponible ?? false,
     },
   })
+
+  const marcaId = form.watch('marca_id')
+
+  const filteredModelos = useMemo(() => {
+    return marcaId !== ''
+      ? modelos.filter(modelo => modelo.marca_id === Number(marcaId))
+      : modelos
+  }, [marcaId])
 
   const { trigger, isMutating } = useSWRMutation(
     '/api/articulos',
@@ -229,6 +244,58 @@ export default function ArticuloFormContent({
             </FormItem>
           )}
         />
+
+        <FormField
+          control={form.control}
+          name="marca_id"
+          render={({ field }) => (
+            <FormItem className="col-span-12 sm:col-span-6">
+              <FormLabel>Marca</FormLabel>
+              <Select onValueChange={field.onChange} value={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleccione una marca" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {marcas?.map(marca => (
+                    <SelectItem key={marca?.id} value={String(marca?.id)}>
+                      {marca?.descripcion}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {marcaId !== '' && (
+          <FormField
+            control={form.control}
+            name="modelo_id"
+            render={({ field }) => (
+              <FormItem className="col-span-12 sm:col-span-6">
+                <FormLabel>Modelo</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Seleccione un modelo" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {filteredModelos?.map(modelo => (
+                      <SelectItem key={modelo?.id} value={String(modelo?.id)}>
+                        {modelo?.descripcion}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
 
         <FormField
           control={form.control}

@@ -9,6 +9,8 @@ import { useState } from 'react'
 import ArticuloFormContent from './ArticuloFormContent'
 import { Button } from '@/components/ui/button'
 import ArticulosTable from './ArticulosTable'
+import { useMarcas } from '@/services/marcas'
+import { useModelos } from '@/services/modelos'
 
 const ARTICULO_DEFAULT_VALUES = {
   descripcion: '',
@@ -16,6 +18,8 @@ const ARTICULO_DEFAULT_VALUES = {
   observacion: '',
   tipo_articulo_id: '',
   talle_id: '',
+  marca_id: '',
+  modelo_id: '',
   nro_serie: '',
   disponible: true,
 }
@@ -31,6 +35,10 @@ export default function ArticulosPage() {
   )
 
   const { talles, isLoading: isLoadingTalles } = useTalles({})
+
+  const { marcas, isLoading: isLoadingMarcas } = useMarcas({})
+
+  const { modelos, isLoading: isLoadingModelos } = useModelos({})
 
   const columns = [
     {
@@ -52,13 +60,23 @@ export default function ArticulosPage() {
     },
     {
       accessorKey: 'tipo_articulo.descripcion',
-      id: 'tipo_articulo.id',
+      id: 'tipo_articulo_id',
       header: 'Tipo',
     },
     {
       accessorKey: 'talle.descripcion',
-      id: 'talle.id',
+      id: 'talle_id',
       header: 'Talle',
+    },
+    {
+      accessorKey: 'marca.descripcion',
+      id: 'marca_id',
+      header: 'Marca',
+    },
+    {
+      accessorKey: 'modelo.descripcion',
+      id: 'modelo_id',
+      header: 'Modelo',
     },
     {
       header: 'Disponible',
@@ -118,6 +136,8 @@ export default function ArticulosPage() {
           articulo={row}
           tipoArticulos={tipoArticulos}
           talles={talles}
+          marcas={marcas}
+          modelos={modelos}
           editing={editing}
         />
       </CreateEditEntityModal>
