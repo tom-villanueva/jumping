@@ -18,7 +18,7 @@ import { Separator } from '@/components/ui/separator'
 export default function ReservaDetailPage({ params }) {
   const [open, setOpen] = useState(false)
 
-  const { reserva, isLoading, isError } = useReservaById({
+  const { reserva, isLoading, isError, isValidating } = useReservaById({
     id: params.id,
     params: {
       include: 'estado,user,equipos',
@@ -33,6 +33,8 @@ export default function ReservaDetailPage({ params }) {
       </div>
     )
   }
+
+  console.log({ isValidating, reserva })
 
   return (
     <div className="container mx-auto pt-10">
@@ -76,12 +78,19 @@ export default function ReservaDetailPage({ params }) {
           </CollapsibleTrigger>
         </div>
         <CollapsibleContent>
-          <ReservaFormContent
-            onFormSubmit={() => {}}
-            reserva={reserva}
-            estados={estados}
-            editing
-          />
+          {!isValidating ? (
+            <ReservaFormContent
+              onFormSubmit={() => {}}
+              reserva={reserva}
+              estados={estados}
+              apiKey={`/api/reservas/${params.id}`}
+              editing
+            />
+          ) : (
+            <div className="flex w-full items-center justify-center">
+              <p className="">Cargando...</p>
+            </div>
+          )}
         </CollapsibleContent>
       </Collapsible>
     </div>

@@ -219,6 +219,7 @@ export default function ReservasContainer() {
           reserva={row}
           estados={estados}
           editing={editing}
+          apiKey="/api/reservas"
         />
       </CreateEditEntityModal>
       <DataTable

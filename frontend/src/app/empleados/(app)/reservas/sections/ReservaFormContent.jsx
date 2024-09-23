@@ -32,65 +32,22 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
+import { reservaSchema, reservaSchemaEdit } from './ReservaSchemas'
 
 const today = formatDate(convertToUTC(new Date().setHours(0, 0, 0, 0)))
-
-const reservaSchema = z
-  .object({
-    comentario: z.string().nullable(),
-    estado_id: z.string().min(1, 'Se requiere estado'),
-    nombre: z.string().nullable(),
-    apellido: z.string().min(1, 'Se requiere apellido'),
-    email: z
-      .string()
-      .email('Escriba un email válido')
-      .min(1, 'Se requiere email'),
-    telefono: z.string().nullable(),
-    fecha_desde: z
-      .string({
-        required_error: 'Se requiere fecha inicio',
-      })
-      .date('Se requiere fecha inicio')
-      .refine(data => convertToUTC(data) >= new Date().setHours(0, 0, 0, 0), {
-        message: 'Fecha inicio tiene que ser igual o mayor a hoy.',
-      }),
-    fecha_hasta: z
-      .string({
-        required_error: 'Se requiere fecha fin',
-      })
-      .date('Se requiere fecha fin'),
-    fecha_prueba: z
-      .string({
-        required_error: 'Se requiere fecha prueba',
-      })
-      .date('Se requiere fecha prueba'),
-  })
-  .refine(
-    data => convertToUTC(data.fecha_hasta) >= convertToUTC(data.fecha_desde),
-    {
-      message: 'Fecha fin no puede ser menor a fecha inicio',
-      path: ['fecha_hasta'],
-    },
-  )
-  .refine(
-    data => convertToUTC(data.fecha_prueba) >= convertToUTC(data.fecha_desde),
-    {
-      message: 'Fecha prueba no puede ser menor a fecha inicio',
-      path: ['fecha_prueba'],
-    },
-  )
 
 export default function ReservaFormContent({
   onFormSubmit,
   reserva,
   estados,
   editing,
+  apiKey,
 }) {
   const { toast } = useToast()
   const { mutate } = useSWRConfig()
 
   const form = useForm({
-    resolver: zodResolver(reservaSchema),
+    resolver: zodResolver(editing ? reservaSchemaEdit : reservaSchema),
     defaultValues: {
       comentario: reserva?.comentario ?? '',
       estado_id: String(reserva?.estado_id) ?? '',
@@ -115,7 +72,7 @@ export default function ReservaFormContent({
             : `😄 Reserva agregada con éxito`,
         })
         form.reset()
-        mutate(key => Array.isArray(key) && key[0] === '/api/reservas')
+        mutate(key => Array.isArray(key) && key[0] === apiKey)
         onFormSubmit()
       },
       onError(err) {
@@ -247,7 +204,12 @@ export default function ReservaFormContent({
             <FormItem className="col-span-12 md:col-span-4">
               <FormLabel>Fecha Inicio</FormLabel>
               <FormControl>
-                <Input type="date" name="fecha_desde" min={today} {...field} />
+                <Input
+                  type="date"
+                  name="fecha_desde"
+                  min={editing ? '' : today}
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -260,7 +222,12 @@ export default function ReservaFormContent({
             <FormItem className="col-span-12 md:col-span-4">
               <FormLabel>Fecha Fin</FormLabel>
               <FormControl>
-                <Input type="date" name="fecha_hasta" min={today} {...field} />
+                <Input
+                  type="date"
+                  name="fecha_hasta"
+                  min={editing ? '' : today}
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -274,7 +241,12 @@ export default function ReservaFormContent({
             <FormItem className="col-span-12 md:col-span-4">
               <FormLabel>Fecha Prueba</FormLabel>
               <FormControl>
-                <Input type="date" name="fecha_prueba" min={today} {...field} />
+                <Input
+                  type="date"
+                  name="fecha_prueba"
+                  min={editing ? '' : today}
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

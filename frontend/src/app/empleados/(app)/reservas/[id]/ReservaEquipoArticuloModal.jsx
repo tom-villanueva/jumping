@@ -34,7 +34,7 @@ export default function ReservaEquipoArticuloModal({
   const { reservaEquipoArticulos, isLoading, isValidating, isError } =
     useReservaEquipoArticulos({
       params: {
-        include: 'articulo.tipo_articulo_talle',
+        include: 'articulo',
       },
       filters: [{ id: 'reserva_equipo_id', value: reservaEquipo?.id ?? '' }],
     })
@@ -49,8 +49,7 @@ export default function ReservaEquipoArticuloModal({
 
     return tipoArticulos.map(tipoArticulo => {
       const reservaEquipoArticulo = reservaEquipoArticulos?.find(
-        r =>
-          r.articulo.tipo_articulo_talle.tipo_articulo_id === tipoArticulo.id,
+        r => r.articulo.tipo_articulo_id === tipoArticulo.id,
       )
       return reservaEquipoArticulo
         ? { ...tipoArticulo, reservaEquipo: { ...reservaEquipoArticulo } }

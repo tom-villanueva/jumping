@@ -104,14 +104,24 @@ export default function ReservaEquipoArticuloForm({
       accessorKey: 'codigo',
     },
     {
-      accessorKey: 'tipo_articulo_talle.tipo_articulo.descripcion',
-      id: 'tipo_articulo_talle.tipo_articulo.id',
+      accessorKey: 'tipo_articulo.descripcion',
+      id: 'tipo_articulo_id',
       header: 'Tipo',
     },
     {
-      accessorKey: 'tipo_articulo_talle.talle.descripcion',
-      id: 'tipo_articulo_talle.talle.id',
+      accessorKey: 'talle.descripcion',
+      id: 'talle_id',
       header: 'Talle',
+    },
+    {
+      accessorKey: 'marca.descripcion',
+      id: 'marca_id',
+      header: 'Marca',
+    },
+    {
+      accessorKey: 'modelo.descripcion',
+      id: 'modelo_id',
+      header: 'Modelo',
     },
     {
       id: 'acciones',
@@ -151,7 +161,7 @@ export default function ReservaEquipoArticuloForm({
               pageSize={5}
               defaultFilters={[
                 {
-                  id: 'tipo_articulo_talle.tipo_articulo.id',
+                  id: 'tipo_articulo_id',
                   value: [tipoArticuloId],
                 },
                 { id: 'disponible', value: [true] },
