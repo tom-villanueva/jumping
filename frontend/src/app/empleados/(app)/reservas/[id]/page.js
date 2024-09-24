@@ -34,8 +34,6 @@ export default function ReservaDetailPage({ params }) {
     )
   }
 
-  console.log({ isValidating, reserva })
-
   return (
     <div className="container mx-auto pt-10">
       <div className="rounded-md border px-2 py-3 text-base">

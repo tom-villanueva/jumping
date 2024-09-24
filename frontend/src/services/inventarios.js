@@ -1,6 +1,6 @@
 import useSWR from 'swr'
 
-export function useTipoArticuloTalles({ params, filters } = {}) {
+export function useInventarios({ params, filters } = {}) {
   const filterParams = {}
 
   filters.forEach(filter => {
@@ -16,11 +16,12 @@ export function useTipoArticuloTalles({ params, filters } = {}) {
 
   const qs = queryParams.toString()
 
-  const { data, error, isLoading } = useSWR(['/api/tipo-articulo-talles', qs])
+  const { data, error, isLoading, ...rest } = useSWR(['/api/inventarios', qs])
 
   return {
-    tipoArticuloTalles: data,
+    inventarios: data,
     isLoading,
     isError: error,
+    ...rest,
   }
 }

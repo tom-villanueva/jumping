@@ -50,10 +50,10 @@ class Inventario extends BaseModel
     public function allowedFilters()
     {
         return [
-            AllowedFilter::exact('talle.id'),
-            AllowedFilter::exact('tipo_articulo.id'),
-            AllowedFilter::exact('marca.id'),
-            AllowedFilter::exact('modelo.id'),
+            AllowedFilter::exact('talle_id'),
+            AllowedFilter::exact('tipo_articulo_id'),
+            AllowedFilter::exact('marca_id'),
+            AllowedFilter::exact('modelo_id'),
         ];
     }
 

@@ -2,8 +2,10 @@
 
 import { DataTable } from '@/components/client-table/data-table'
 import { useDebounce } from '@/hooks/useDebounce'
+import { useInventarios } from '@/services/inventarios'
+import { useMarcas } from '@/services/marcas'
+import { useModelos } from '@/services/modelos'
 import { useTalles } from '@/services/talles'
-import { useTipoArticuloTalles } from '@/services/tipo-articulo-talles'
 import { useTipoArticulos } from '@/services/tipo-articulos'
 import {
   getCoreRowModel,
@@ -19,11 +21,11 @@ import { useEffect, useState } from 'react'
 
 export default function StockTable({
   columns,
-  defaultFilters = [],
   pageSize = 10,
+  columnFilters,
+  setColumnFilters,
+  debouncedColumnFilters,
 }) {
-  const [columnFilters, setColumnFilters] = useState(defaultFilters)
-  const debouncedColumnFilters = useDebounce(columnFilters, 1000)
   const [sorting, setSorting] = useState([])
   const [pagination, setPagination] = useState({
     pageIndex: 0, //initial page index
@@ -40,11 +42,11 @@ export default function StockTable({
     }
   }, [columnFilters, setPagination])
 
-  const { tipoArticuloTalles, isLoading, isError } = useTipoArticuloTalles({
+  const { inventarios, isLoading, isError } = useInventarios({
     params: {
       page: pagination.pageIndex + 1,
       page_size: pagination.pageSize,
-      include: 'tipo_articulo,talle',
+      include: 'tipo_articulo,talle,marca,modelo',
       sort: 'id',
     },
     filters: debouncedColumnFilters,
@@ -55,9 +57,11 @@ export default function StockTable({
   )
 
   const { talles, isLoading: isLoadingTalles } = useTalles({})
+  const { marcas, isLoading: isLoadingMarcas } = useMarcas({})
+  const { modelos, isLoading: isLoadingModelos } = useModelos({})
 
   const table = useReactTable({
-    data: tipoArticuloTalles?.data || [],
+    data: inventarios?.data || [],
     columns,
     state: {
       pagination,
@@ -76,7 +80,7 @@ export default function StockTable({
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
 
-    rowCount: tipoArticuloTalles?.total,
+    rowCount: inventarios?.total,
 
     manualPagination: true,
     manualSorting: true,
@@ -91,11 +95,17 @@ export default function StockTable({
     <DataTable
       table={table}
       columns={columns}
-      isLoading={isLoading && isLoadingTalles && isLoadingTipoArticulos}
+      isLoading={
+        isLoading &&
+        isLoadingTalles &&
+        isLoadingTipoArticulos &&
+        isLoadingMarcas &&
+        isLoadingModelos
+      }
       filters={[
         {
           type: 'select',
-          columnName: 'tipo_articulo.id',
+          columnName: 'tipo_articulo_id',
           title: 'Tipos',
           options:
             tipoArticulos?.map(tipo => ({
@@ -106,12 +116,34 @@ export default function StockTable({
         },
         {
           type: 'select',
-          columnName: 'talle.id',
+          columnName: 'talle_id',
           title: 'Talles',
           options:
             talles?.map(talle => ({
               label: talle.descripcion,
               value: talle.id,
+              icon: DotIcon,
+            })) ?? [],
+        },
+        {
+          type: 'select',
+          columnName: 'marca_id',
+          title: 'Marcas',
+          options:
+            marcas?.map(marca => ({
+              label: marca.descripcion,
+              value: marca.id,
+              icon: DotIcon,
+            })) ?? [],
+        },
+        {
+          type: 'select',
+          columnName: 'modelo_id',
+          title: 'Modelos',
+          options:
+            modelos?.map(modelo => ({
+              label: modelo.descripcion,
+              value: modelo.id,
               icon: DotIcon,
             })) ?? [],
         },
