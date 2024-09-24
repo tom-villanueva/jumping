@@ -27,17 +27,24 @@ class StoreEquipoPrecioController extends Controller
                 "fecha_hasta" => null
             ];
 
-            $new_entity = $this->repository->create($data);
-
-            // Actualizo el último equipo precio para que termine un día antes
-            // que comience el nuevo
             $ultimoEquipoPrecio = EquipoPrecio::where('equipo_id', '=', $request->equipo_id)
                 ->whereNull('fecha_hasta')
                 ->first();
 
-            $this->repository->update($ultimoEquipoPrecio->id, [
-                "fecha_hasta" => Carbon::parse($request->fecha_desde)->subDay()
-            ]);
+            // SI SON IGUALES LAS FEHCA_DESDE, REEMPLAZO EL PRECIO
+            if(Carbon::parse($request->fecha_desde)->eq(Carbon::parse($ultimoEquipoPrecio->fecha_desde))) {
+                $this->repository->update($ultimoEquipoPrecio->id, [
+                    'precio' => $request->precio
+                ]);
+                $new_entity = $ultimoEquipoPrecio;
+            } else {
+                $new_entity = $this->repository->create($data);
+                // Actualizo el último equipo precio para que termine un día antes
+                // que comience el nuevo
+                $this->repository->update($ultimoEquipoPrecio->id, [
+                    "fecha_hasta" => Carbon::parse($request->fecha_desde)->subDay()
+                ]);
+            }
             
             DB::commit();
         } catch (\Throwable $th) {

@@ -41,7 +41,7 @@ class AfterLastEquipoPrecio implements DataAwareRule, ValidationRule
           ->whereNull('fecha_hasta')
           ->first();
 
-        if(Carbon::parse($value)->lte(Carbon::parse($ultimoEquipoPrecio->fecha_desde))) {
+        if(Carbon::parse($value)->lt(Carbon::parse($ultimoEquipoPrecio->fecha_desde))) {
             $fail("La fecha de inicio debe ser superior a la fecha de inicio del último precio.");
         }
     }

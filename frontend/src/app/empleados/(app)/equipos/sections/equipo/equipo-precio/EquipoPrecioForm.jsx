@@ -33,10 +33,10 @@ const equipoPrecioSchema = z.object({
     .string({
       required_error: 'Se requiere fecha inicio',
     })
-    .date('Se requiere fecha inicio')
-    .refine(data => convertToUTC(data) >= new Date().setHours(0, 0, 0, 0), {
-      message: 'Fecha inicio tiene que ser igual o mayor a hoy.',
-    }),
+    .date('Se requiere fecha inicio'),
+  // .refine(data => convertToUTC(data) >= new Date().setHours(0, 0, 0, 0), {
+  //   message: 'Fecha inicio tiene que ser igual o mayor a hoy.',
+  // }),
 })
 
 export default function EquipoPrecioForm({ equipo }) {
