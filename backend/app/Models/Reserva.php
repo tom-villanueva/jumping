@@ -135,4 +135,97 @@ class Reserva extends BaseModel
             'equipos'
         ];
     }
+
+    /**
+     * Métodos
+     */
+    /**
+     * Calculate the total price of the reservation.
+     *
+     * @return float
+     */
+    public function calculateTotalPrice()
+    {
+        $totalPrice = 0;
+
+        foreach ($this->equipos as $reservaEquipo) {
+            // Get the associated precios and descuentos for the reservation equipo
+            $totalPrice += $this->calculateReservaEquipoPrice($reservaEquipo);
+        }
+
+        return $totalPrice;
+    }
+
+    /**
+     * Calculate the total price for a single ReservaEquipo.
+     *
+     * @param ReservaEquipo $reservaEquipo
+     * @return float
+     */
+    private function calculateReservaEquipoPrice(ReservaEquipo $reservaEquipo)
+    {
+        $price = 0;
+
+        $startDate = Carbon::parse($this->fecha_desde);
+        $endDate = Carbon::parse($this->fecha_hasta);
+        $totalDays = $startDate->diffInDays($endDate) + 1;
+
+        // Fetch the applicable prices within the reservation date range
+        foreach ($reservaEquipo->precios as $reservaEquipoPrecio) {
+            $equipoPrecio = $reservaEquipoPrecio->equipo_precio()->withTrashed()->first();
+
+            if ($equipoPrecio) {
+                // Compare the date ranges to determine how many days apply to each price
+                $precioStartDate = Carbon::parse($equipoPrecio->fecha_desde);
+                $precioEndDate = Carbon::parse($equipoPrecio->fecha_hasta);
+
+                // Get the overlapping days between reservation and price validity period
+                $daysForThisPrice = $this->getOverlappingDays($startDate, $endDate, $precioStartDate, $precioEndDate);
+
+                // Multiply the price per day by the number of applicable days
+                $price += $equipoPrecio->precio * $daysForThisPrice;
+            }
+        }
+
+        // Now apply any discounts
+        foreach ($reservaEquipo->descuentos as $reservaEquipoDescuento) {
+            $equipoDescuento = $reservaEquipoDescuento->equipo_descuento()->withTrashed()->first();
+
+            if ($equipoDescuento) {
+                // Compare the date ranges for the discount
+                $descuentoStartDate = Carbon::parse($equipoDescuento->fecha_desde);
+                $descuentoEndDate = Carbon::parse($equipoDescuento->fecha_hasta);
+
+                // Get the overlapping days between reservation and discount validity period
+                $daysForThisDiscount = $this->getOverlappingDays($startDate, $endDate, $descuentoStartDate, $descuentoEndDate);
+
+                // Apply the discount for the applicable days
+                $discountAmount = $equipoDescuento->descuento * $daysForThisDiscount;
+                $price -= $discountAmount;
+            }
+        }
+
+        return $price;
+    }
+
+    /**
+     * Calculate the number of overlapping days between two date ranges.
+     *
+     * @param Carbon $startDate1
+     * @param Carbon $endDate1
+     * @param Carbon $startDate2
+     * @param Carbon $endDate2
+     * @return int
+     */
+    private function getOverlappingDays(Carbon $startDate1, Carbon $endDate1, Carbon $startDate2, Carbon $endDate2)
+    {
+        $overlapStart = $startDate1->max($startDate2);
+        $overlapEnd = $endDate1->min($endDate2);
+
+        if ($overlapStart->lte($overlapEnd)) {
+            return $overlapStart->diffInDays($overlapEnd) + 1;
+        }
+
+        return 0;
+    }
 }
