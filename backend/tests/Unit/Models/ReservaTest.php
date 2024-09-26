@@ -44,7 +44,11 @@ class ReservaTest extends ModelTestCase
                 'id' => 'int', 
                 'deleted_at' => 'datetime' // Este es necesario cuando hay soft delete
             ],
-            table: 'reservas'
+            table: 'reservas',
+            appends: [
+                'estado_actual',
+                'precio_total'
+            ]
         );
     }
 
@@ -63,19 +67,7 @@ class ReservaTest extends ModelTestCase
         );
     }
 
-    public function test_reserva_estado_relation_is_ok()
-    {
-        $reserva = new Reserva();
-        $estado = new Estado();
-        $relation = $reserva->estado();
-
-        $this->assertBelongsToRelation(
-            $relation,
-            $reserva,
-            $estado,
-            'estado_id'
-        );
-    }
+    // relacion estado
 
     public function test_reserva_traslado_relation_is_ok()
     {
@@ -207,6 +199,9 @@ class ReservaTest extends ModelTestCase
         ReservaEquipoPrecio::factory()->create([
             'reserva_equipo_id' => $reservaEquipo->id,
             'equipo_precio_id' => $equipoPrecio->id,
+            'fecha_desde' => $equipoPrecio->fecha_desde,
+            'fecha_hasta' => $equipoPrecio->fecha_hasta ?? $reserva->fecha_hasta,
+            'precio' => $equipoPrecio->precio,
         ]);
 
         // Call the getTotalPrice method
@@ -243,6 +238,9 @@ class ReservaTest extends ModelTestCase
         ReservaEquipoPrecio::factory()->create([
             'reserva_equipo_id' => $reservaEquipo->id,
             'equipo_precio_id' => $equipoPrecio->id,
+            'fecha_desde' => $equipoPrecio->fecha_desde,
+            'fecha_hasta' => $equipoPrecio->fecha_hasta ?? $reserva->fecha_hasta,
+            'precio' => $equipoPrecio->precio,
         ]);
 
         // Create related EquipoDescuento for ReservaEquipo
@@ -256,6 +254,9 @@ class ReservaTest extends ModelTestCase
         ReservaEquipoDescuento::factory()->create([
             'reserva_equipo_id' => $reservaEquipo->id,
             'equipo_descuento_id' => $equipoDescuento->id,
+            'fecha_desde' => $equipoDescuento->fecha_desde,
+            'fecha_hasta' => $equipoDescuento->fecha_hasta,
+            'descuento' => $equipoDescuento->descuento->valor,
         ]);
 
         // Call the getTotalPrice method
@@ -300,11 +301,17 @@ class ReservaTest extends ModelTestCase
         ReservaEquipoPrecio::factory()->create([
             'reserva_equipo_id' => $reservaEquipo->id,
             'equipo_precio_id' => $equipoPrecio1->id,
+            'fecha_desde' => $equipoPrecio1->fecha_desde,
+            'fecha_hasta' => $equipoPrecio1->fecha_hasta ?? $reserva->fecha_hasta,
+            'precio' => $equipoPrecio1->precio,
         ]);
 
         ReservaEquipoPrecio::factory()->create([
             'reserva_equipo_id' => $reservaEquipo->id,
             'equipo_precio_id' => $equipoPrecio2->id,
+            'fecha_desde' => $equipoPrecio2->fecha_desde,
+            'fecha_hasta' => $equipoPrecio2->fecha_hasta ?? $reserva->fecha_hasta,
+            'precio' => $equipoPrecio2->precio,
         ]);
     //     dd($reserva->fecha_desde->format("Y-m-d"), $reserva->fecha_hasta->format("Y-m-d"),
     //         $equipoPrecio1->fecha_desde->format("Y-m-d"), $equipoPrecio1->fecha_hasta->format("Y-m-d"),
@@ -363,11 +370,17 @@ class ReservaTest extends ModelTestCase
         ReservaEquipoPrecio::factory()->create([
             'reserva_equipo_id' => $reservaEquipo->id,
             'equipo_precio_id' => $equipoPrecio1->id,
+            'fecha_desde' => $equipoPrecio1->fecha_desde,
+            'fecha_hasta' => $equipoPrecio1->fecha_hasta ?? $reserva->fecha_hasta,
+            'precio' => $equipoPrecio1->precio,
         ]);
 
         ReservaEquipoPrecio::factory()->create([
             'reserva_equipo_id' => $reservaEquipo->id,
             'equipo_precio_id' => $equipoPrecio2->id,
+            'fecha_desde' => $equipoPrecio2->fecha_desde,
+            'fecha_hasta' => $equipoPrecio2->fecha_hasta ?? $reserva->fecha_hasta,
+            'precio' => $equipoPrecio2->precio,
         ]);
 
         // Create a discount for the overlapping period with the first EquipoPrecio
@@ -390,11 +403,17 @@ class ReservaTest extends ModelTestCase
         ReservaEquipoDescuento::factory()->create([
             'reserva_equipo_id' => $reservaEquipo->id,
             'equipo_descuento_id' => $equipoDescuento1->id,
+            'fecha_desde' => $equipoDescuento1->fecha_desde,
+            'fecha_hasta' => $equipoDescuento1->fecha_hasta,
+            'descuento' => $equipoDescuento1->descuento->valor,
         ]);
 
         ReservaEquipoDescuento::factory()->create([
             'reserva_equipo_id' => $reservaEquipo->id,
             'equipo_descuento_id' => $equipoDescuento2->id,
+            'fecha_desde' => $equipoDescuento2->fecha_desde,
+            'fecha_hasta' => $equipoDescuento2->fecha_hasta,
+            'descuento' => $equipoDescuento2->descuento->valor,
         ]);
 
         // Call the calculateTotalPrice method

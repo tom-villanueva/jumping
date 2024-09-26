@@ -193,23 +193,23 @@ class Reserva extends BaseModel
         // $array = [];
         // Fetch the applicable prices within the reservation date range
         foreach ($reservaEquipo->precios as $reservaEquipoPrecio) {
-            $equipoPrecio = $reservaEquipoPrecio->equipo_precio()->withTrashed()->first();
+            // $equipoPrecio = $reservaEquipoPrecio->equipo_precio()->withTrashed()->first();
 
-            if ($equipoPrecio) {
+            // if ($equipoPrecio) {
                 // Compare the date ranges to determine how many days apply to each price
-                $precioStartDate = Carbon::parse($equipoPrecio->fecha_desde);
-                $precioEndDate = Carbon::parse($equipoPrecio->fecha_hasta);
+                $precioStartDate = Carbon::parse($reservaEquipoPrecio->fecha_desde);
+                $precioEndDate = Carbon::parse($reservaEquipoPrecio->fecha_hasta);
 
                 // Get the overlapping days between reservation and price validity period
                 $daysForThisPrice = $this->getOverlappingDays($startDate, $endDate, $precioStartDate, $precioEndDate);
                 // $array[] = $daysForThisPrice;
                 // Calculate the total price for this period
-                $priceForThisPeriod = $equipoPrecio->precio * $daysForThisPrice;
+                $priceForThisPeriod = $reservaEquipoPrecio->precio * $daysForThisPrice;
 
                 // Apply any overlapping discounts
                 $priceForThisPeriod -= $this->applyOverlappingDiscountsForPrice(
                     $reservaEquipo, 
-                    $equipoPrecio, 
+                    $reservaEquipoPrecio, 
                     $precioStartDate, 
                     $precioEndDate, 
                     $startDate,
@@ -218,7 +218,7 @@ class Reserva extends BaseModel
 
                 // Add the discounted price to the total price
                 $totalPrice += $priceForThisPeriod;
-            }
+            // }
         }
         
         return $totalPrice;
@@ -238,7 +238,7 @@ class Reserva extends BaseModel
      */
     private function applyOverlappingDiscountsForPrice(
         ReservaEquipo $reservaEquipo, 
-        EquipoPrecio $equipoPrecio,  
+        ReservaEquipoPrecio $reservaEquipoPrecio,
         Carbon $precioStartDate, 
         Carbon $precioEndDate, 
         Carbon $reservaStartDate, 
@@ -248,12 +248,12 @@ class Reserva extends BaseModel
         $totalDiscount = 0;
         // $array = [];
         foreach ($reservaEquipo->descuentos as $reservaEquipoDescuento) {
-            $equipoDescuento = $reservaEquipoDescuento->equipo_descuento()->withTrashed()->first();
+            // $equipoDescuento = $reservaEquipoDescuento->equipo_descuento()->withTrashed()->first();
 
-            if ($equipoDescuento) {
+            // if ($equipoDescuento) {
                 // Compare the date ranges for the discount
-                $descuentoStartDate = Carbon::parse($equipoDescuento->fecha_desde);
-                $descuentoEndDate = Carbon::parse($equipoDescuento->fecha_hasta);
+                $descuentoStartDate = Carbon::parse($reservaEquipoDescuento->fecha_desde);
+                $descuentoEndDate = Carbon::parse($reservaEquipoDescuento->fecha_hasta);
 
                 $periodDescuento = Period::make($descuentoStartDate, $descuentoEndDate);
                 $periodPrecio = Period::make($precioStartDate, $precioEndDate);
@@ -265,12 +265,12 @@ class Reserva extends BaseModel
 
                     if ($daysForThisDiscount > 0) {
                         // Calculate the discount for the applicable overlapping days
-                        $discountPerDay = $equipoPrecio->precio * ($equipoDescuento->descuento->valor / 100);
+                        $discountPerDay = $reservaEquipoPrecio->precio * ($reservaEquipoDescuento->descuento / 100);
                         $totalDiscount += $discountPerDay * $daysForThisDiscount;
                         // $array[$periodWithReserva->asString()] = $discountPerDay * $daysForThisDiscount;
                     }
                 }
-            }
+            // }
         }
         
         return $totalDiscount;
