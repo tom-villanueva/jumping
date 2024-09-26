@@ -14,6 +14,9 @@ class ReservaEquipoPrecio extends BaseModel
     protected $fillable = [
         'reserva_equipo_id',
         'equipo_precio_id',
+        'precio',
+        'fecha_desde',
+        'fecha_hasta'
     ];
 
     /**

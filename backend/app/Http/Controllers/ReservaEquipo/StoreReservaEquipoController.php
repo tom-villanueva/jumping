@@ -54,6 +54,9 @@ class StoreReservaEquipoController extends Controller
                 ReservaEquipoPrecio::create([
                     'reserva_equipo_id' => $reserva_equipo->id,
                     'equipo_precio_id' => $precio->id,
+                    'precio' => $precio->precio,
+                    'fecha_desde' => $precio->fecha_desde,
+                    'fecha_hasta' => $precio->fecha_hasta ?? $fechaHasta,
                 ]);
             }
             
@@ -66,6 +69,9 @@ class StoreReservaEquipoController extends Controller
                 ReservaEquipoDescuento::create([
                     'reserva_equipo_id' => $reserva_equipo->id,
                     'equipo_descuento_id' => $equipo_descuento_id,
+                    'descuento' => $equipo_descuento->valor,
+                    'fecha_desde' => $equipo_descuento->pivot->fecha_desde,
+                    'fecha_hasta' => $equipo_descuento->pivot->fecha_hasta
                 ]);
             }
 

@@ -108,7 +108,7 @@ class StoreReservaEquipoControllerTest extends TestCase
         // Perform the request
         $response = $this->actingAs($user, $user->getModelGuard())
             ->postJson("/api/reserva-equipos", $data);
-
+// dd($response);
         $response->assertStatus(201);
         $response->assertJson([
             'reserva_id' => $reserva->id,
@@ -126,20 +126,32 @@ class StoreReservaEquipoControllerTest extends TestCase
         $this->assertDatabaseHas('reserva_equipo_precio', [
             'reserva_equipo_id' => $response['id'],
             'equipo_precio_id' => $precio1->id,
+            'precio' => $precio1->precio,
+            'fecha_desde' => $precio1->fecha_desde,
+            'fecha_hasta' => $precio1->fecha_hasta
         ]);
         $this->assertDatabaseHas('reserva_equipo_precio', [
             'reserva_equipo_id' => $response['id'],
             'equipo_precio_id' => $precio2->id,
+            'precio' => $precio2->precio,
+            'fecha_desde' => $precio2->fecha_desde,
+            'fecha_hasta' => $reserva->fecha_hasta
         ]);
 
         // Assert that the correct ReservaEquipoDescuento records are created
         $this->assertDatabaseHas('reserva_equipo_descuento', [
             'reserva_equipo_id' => $response['id'],
             'equipo_descuento_id' => $descuento1->id,
+            'descuento' => $descuento1->descuento->valor,
+            'fecha_desde' => $descuento1->fecha_desde,
+            'fecha_hasta' => $descuento1->fecha_hasta
         ]);
         $this->assertDatabaseHas('reserva_equipo_descuento', [
             'reserva_equipo_id' => $response['id'],
             'equipo_descuento_id' => $descuento2->id,
+            'descuento' => $descuento2->descuento->valor,
+            'fecha_desde' => $descuento2->fecha_desde,
+            'fecha_hasta' => $descuento2->fecha_hasta
         ]);
     }
 }
