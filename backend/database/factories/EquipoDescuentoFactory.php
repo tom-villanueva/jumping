@@ -24,7 +24,7 @@ class EquipoDescuentoFactory extends Factory
 
         return [
             'equipo_id' => Equipo::factory()->create()->id,
-            'descuento_id' => Descuento::factory()->create()->id,
+            'descuento_id' => 1,
             'fecha_desde' => $today,
             'fecha_hasta' => $todayPlusTenDays
         ];

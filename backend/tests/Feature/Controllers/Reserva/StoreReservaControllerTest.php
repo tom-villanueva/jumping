@@ -62,28 +62,32 @@ class StoreReservaControllerTest extends TestCase
             'estado_id' => $estado->id,
             'user_id' => null,
             'nombre' => null,
-            'apellido' => null,
-            'email' => null,
+            'apellido' => 'villanueva',
+            'email' => 'tomi@gmail.com',
             'telefono' => null
         ];
 
         $response = $this->actingAs($user, $user->getModelGuard())->postJson("/api/reservas", $data);
-           
+        
         $response->assertStatus(201);
         $response->assertJson([
             'fecha_prueba' => $data['fecha_prueba'],
             'fecha_desde' => $data['fecha_desde'],
             'fecha_hasta' => $data['fecha_hasta'],
             'comentario' => $data['comentario'],
-            'estado_id' => $estado->id,
             'nombre' => null,
-            'apellido' => null,
-            'email' => null,
-            'telefono' => null
+            'apellido' => $data['apellido'],
+            'email' => $data['email'],
+            'telefono' => null,
         ]);
         
         $this->assertDatabaseHas('reservas', [
-            "id" => $response['id'],
+            "id" => $response['id'], 
+        ]);
+
+        $this->assertDatabaseHas('reserva_estado', [
+            "reserva_id" => $response['id'],
+            "estado_id" => $estado->id
         ]);
     }
 }

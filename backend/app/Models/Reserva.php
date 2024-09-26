@@ -6,6 +6,7 @@ use App\Core\BaseModel;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Period\Period;
 use Spatie\QueryBuilder\AllowedFilter;
 
 class Reserva extends BaseModel
@@ -13,6 +14,11 @@ class Reserva extends BaseModel
     use SoftDeletes, HasFactory;
 
     protected $table = 'reservas';
+
+     protected $appends = [
+        'estado_actual',
+        'precio_total'
+    ];
 
     protected $fillable = [
         'fecha_prueba',
@@ -35,9 +41,16 @@ class Reserva extends BaseModel
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function estado()
+    public function estados()
     {
-        return $this->belongsTo(Estado::class, 'estado_id');
+        return $this->hasMany(ReservaEstado::class, 'reserva_id');
+    }
+
+    public function getEstadoActualAttribute()
+    {
+        return $this->estados()
+            ->orderBy('created_at', 'asc')
+            ->first();
     }
 
     public function traslados() 
@@ -51,6 +64,16 @@ class Reserva extends BaseModel
             ->withPivot(['id', 'altura', 'peso', 'nombre', 'apellido', 'num_calzado'])
             ->wherePivotNull('deleted_at')
             ->withTimestamps();
+    }
+
+    public function getPrecioTotalAttribute()
+    {
+        return $this->calculateTotalPrice();
+    }
+
+    public function equipos_reservados()
+    {
+        return $this->hasMany(ReservaEquipo::class, 'reserva_id');
     }
 
     /**
@@ -103,7 +126,13 @@ class Reserva extends BaseModel
     public function allowedFilters()
     {
         return [
-            AllowedFilter::exact('estado_id'),
+            AllowedFilter::callback('estado_id', function (Builder $query, $value) {
+                $query->whereHas('estados', function ($query) use ($value) {
+                    $query->where('estado_id', $value)
+                        ->orderBy('created_at', 'asc')
+                        ->limit(1);
+                });
+            }),
             AllowedFilter::exact('user_id'),
             AllowedFilter::beginsWithStrict('apellido'),
             AllowedFilter::beginsWithStrict('email'),
@@ -130,7 +159,6 @@ class Reserva extends BaseModel
     {
         return [
             'user',
-            'estado',
             'traslados',
             'equipos'
         ];
@@ -147,29 +175,22 @@ class Reserva extends BaseModel
     public function calculateTotalPrice()
     {
         $totalPrice = 0;
-
-        foreach ($this->equipos as $reservaEquipo) {
+        
+        foreach ($this->equipos_reservados as $reservaEquipo) {
             // Get the associated precios and descuentos for the reservation equipo
             $totalPrice += $this->calculateReservaEquipoPrice($reservaEquipo);
         }
 
-        return $totalPrice;
+        return round($totalPrice, 2);
     }
 
-    /**
-     * Calculate the total price for a single ReservaEquipo.
-     *
-     * @param ReservaEquipo $reservaEquipo
-     * @return float
-     */
     private function calculateReservaEquipoPrice(ReservaEquipo $reservaEquipo)
     {
-        $price = 0;
+        $totalPrice = 0;
 
         $startDate = Carbon::parse($this->fecha_desde);
         $endDate = Carbon::parse($this->fecha_hasta);
-        $totalDays = $startDate->diffInDays($endDate) + 1;
-
+        // $array = [];
         // Fetch the applicable prices within the reservation date range
         foreach ($reservaEquipo->precios as $reservaEquipoPrecio) {
             $equipoPrecio = $reservaEquipoPrecio->equipo_precio()->withTrashed()->first();
@@ -181,13 +202,51 @@ class Reserva extends BaseModel
 
                 // Get the overlapping days between reservation and price validity period
                 $daysForThisPrice = $this->getOverlappingDays($startDate, $endDate, $precioStartDate, $precioEndDate);
+                // $array[] = $daysForThisPrice;
+                // Calculate the total price for this period
+                $priceForThisPeriod = $equipoPrecio->precio * $daysForThisPrice;
 
-                // Multiply the price per day by the number of applicable days
-                $price += $equipoPrecio->precio * $daysForThisPrice;
+                // Apply any overlapping discounts
+                $priceForThisPeriod -= $this->applyOverlappingDiscountsForPrice(
+                    $reservaEquipo, 
+                    $equipoPrecio, 
+                    $precioStartDate, 
+                    $precioEndDate, 
+                    $startDate,
+                    $endDate
+                );
+
+                // Add the discounted price to the total price
+                $totalPrice += $priceForThisPeriod;
             }
         }
+        
+        return $totalPrice;
+    }
 
-        // Now apply any discounts
+    /**
+     * Apply overlapping discounts for a given price period.
+     *
+     * @param ReservaEquipo $reservaEquipo
+     * @param EquipoPrecio $equipoPrecio
+     * @param int $daysForThisPrice
+     * @param Carbon $precioStartDate
+     * @param Carbon $precioEndDate
+     * @param Carbon $reservaStartDate
+     * @param Carbon $reservaEndDate
+     * @return float The total discount amount for the given price period
+     */
+    private function applyOverlappingDiscountsForPrice(
+        ReservaEquipo $reservaEquipo, 
+        EquipoPrecio $equipoPrecio,  
+        Carbon $precioStartDate, 
+        Carbon $precioEndDate, 
+        Carbon $reservaStartDate, 
+        Carbon $reservaEndDate, 
+    )
+    {
+        $totalDiscount = 0;
+        // $array = [];
         foreach ($reservaEquipo->descuentos as $reservaEquipoDescuento) {
             $equipoDescuento = $reservaEquipoDescuento->equipo_descuento()->withTrashed()->first();
 
@@ -196,16 +255,25 @@ class Reserva extends BaseModel
                 $descuentoStartDate = Carbon::parse($equipoDescuento->fecha_desde);
                 $descuentoEndDate = Carbon::parse($equipoDescuento->fecha_hasta);
 
-                // Get the overlapping days between reservation and discount validity period
-                $daysForThisDiscount = $this->getOverlappingDays($startDate, $endDate, $descuentoStartDate, $descuentoEndDate);
+                $periodDescuento = Period::make($descuentoStartDate, $descuentoEndDate);
+                $periodPrecio = Period::make($precioStartDate, $precioEndDate);
 
-                // Apply the discount for the applicable days
-                $discountAmount = $equipoDescuento->descuento * $daysForThisDiscount;
-                $price -= $discountAmount;
+                if($periodDescuento->overlapsWith($periodPrecio)) {
+                    $periodReserva = Period::make($reservaStartDate, $reservaEndDate);
+                    $periodWithReserva = $periodDescuento->overlap($periodPrecio, $periodReserva);
+                    $daysForThisDiscount = $periodWithReserva->length();
+
+                    if ($daysForThisDiscount > 0) {
+                        // Calculate the discount for the applicable overlapping days
+                        $discountPerDay = $equipoPrecio->precio * ($equipoDescuento->descuento->valor / 100);
+                        $totalDiscount += $discountPerDay * $daysForThisDiscount;
+                        // $array[$periodWithReserva->asString()] = $discountPerDay * $daysForThisDiscount;
+                    }
+                }
             }
         }
-
-        return $price;
+        
+        return $totalDiscount;
     }
 
     /**
@@ -219,13 +287,11 @@ class Reserva extends BaseModel
      */
     private function getOverlappingDays(Carbon $startDate1, Carbon $endDate1, Carbon $startDate2, Carbon $endDate2)
     {
-        $overlapStart = $startDate1->max($startDate2);
-        $overlapEnd = $endDate1->min($endDate2);
+        $period1 = Period::make($startDate1, $endDate1);
+        $period2 = Period::make($startDate2, $endDate2);
 
-        if ($overlapStart->lte($overlapEnd)) {
-            return $overlapStart->diffInDays($overlapEnd) + 1;
-        }
+        $resultingPeriod = $period1->overlap($period2);
 
-        return 0;
+        return $resultingPeriod->length();
     }
 }

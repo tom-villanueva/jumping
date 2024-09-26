@@ -20,7 +20,6 @@ class Estados extends Seeder
             "Pendiente",
             "Pagada",
             "Cancelada",
-            "Finalizada"
         ];
 
         foreach ($talles as $talle) {
