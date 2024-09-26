@@ -15,6 +15,7 @@ class Pago extends BaseModel
     protected $fillable = [
         'total',
         'status',
+        'reserva_id',
         'numero_comprobante',
         'metodo_pago_id',
         'moneda_id'
@@ -31,6 +32,11 @@ class Pago extends BaseModel
     public function moneda() 
     {
         return $this->belongsTo(Moneda::class, 'moneda_id');
+    }
+
+    public function reserva() 
+    {
+        return $this->belongsTo(Reserva::class, 'reserva_id');
     }
 
     /**

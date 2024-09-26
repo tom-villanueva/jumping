@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Reserva;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -20,6 +21,7 @@ class PagoFactory extends Factory
             'total' => fake()->numberBetween(),
             'status' => 'success',
             'numero_comprobante' => fake()->word(),
+            'reserva_id' => Reserva::factory()->create()->id,
             'metodo_pago_id' => 1,
             'moneda_id' => 1,
         ];

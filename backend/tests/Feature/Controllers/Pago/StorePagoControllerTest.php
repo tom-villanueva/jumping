@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Reserva;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use Tests\WithStubUserEmpleado;
@@ -18,6 +19,7 @@ class StorePagoControllerTest extends TestCase
         $data = [
             'total' => '',
             'status' => '',
+            'reserva_id' => 120,
             'numero_comprobante' => '',
             'metodo_pago_id' => 25,
             'moneda_id' => 25
@@ -33,6 +35,7 @@ class StorePagoControllerTest extends TestCase
         $response->assertJsonValidationErrors([
             'total',
             'status',
+            'reserva_id',
             'numero_comprobante',
             'metodo_pago_id',
             'moneda_id' 
@@ -55,6 +58,7 @@ class StorePagoControllerTest extends TestCase
         $data = [
             'total' => 100,
             'status' => 'success',
+            'reserva_id' => Reserva::factory()->create()->id,
             'numero_comprobante' => '123',
             'metodo_pago_id' => 1,
             'moneda_id' => 1
@@ -67,6 +71,7 @@ class StorePagoControllerTest extends TestCase
             'total' => $data["total"],
             'status' => $data["status"],
             'numero_comprobante' => $data["numero_comprobante"],
+            'reserva_id' => $data["reserva_id"],
             'metodo_pago_id' => $data["metodo_pago_id"],
             'moneda_id' => $data["moneda_id"]
         ]);

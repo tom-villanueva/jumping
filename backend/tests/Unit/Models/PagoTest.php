@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use App\Models\MetodoPago;
 use App\Models\Moneda;
 use App\Models\Pago;
+use App\Models\Reserva;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\ModelTestCase;
 
@@ -19,6 +20,7 @@ class PagoTest extends ModelTestCase
             fillable: [
                 'total',
                 'status',
+                'reserva_id',
                 'numero_comprobante',
                 'metodo_pago_id',
                 'moneda_id'
@@ -57,6 +59,20 @@ class PagoTest extends ModelTestCase
             $pago,
             $moneda,
             'moneda_id'
+        );
+    }
+
+    public function test_pago_reserva_relation_is_ok()
+    {
+        $pago = new Pago();
+        $reserva = new Reserva();
+        $relation = $pago->reserva();
+
+        $this->assertBelongsToRelation(
+            $relation,
+            $pago,
+            $reserva,
+            'reserva_id'
         );
     }
 }

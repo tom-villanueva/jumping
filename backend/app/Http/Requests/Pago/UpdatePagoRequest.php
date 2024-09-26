@@ -28,6 +28,7 @@ class UpdatePagoRequest extends FormRequest
             'total' => 'required|integer|min:0',
             'status' => 'required|string',
             'numero_comprobante' => 'required|string',
+            'reserva_id' => 'required|exists:reservas,id',
             'metodo_pago_id' => 'required|exists:metodo_pago,id',
             'moneda_id' => 'required|exists:monedas,id',
         ];

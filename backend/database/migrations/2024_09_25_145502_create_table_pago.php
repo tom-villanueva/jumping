@@ -32,6 +32,9 @@ return new class extends Migration
             $table->unsignedBigInteger('total')->default(0);
             $table->string('status');
             $table->string('numero_comprobante');
+
+            $table->foreignId('reserva_id')->references('id')->on('reservas')->restrictOnDelete();
+            $table->index('reserva_id');
             
             $table->foreignId('moneda_id')->references('id')->on('monedas')->restrictOnDelete();
             $table->index('moneda_id');

@@ -21,6 +21,7 @@ class UpdatePagoControllerTest extends TestCase
         $data = [
             'total' => '',
             'status' => '',
+            'reserva_id' => 120,
             'numero_comprobante' => '',
             'metodo_pago_id' => 25,
             'moneda_id' => 25
@@ -35,6 +36,7 @@ class UpdatePagoControllerTest extends TestCase
         $response->assertJsonValidationErrors([
             'total',
             'status',
+            'reserva_id',
             'numero_comprobante',
             'metodo_pago_id',
             'moneda_id'
@@ -64,6 +66,7 @@ class UpdatePagoControllerTest extends TestCase
             'total' => 100,
             'status' => 'failed',
             'numero_comprobante' => '1234',
+            'reserva_id' => $pago->reserva_id,
             'metodo_pago_id' => 2,
             'moneda_id' => 2
         ];
@@ -76,6 +79,7 @@ class UpdatePagoControllerTest extends TestCase
             'total' => $data["total"],
             'status' => $data["status"],
             'numero_comprobante' => $data["numero_comprobante"],
+            'reserva_id' => $data["reserva_id"],
             'metodo_pago_id' => $data["metodo_pago_id"],
             'moneda_id' => $data["moneda_id"]
         ]);
