@@ -21,6 +21,7 @@ export default function DeleteEntityForm({
   apiKey,
   mutateKey,
   name,
+  onFormSubmit = () => {},
 }) {
   const { toast } = useToast()
   const { mutate } = useSWRConfig()
@@ -32,6 +33,7 @@ export default function DeleteEntityForm({
       })
 
       mutate(key => Array.isArray(key) && key[0] === (mutateKey ?? apiKey))
+      onFormSubmit()
     },
     onError(err) {
       if (axios.isAxiosError(err)) {

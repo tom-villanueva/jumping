@@ -50,7 +50,6 @@ export default function ReservaFormContent({
     resolver: zodResolver(editing ? reservaSchemaEdit : reservaSchema),
     defaultValues: {
       comentario: reserva?.comentario ?? '',
-      estado_id: String(reserva?.estado_id) ?? '',
       nombre: reserva?.nombre ?? '',
       apellido: reserva?.apellido ?? '',
       email: reserva?.email ?? '',
@@ -197,63 +196,66 @@ export default function ReservaFormContent({
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="fecha_desde"
-          render={({ field }) => (
-            <FormItem className="col-span-12 md:col-span-4">
-              <FormLabel>Fecha Inicio</FormLabel>
-              <FormControl>
-                <Input
-                  type="date"
-                  name="fecha_desde"
-                  min={editing ? '' : today}
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="fecha_hasta"
-          render={({ field }) => (
-            <FormItem className="col-span-12 md:col-span-4">
-              <FormLabel>Fecha Fin</FormLabel>
-              <FormControl>
-                <Input
-                  type="date"
-                  name="fecha_hasta"
-                  min={editing ? '' : today}
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {!editing && (
+          <>
+            <FormField
+              control={form.control}
+              name="fecha_desde"
+              render={({ field }) => (
+                <FormItem className="col-span-12 md:col-span-4">
+                  <FormLabel>Fecha Inicio</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="date"
+                      name="fecha_desde"
+                      min={editing ? '' : today}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="fecha_hasta"
+              render={({ field }) => (
+                <FormItem className="col-span-12 md:col-span-4">
+                  <FormLabel>Fecha Fin</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="date"
+                      name="fecha_hasta"
+                      min={editing ? '' : today}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="fecha_prueba"
+              render={({ field }) => (
+                <FormItem className="col-span-12 md:col-span-4">
+                  <FormLabel>Fecha Prueba</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="date"
+                      name="fecha_prueba"
+                      min={editing ? '' : today}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </>
+        )}
 
-        <FormField
-          control={form.control}
-          name="fecha_prueba"
-          render={({ field }) => (
-            <FormItem className="col-span-12 md:col-span-4">
-              <FormLabel>Fecha Prueba</FormLabel>
-              <FormControl>
-                <Input
-                  type="date"
-                  name="fecha_prueba"
-                  min={editing ? '' : today}
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
+        {/* <FormField
           control={form.control}
           name="estado_id"
           render={({ field }) => (
@@ -276,7 +278,7 @@ export default function ReservaFormContent({
               <FormMessage />
             </FormItem>
           )}
-        />
+        /> */}
 
         <FormField
           control={form.control}

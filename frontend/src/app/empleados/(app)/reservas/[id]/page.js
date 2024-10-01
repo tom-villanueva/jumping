@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button'
 import { convertToUTC } from '@/lib/utils'
 import ReservaEquipoList from './ReservaEquipoList'
 import { Separator } from '@/components/ui/separator'
+import ReservaDetailLabel from './ReservaDetailLabel'
 
 export default function ReservaDetailPage({ params }) {
   const [open, setOpen] = useState(false)
@@ -21,7 +22,7 @@ export default function ReservaDetailPage({ params }) {
   const { reserva, isLoading, isError, isValidating } = useReservaById({
     id: params.id,
     params: {
-      include: 'estado,user,equipos',
+      include: 'user,equipos',
     },
   })
   const { estados, isLoading: isLoadingEstados } = useEstados({})
@@ -37,35 +38,55 @@ export default function ReservaDetailPage({ params }) {
   return (
     <div className="container mx-auto pt-10">
       <div className="rounded-md border px-2 py-3 text-base">
-        <p>
-          {`Reserva Nro. `}
-          <span className="font-bold">{reserva.id}</span>
-        </p>
-        <p>
-          {`A nombre de `}
-          <span className="font-bold">{`${reserva.apellido}, ${reserva.nombre}.`}</span>
-        </p>
-        <p>
-          {`Desde el `}
-          <span className="font-bold">
-            {convertToUTC(reserva.fecha_desde).toLocaleDateString()}
-          </span>
-          {` hasta el `}
-          <span className="font-bold">
-            {convertToUTC(reserva.fecha_hasta).toLocaleDateString()}
-          </span>
-        </p>
-        <p>
-          {`Estado `}
-          <span className="font-bold">{reserva?.estado?.descripcion}</span>
-        </p>
+        <ReservaDetailLabel
+          title="Reserva Nro."
+          label={reserva.id}
+          isValidating={isValidating}
+        />
+        <ReservaDetailLabel
+          title="A nombre de"
+          label={`${reserva.apellido}, ${reserva.nombre}.`}
+          isValidating={isValidating}
+        />
+        <ReservaDetailLabel
+          title="Desde el"
+          label={convertToUTC(reserva.fecha_desde).toLocaleDateString()}
+          isValidating={isValidating}
+        />
+        <ReservaDetailLabel
+          title="Hasta el"
+          label={convertToUTC(reserva.fecha_hasta).toLocaleDateString()}
+          isValidating={isValidating}
+        />
+        <ReservaDetailLabel
+          title="Fecha de prueba"
+          label={convertToUTC(reserva.fecha_prueba).toLocaleDateString()}
+          isValidating={isValidating}
+        />
+        <ReservaDetailLabel
+          title="Estado"
+          label={reserva?.estado_actual?.estado?.descripcion}
+          isValidating={isValidating}
+        />
+        <Separator className="my-2 w-full" />
+        <ReservaDetailLabel
+          title="Total"
+          label={new Intl.NumberFormat('es-AR', {
+            style: 'currency',
+            currency: 'ARS',
+          }).format(reserva?.precio_total)}
+          isValidating={isValidating}
+        />
       </div>
 
       <Separator className="mt-8 w-full" />
 
       <ReservaEquipoList reservaId={params.id} />
 
-      <Collapsible open={open} onOpenChange={setOpen} className="space-y-2">
+      <Collapsible
+        open={open}
+        onOpenChange={setOpen}
+        className="mt-2 space-y-2">
         <div className="flex w-[250px] items-center justify-between space-x-4 px-2">
           <h4 className="text-sm font-semibold">Datos de la reserva</h4>
           <CollapsibleTrigger asChild>

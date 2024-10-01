@@ -67,7 +67,6 @@ export default function ReservasContainer() {
       page: pagination.pageIndex + 1,
       page_size: pagination.pageSize,
       sort: 'fecha_desde',
-      include: 'estado',
     },
     filters: debouncedColumnFilters,
   })
@@ -110,7 +109,7 @@ export default function ReservasContainer() {
       accessorKey: 'email',
     },
     {
-      accessorKey: 'estado.descripcion',
+      accessorKey: 'estado_actual.descripcion',
       id: 'estado_id',
       header: 'Estado',
     },

@@ -25,7 +25,6 @@ class Reserva extends BaseModel
         'fecha_desde',
         'fecha_hasta',
         'comentario',
-        'estado_id',
         'user_id',
         'nombre',
         'apellido',
@@ -49,6 +48,7 @@ class Reserva extends BaseModel
     public function getEstadoActualAttribute()
     {
         return $this->estados()
+            ->with('estado')
             ->orderBy('created_at', 'asc')
             ->first();
     }

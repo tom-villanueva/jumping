@@ -22,6 +22,7 @@ import CreateEditEntityModal from '@/components/crud/CreateEditEntityModal'
 import ReservaEquipoArticuloModal from './ReservaEquipoArticuloModal'
 import { List, Trash } from 'lucide-react'
 import DeleteEntityForm from '@/components/crud/DeleteEntityForm'
+import { useSWRConfig } from 'swr'
 
 const RESERVA_EQUIPO_DEFAULT_VALUES = {
   altura: '',
@@ -46,6 +47,8 @@ export default function ReservaEquipoList({ reservaId }) {
   const [openFormModal, setOpenFormModal] = useState(false)
   const [openDeleteModal, setOpenDeleteModal] = useState(false)
   const [editing, setEditing] = useState(false)
+
+  const { mutate } = useSWRConfig()
 
   const columns = [
     {
@@ -125,7 +128,13 @@ export default function ReservaEquipoList({ reservaId }) {
         <ReservaEquipoForm
           reservaId={reservaId}
           reservaEquipo={row}
-          onFormSubmit={() => setOpenFormModal(!openFormModal)}
+          onFormSubmit={() => {
+            setOpenFormModal(!openFormModal)
+            mutate(
+              key =>
+                Array.isArray(key) && key[0] === `/api/reservas/${reservaId}`,
+            )
+          }}
           editing={editing}
         />
       </CreateEditEntityModal>
@@ -135,12 +144,19 @@ export default function ReservaEquipoList({ reservaId }) {
         entity={row}
         apiKey="/api/reserva-equipos"
         name="equipo de la reserva"
+        onFormSubmit={() => {
+          mutate(
+            key =>
+              Array.isArray(key) && key[0] === `/api/reservas/${reservaId}`,
+          )
+        }}
       />
       <ReservaEquipoArticuloModal
         open={openArticuloFormModal}
         onOpenChange={() => setOpenArticuloFormModal(!openArticuloFormModal)}
         tipoArticulos={row?.equipo?.equipo_tipo_articulo}
         reservaEquipo={row}
+        reservaId={reservaId}
       />
       <DataTable
         table={table}

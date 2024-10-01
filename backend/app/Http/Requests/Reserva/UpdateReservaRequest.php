@@ -25,11 +25,11 @@ class UpdateReservaRequest extends FormRequest
     public function rules()
     {
         return [
-            'fecha_desde' => 'required|date_format:Y-m-d',
-            'fecha_hasta' => 'required|date_format:Y-m-d|after_or_equal:fecha_desde',
-            'fecha_prueba' => 'nullable|date_format:Y-m-d|after_or_equal:fecha_desde',
+            // 'fecha_desde' => 'required|date_format:Y-m-d',
+            // 'fecha_hasta' => 'required|date_format:Y-m-d|after_or_equal:fecha_desde',
+            // 'fecha_prueba' => 'nullable|date_format:Y-m-d|after_or_equal:fecha_desde',
             'comentario' => 'nullable',
-            'estado_id' => 'required|exists:estados,id',
+            // 'estado_id' => 'required|exists:estados,id',
             'user_id' => 'nullable|exists:users,id',
             'nombre' => 'nullable',
             'apellido' => 'nullable',
