@@ -17,7 +17,7 @@ class Estados extends Seeder
         Estado::truncate();
 
         $talles = [
-            "Pendiente",
+            "Pendiente de Pago",
             "Pagada",
             "Cancelada",
         ];

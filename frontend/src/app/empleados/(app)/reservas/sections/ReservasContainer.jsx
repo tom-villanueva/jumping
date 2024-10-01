@@ -109,7 +109,7 @@ export default function ReservasContainer() {
       accessorKey: 'email',
     },
     {
-      accessorKey: 'estado_actual.descripcion',
+      accessorKey: 'estado_actual.estado.descripcion',
       id: 'estado_id',
       header: 'Estado',
     },
@@ -152,6 +152,11 @@ export default function ReservasContainer() {
         )
       },
     },
+    {
+      accessorKey: 'id',
+      id: 'articulo_codigo',
+      header: 'Articulo',
+    },
     // {
     //   accessorKey: 'comentario',
     //   header: 'Comentario',
@@ -165,6 +170,9 @@ export default function ReservasContainer() {
       pagination,
       sorting,
       columnFilters,
+      columnVisibility: {
+        articulo_codigo: false,
+      },
     },
 
     onPaginationChange: setPagination,
@@ -245,6 +253,12 @@ export default function ReservasContainer() {
             type: 'text',
             columnName: 'email',
             title: 'Email',
+            options: [],
+          },
+          {
+            type: 'text',
+            columnName: 'articulo_codigo',
+            title: 'Código Art.',
             options: [],
           },
           {
