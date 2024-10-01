@@ -2,11 +2,9 @@
 
 namespace Tests\Unit;
 
-use App\Models\Descuento;
 use App\Models\Equipo;
 use App\Models\EquipoDescuento;
 use App\Models\EquipoPrecio;
-use App\Models\Estado;
 use App\Models\Reserva;
 use App\Models\ReservaEquipo;
 use App\Models\ReservaEquipoDescuento;
@@ -33,7 +31,6 @@ class ReservaTest extends ModelTestCase
                 'fecha_desde',
                 'fecha_hasta',
                 'comentario',
-                'estado_id',
                 'user_id',
                 'nombre',
                 'apellido',

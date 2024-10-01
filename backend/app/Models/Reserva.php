@@ -45,6 +45,11 @@ class Reserva extends BaseModel
         return $this->hasMany(ReservaEstado::class, 'reserva_id');
     }
 
+    public function pagos()
+    {
+        return $this->hasMany(Pago::class, 'reserva_id');
+    }
+
     public function getEstadoActualAttribute()
     {
         return $this->estados()

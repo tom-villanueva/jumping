@@ -21,11 +21,11 @@ class StoreReservaController extends Controller
         DB::beginTransaction();
 
         try {
-            $reserva = $this->repository->create($request->except('estado_id'));
+            $reserva = $this->repository->create($request->all());
 
             ReservaEstado::create([
                 'reserva_id' => $reserva->id,
-                'estado_id' => $request->estado_id
+                'estado_id' => 1
             ]);
 
             DB::commit();

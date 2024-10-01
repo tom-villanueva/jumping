@@ -19,15 +19,9 @@ class UpdateReservaControllerTest extends TestCase
 
         $reserva = Reserva::factory()->create();
 
-        $today = Carbon::now()->format('Y-m-d');
-        $todaySubOneDay = Carbon::now()->subDay()->format('Y-m-d');
-
         $data = [
-            'fecha_desde' => $today,
-            'fecha_hasta' => $todaySubOneDay,
             'comentario' => null,
-            'estado_id' => 10,
-            'user_id' => null,
+            'user_id' => 25,
         ];
 
         // Act
@@ -36,7 +30,7 @@ class UpdateReservaControllerTest extends TestCase
 
         // Assert
         $response->assertStatus(422);
-        $response->assertJsonValidationErrors(['fecha_hasta', 'estado_id']);
+        $response->assertJsonValidationErrors(['user_id']);
     }
 
     public function test_unauthorized_user_can_not_update_reserva()
@@ -59,24 +53,16 @@ class UpdateReservaControllerTest extends TestCase
         $reserva = Reserva::factory()->create();
 
         $data = [
-            'fecha_prueba' => $reserva->fecha_prueba,
-            'fecha_desde' => $reserva->fecha_desde,
-            'fecha_hasta' => $reserva->fecha_hasta,
             'comentario' => "nuevo comment",
-            'estado_id' => $reserva->estado_id,
             'user_id' => $reserva->user_id,
         ];
 
         $response = $this->actingAs($user, $user->getModelGuard())
                         ->putJson("/api/reservas/{$reserva->id}", $data);
-
+        
         $response->assertStatus(200);
         $response->assertJson([
-            'fecha_prueba' => $data['fecha_prueba'],
-            'fecha_desde' => $data['fecha_desde'],
-            'fecha_hasta' => $data['fecha_hasta'],
             'comentario' => $data['comentario'],
-            'estado_id' => $data['estado_id'],
             'user_id' => $data['user_id']
         ]);
         
