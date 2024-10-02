@@ -224,7 +224,6 @@ export default function ReservasContainer() {
         <ReservaFormContent
           onFormSubmit={() => setOpenFormModal(!openFormModal)}
           reserva={row}
-          estados={estados}
           editing={editing}
           apiKey="/api/reservas"
         />

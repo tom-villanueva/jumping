@@ -1,6 +1,5 @@
 'use client'
 
-import { useEstados } from '@/services/estados'
 import { useReservaById } from '@/services/reservas'
 import ReservaFormContent from '../sections/ReservaFormContent'
 import {
@@ -15,6 +14,7 @@ import { convertToUTC } from '@/lib/utils'
 import ReservaEquipoList from './ReservaEquipoList'
 import { Separator } from '@/components/ui/separator'
 import ReservaDetailLabel from './ReservaDetailLabel'
+import ReservaDetailActions from './ReservaDetailActions'
 
 export default function ReservaDetailPage({ params }) {
   const [open, setOpen] = useState(false)
@@ -25,7 +25,19 @@ export default function ReservaDetailPage({ params }) {
       include: 'user,equipos',
     },
   })
-  const { estados, isLoading: isLoadingEstados } = useEstados({})
+
+  if (isError) {
+    const { status } = isError
+    return (
+      <div className="container mx-auto pt-10">
+        {status === 404 ? (
+          <p>La reserva no EXISTE.</p>
+        ) : (
+          <p>Ocurrió un error, intente de nuevo.</p>
+        )}
+      </div>
+    )
+  }
 
   if (isLoading) {
     return (
@@ -79,9 +91,17 @@ export default function ReservaDetailPage({ params }) {
         />
       </div>
 
+      <ReservaDetailActions
+        reservaId={params.id}
+        estadoId={reserva?.estado_actual?.estado_id}
+      />
+
       <Separator className="mt-8 w-full" />
 
-      <ReservaEquipoList reservaId={params.id} />
+      <ReservaEquipoList
+        reservaId={params.id}
+        estadoId={reserva?.estado_actual?.estado_id}
+      />
 
       <Collapsible
         open={open}
@@ -101,7 +121,6 @@ export default function ReservaDetailPage({ params }) {
             <ReservaFormContent
               onFormSubmit={() => {}}
               reserva={reserva}
-              estados={estados}
               apiKey={`/api/reservas/${params.id}`}
               editing
             />

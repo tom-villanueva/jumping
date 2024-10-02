@@ -39,7 +39,6 @@ const today = formatDate(convertToUTC(new Date().setHours(0, 0, 0, 0)))
 export default function ReservaFormContent({
   onFormSubmit,
   reserva,
-  estados,
   editing,
   apiKey,
 }) {

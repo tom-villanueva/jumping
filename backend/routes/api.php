@@ -30,3 +30,5 @@ require __DIR__.'/Inventario.php';
 require __DIR__.'/Marca.php';
 require __DIR__.'/Modelo.php';
 require __DIR__.'/Pago.php';
+require __DIR__.'/MetodoPago.php';
+require __DIR__.'/Moneda.php';

@@ -55,7 +55,7 @@ class Reserva extends BaseModel
     {
         return $this->estados()
             ->with('estado')
-            ->orderBy('created_at', 'asc')
+            ->orderBy('created_at', 'desc')
             ->first();
     }
 

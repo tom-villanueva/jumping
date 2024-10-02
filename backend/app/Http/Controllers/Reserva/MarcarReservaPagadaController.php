@@ -7,6 +7,7 @@ use App\Models\Pago;
 use App\Repositories\Reserva\ReservaRepository;
 use App\Models\ReservaEstado;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class MarcarReservaPagadaController extends Controller
 {
@@ -23,6 +24,16 @@ class MarcarReservaPagadaController extends Controller
 
         try {
             $reserva = $this->repository->find($id);
+
+            $estado = ReservaEstado::where('reserva_id', $reserva->id)
+                ->where('estado_id', 2)
+                ->first();
+            
+            if(!empty($estado)) {
+                throw ValidationException::withMessages([
+                    'reserva_pagada' => 'La reserva ya esta paga.'
+                ]);
+            }
 
             ReservaEstado::create([
                 'reserva_id' => $reserva->id,

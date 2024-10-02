@@ -1,13 +1,3 @@
-/**
- * 'altura' => 'nullable|integer',
-            'peso' => 'nullable|integer',
-            'num_calzado' => 'nullable|integer',
-            'nombre' => 'nullable|string',
-            'apellido' => 'nullable|string',
-            'reserva_id' => 'required|exists:reservas,id',
-            'equipo_id' => 'required|exists:equipo,id'
- */
-
 import { DataTable } from '@/components/client-table/data-table'
 import { useReservaEquipos } from '@/services/reserva-equipos'
 import {
@@ -23,6 +13,7 @@ import ReservaEquipoArticuloModal from './ReservaEquipoArticuloModal'
 import { List, Trash } from 'lucide-react'
 import DeleteEntityForm from '@/components/crud/DeleteEntityForm'
 import { useSWRConfig } from 'swr'
+import { RESERVA_PAGADA_ID } from '@/lib/utils'
 
 const RESERVA_EQUIPO_DEFAULT_VALUES = {
   altura: '',
@@ -34,7 +25,7 @@ const RESERVA_EQUIPO_DEFAULT_VALUES = {
   reserva_id: '',
 }
 
-export default function ReservaEquipoList({ reservaId }) {
+export default function ReservaEquipoList({ reservaId, estadoId }) {
   const { reservaEquipos, isLoading, isError } = useReservaEquipos({
     params: {
       include: 'equipo,equipo.equipo_tipo_articulo',
@@ -112,6 +103,7 @@ export default function ReservaEquipoList({ reservaId }) {
       <div className="flex w-full items-center justify-between gap-4 py-4">
         <h2>Equipos de la reserva</h2>
         <Button
+          disabled={estadoId === RESERVA_PAGADA_ID}
           onClick={() => {
             setRow(RESERVA_EQUIPO_DEFAULT_VALUES)
             setEditing(false)

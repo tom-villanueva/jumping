@@ -8,6 +8,8 @@ export function cn(...inputs) {
   return twMerge(clsx(inputs))
 }
 
+export const RESERVA_PAGADA_ID = 2
+
 /**
  * status: UNSET | SUCCESS | ERROR
  */
@@ -85,10 +87,29 @@ export const convertToUTC = date => {
   return new Date(utcTimestamp)
 }
 
-export const fetcher = ([url, qs]) =>
-  axios.get(`${url}?${qs}`).then(res => {
-    return res.data
-  })
+// export const fetcher = ([url, qs]) =>
+//   axios.get(`${url}?${qs}`).then(res => {
+//     return res.data
+//   })
+
+export const fetcher = async ([url, qs]) => {
+  // const query = new URLSearchParams(params).toString()
+  try {
+    const response = await axios.get(`${url}?${qs}`)
+    return response.data
+  } catch (error) {
+    const { response } = error
+    if (response) {
+      const errorMessage = {
+        status: response.status,
+        statusText: response.statusText,
+        url: response.config.url,
+      }
+      throw errorMessage // Pass custom error details
+    }
+    throw error // for non-HTTP errors
+  }
+}
 
 // https://swr.vercel.app/docs/mutation#useswrmutation
 export async function storeFetcher(url, { arg }) {
