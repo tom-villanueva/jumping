@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import ArticulosTable from './ArticulosTable'
 import { useMarcas } from '@/services/marcas'
 import { useModelos } from '@/services/modelos'
+import Header from '../Header'
 
 const ARTICULO_DEFAULT_VALUES = {
   descripcion: '',
@@ -108,40 +109,43 @@ export default function ArticulosPage() {
   ]
 
   return (
-    <div className="container mx-auto py-10">
-      <div className="flex w-full justify-end pb-4">
-        <Button
-          onClick={() => {
-            setRow(ARTICULO_DEFAULT_VALUES)
-            setEditing(false)
-            setOpenFormModal(true)
-          }}>
-          Nuevo Artículo
-        </Button>
-      </div>
-      <DeleteEntityForm
-        openDeleteForm={openDeleteModal}
-        setOpenDeleteForm={setOpenDeleteModal}
-        entity={row}
-        apiKey="/api/articulos"
-        name="articulo"
-      />
-      <CreateEditEntityModal
-        open={openFormModal}
-        onOpenChange={() => setOpenFormModal(!openFormModal)}
-        editing={editing}
-        name="articulo">
-        <ArticuloFormContent
-          onFormSubmit={() => setOpenFormModal(!openFormModal)}
-          articulo={row}
-          tipoArticulos={tipoArticulos}
-          talles={talles}
-          marcas={marcas}
-          modelos={modelos}
-          editing={editing}
+    <>
+      <Header title="Artículos" />
+      <div className="container mx-auto py-10">
+        <div className="flex w-full justify-end pb-4">
+          <Button
+            onClick={() => {
+              setRow(ARTICULO_DEFAULT_VALUES)
+              setEditing(false)
+              setOpenFormModal(true)
+            }}>
+            Nuevo Artículo
+          </Button>
+        </div>
+        <DeleteEntityForm
+          openDeleteForm={openDeleteModal}
+          setOpenDeleteForm={setOpenDeleteModal}
+          entity={row}
+          apiKey="/api/articulos"
+          name="articulo"
         />
-      </CreateEditEntityModal>
-      <ArticulosTable columns={columns} />
-    </div>
+        <CreateEditEntityModal
+          open={openFormModal}
+          onOpenChange={() => setOpenFormModal(!openFormModal)}
+          editing={editing}
+          name="articulo">
+          <ArticuloFormContent
+            onFormSubmit={() => setOpenFormModal(!openFormModal)}
+            articulo={row}
+            tipoArticulos={tipoArticulos}
+            talles={talles}
+            marcas={marcas}
+            modelos={modelos}
+            editing={editing}
+          />
+        </CreateEditEntityModal>
+        <ArticulosTable columns={columns} />
+      </div>
+    </>
   )
 }

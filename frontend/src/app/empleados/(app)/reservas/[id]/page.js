@@ -89,9 +89,16 @@ export default function ReservaDetailPage({ params }) {
           }).format(reserva?.precio_total)}
           isValidating={isValidating}
         />
+        <Separator className="my-2 w-full" />
+        <ReservaDetailLabel
+          title="Comentario"
+          label={reserva?.comentario}
+          isValidating={isValidating}
+        />
       </div>
 
       <ReservaDetailActions
+        reserva={reserva}
         reservaId={params.id}
         estadoId={reserva?.estado_actual?.estado_id}
       />

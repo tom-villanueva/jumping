@@ -117,7 +117,7 @@ export async function storeFetcher(url, { arg }) {
 }
 
 export async function updateFetcher(url, { arg }) {
-  await axios.put(`${url}/${arg.id}`, arg.data)
+  return await axios.put(`${url}/${arg.id}`, arg.data)
 }
 
 export async function deleteFetcher(url, { arg }) {

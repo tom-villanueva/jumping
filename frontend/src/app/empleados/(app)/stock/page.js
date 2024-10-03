@@ -5,6 +5,7 @@ import StockGraphs from './StockGraphs'
 import StockTable from './StockTable'
 import { useInventarios } from '@/services/inventarios'
 import { useDebounce } from '@/hooks/useDebounce'
+import Header from '../Header'
 
 export default function StockPage() {
   const [columnFilters, setColumnFilters] = useState([])
@@ -46,18 +47,21 @@ export default function StockPage() {
   ]
 
   return (
-    <div className="container mx-auto pt-10">
-      <StockTable
-        columns={columns}
-        columnFilters={columnFilters}
-        setColumnFilters={setColumnFilters}
-        debouncedColumnFilters={debouncedColumnFilters}
-      />
-      {isLoading || isValidating ? (
-        'cargando'
-      ) : (
-        <StockGraphs inventario={inventarios} />
-      )}
-    </div>
+    <>
+      <Header title="Stock" />
+      <div className="container mx-auto pt-10">
+        <StockTable
+          columns={columns}
+          columnFilters={columnFilters}
+          setColumnFilters={setColumnFilters}
+          debouncedColumnFilters={debouncedColumnFilters}
+        />
+        {isLoading || isValidating ? (
+          'cargando'
+        ) : (
+          <StockGraphs inventario={inventarios} />
+        )}
+      </div>
+    </>
   )
 }

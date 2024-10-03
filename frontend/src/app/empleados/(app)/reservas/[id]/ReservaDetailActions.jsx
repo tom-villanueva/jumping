@@ -4,8 +4,9 @@ import { Button } from '@/components/ui/button'
 import { RESERVA_PAGADA_ID } from '@/lib/utils'
 import DeleteEntityForm from '@/components/crud/DeleteEntityForm'
 import { useRouter } from 'next/navigation'
+import ReservaExtenderDialog from './ReservaExtenderDialog'
 
-export default function ReservaDetailActions({ reservaId, estadoId }) {
+export default function ReservaDetailActions({ reservaId, estadoId, reserva }) {
   const [openPagar, setOpenPagar] = useState(false)
   const [openExtender, setOpenExtender] = useState(false)
   const [openEliminar, setOpenEliminar] = useState(false)
@@ -24,7 +25,7 @@ export default function ReservaDetailActions({ reservaId, estadoId }) {
         </Button>
 
         <Button type="button" onClick={() => setOpenExtender(true)}>
-          Extender reserva
+          Extender (reserva desde reserva)
         </Button>
 
         <Button
@@ -46,10 +47,18 @@ export default function ReservaDetailActions({ reservaId, estadoId }) {
           router.replace('/empleados/reservas')
         }}
       />
+
       <ReservaMarcarComoPagadaDialog
         openForm={openPagar}
         setOpenForm={setOpenPagar}
         reservaId={reservaId}
+      />
+
+      <ReservaExtenderDialog
+        openForm={openExtender}
+        setOpenForm={setOpenExtender}
+        reservaId={reservaId}
+        reserva={reserva}
       />
     </div>
   )

@@ -13,6 +13,7 @@ import MarcasContainer from './sections/marcas/MarcasContainer'
 import { useMarcas } from '@/services/marcas'
 import { useModelos } from '@/services/modelos'
 import ModelosContainer from './sections/modelos/ModelosContainer'
+import Header from '../Header'
 
 const Equipos = () => {
   const {
@@ -96,42 +97,45 @@ const Equipos = () => {
   }
 
   return (
-    <div className="container mx-auto pt-10">
-      {/* <Suspense fallback={<p>Loading...</p>}> */}
-      <Tabs defaultValue="equipos" className="">
-        <TabsList>
-          <TabsTrigger value="equipos">Equipos</TabsTrigger>
-          <TabsTrigger value="tipo_articulos">Tipos de Artículos</TabsTrigger>
-          <TabsTrigger value="talles">Talles</TabsTrigger>
-          <TabsTrigger value="marcas">Marcas</TabsTrigger>
-          <TabsTrigger value="modelos">Modelos</TabsTrigger>
-          <TabsTrigger value="descuentos">Descuentos</TabsTrigger>
-        </TabsList>
-        <TabsContent value="equipos">
-          <EquiposContainer
-            equipos={equipos}
-            tipoArticulos={tipoArticulos}
-            descuentos={descuentos}
-          />
-        </TabsContent>
-        <TabsContent value="tipo_articulos">
-          <TipoArticulosContainer tipoArticulos={tipoArticulos} />
-        </TabsContent>
-        <TabsContent value="talles">
-          <TallesContainer talles={talles} />
-        </TabsContent>
-        <TabsContent value="marcas">
-          <MarcasContainer marcas={marcas} />
-        </TabsContent>
-        <TabsContent value="modelos">
-          <ModelosContainer modelos={modelos} marcas={marcas} />
-        </TabsContent>
-        <TabsContent value="descuentos">
-          <DescuentosContainer descuentos={descuentos} />
-        </TabsContent>
-      </Tabs>
-      {/* </Suspense> */}
-    </div>
+    <>
+      <Header title="Equipos" />
+      <div className="container mx-auto pt-10">
+        {/* <Suspense fallback={<p>Loading...</p>}> */}
+        <Tabs defaultValue="equipos" className="">
+          <TabsList>
+            <TabsTrigger value="equipos">Equipos</TabsTrigger>
+            <TabsTrigger value="tipo_articulos">Tipos de Artículos</TabsTrigger>
+            <TabsTrigger value="talles">Talles</TabsTrigger>
+            <TabsTrigger value="marcas">Marcas</TabsTrigger>
+            <TabsTrigger value="modelos">Modelos</TabsTrigger>
+            <TabsTrigger value="descuentos">Descuentos</TabsTrigger>
+          </TabsList>
+          <TabsContent value="equipos">
+            <EquiposContainer
+              equipos={equipos}
+              tipoArticulos={tipoArticulos}
+              descuentos={descuentos}
+            />
+          </TabsContent>
+          <TabsContent value="tipo_articulos">
+            <TipoArticulosContainer tipoArticulos={tipoArticulos} />
+          </TabsContent>
+          <TabsContent value="talles">
+            <TallesContainer talles={talles} />
+          </TabsContent>
+          <TabsContent value="marcas">
+            <MarcasContainer marcas={marcas} />
+          </TabsContent>
+          <TabsContent value="modelos">
+            <ModelosContainer modelos={modelos} marcas={marcas} />
+          </TabsContent>
+          <TabsContent value="descuentos">
+            <DescuentosContainer descuentos={descuentos} />
+          </TabsContent>
+        </Tabs>
+        {/* </Suspense> */}
+      </div>
+    </>
   )
 }
 

@@ -78,6 +78,7 @@ export default function ReservaEquipoList({ reservaId, estadoId }) {
             <List className="h-4 w-4" />
           </Button>
           <Button
+            disabled={estadoId === RESERVA_PAGADA_ID}
             variant="destructive"
             type="button"
             onClick={() => {

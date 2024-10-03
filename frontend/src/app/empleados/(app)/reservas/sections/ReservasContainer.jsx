@@ -74,23 +74,23 @@ export default function ReservasContainer() {
   const { estados, isLoading: isLoadingEstados } = useEstados({})
 
   const columns = [
-    {
-      id: 'acciones',
-      cell: ({ row }) => (
-        <ReservaTableActions
-          row={row.original}
-          openDeleteModal={() => {
-            setRow(row.original)
-            setOpenDeleteModal(true)
-          }}
-          openEditModal={() => {
-            setRow(row.original)
-            setEditing(true)
-            setOpenFormModal(true)
-          }}
-        />
-      ),
-    },
+    // {
+    //   id: 'acciones',
+    //   cell: ({ row }) => (
+    //     <ReservaTableActions
+    //       row={row.original}
+    //       openDeleteModal={() => {
+    //         setRow(row.original)
+    //         setOpenDeleteModal(true)
+    //       }}
+    //       openEditModal={() => {
+    //         setRow(row.original)
+    //         setEditing(true)
+    //         setOpenFormModal(true)
+    //       }}
+    //     />
+    //   ),
+    // },
     {
       header: 'Nro',
       accessorKey: 'id',

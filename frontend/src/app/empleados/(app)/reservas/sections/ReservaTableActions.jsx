@@ -39,14 +39,6 @@ export default function ReservaTableActions({
             Editar
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onClick={() => {
-              openDeleteModal()
-            }}>
-            <Trash className="mr-2 h-4 w-4" />
-            Eliminar
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
           <DropdownMenuItem>
             <Link
               href={`reservas/${row.id}`}
