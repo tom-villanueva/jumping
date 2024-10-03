@@ -146,9 +146,9 @@ export default function ReservaExtenderForm({
     resolver: zodResolver(reservaExtenderSchema),
     defaultValues: {
       es_extension: true,
-      fecha_desde: reserva?.fecha_hasta,
+      fecha_desde: today,
       fecha_hasta: '',
-      fecha_prueba: reserva?.fecha_hasta,
+      fecha_prueba: today,
     },
   })
 
