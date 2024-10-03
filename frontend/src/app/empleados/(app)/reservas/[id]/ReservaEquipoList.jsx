@@ -10,10 +10,11 @@ import { Button } from '@/components/ui/button'
 import { useState } from 'react'
 import CreateEditEntityModal from '@/components/crud/CreateEditEntityModal'
 import ReservaEquipoArticuloModal from './ReservaEquipoArticuloModal'
-import { List, Trash } from 'lucide-react'
+import { CircleDollarSign, List, Trash } from 'lucide-react'
 import DeleteEntityForm from '@/components/crud/DeleteEntityForm'
 import { useSWRConfig } from 'swr'
 import { RESERVA_PAGADA_ID } from '@/lib/utils'
+import ReservaEquipoPrecios from './ReservaEquipoPrecios'
 
 const RESERVA_EQUIPO_DEFAULT_VALUES = {
   altura: '',
@@ -28,7 +29,7 @@ const RESERVA_EQUIPO_DEFAULT_VALUES = {
 export default function ReservaEquipoList({ reservaId, estadoId }) {
   const { reservaEquipos, isLoading, isError } = useReservaEquipos({
     params: {
-      include: 'equipo,equipo.equipo_tipo_articulo',
+      include: 'equipo,equipo.equipo_tipo_articulo,precios,descuentos',
     },
     filters: [{ id: 'reserva_id', value: reservaId }],
   })
@@ -37,6 +38,7 @@ export default function ReservaEquipoList({ reservaId, estadoId }) {
   const [openArticuloFormModal, setOpenArticuloFormModal] = useState(false)
   const [openFormModal, setOpenFormModal] = useState(false)
   const [openDeleteModal, setOpenDeleteModal] = useState(false)
+  const [openPreciosModal, setOpenPreciosModal] = useState(false)
   const [editing, setEditing] = useState(false)
 
   const { mutate } = useSWRConfig()
@@ -76,6 +78,15 @@ export default function ReservaEquipoList({ reservaId, estadoId }) {
               setOpenArticuloFormModal(true)
             }}>
             <List className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="outline"
+            type="button"
+            onClick={() => {
+              setRow(row.original)
+              setOpenPreciosModal(true)
+            }}>
+            <CircleDollarSign className="h-4 w-4" />
           </Button>
           <Button
             disabled={estadoId === RESERVA_PAGADA_ID}
@@ -150,6 +161,12 @@ export default function ReservaEquipoList({ reservaId, estadoId }) {
         tipoArticulos={row?.equipo?.equipo_tipo_articulo}
         reservaEquipo={row}
         reservaId={reservaId}
+      />
+      <ReservaEquipoPrecios
+        open={openPreciosModal}
+        onOpenChange={() => setOpenPreciosModal(!openPreciosModal)}
+        precios={row?.precios ?? []}
+        descuentos={row?.descuentos ?? []}
       />
       <DataTable
         table={table}
