@@ -29,6 +29,7 @@ export default function EquipoDescuentoFormModal({
           <EquipoDescuentoForm equipo={equipo} descuentos={descuentos} />
           <EquipoDescuentoTable
             equipo={equipo}
+            descuentosAll={descuentos}
             descuentos={descuentosVigentes}
           />
         </div>

@@ -26,10 +26,11 @@ class UpdateEquipoDescuentoRequest extends FormRequest
     {
         return [
             'id' => 'required|exists:equipo_descuento,id',
-            'equipo_id' => ['required', 'exists:equipo,id', new NoOverlappingDiscountsUpdate()],
+            'dias' => 'required|integer|min:1',
+            // 'equipo_id' => ['required', 'exists:equipo,id', new NoOverlappingDiscountsUpdate()],
             'descuento_id' => 'exists:descuentos,id',
-            'fecha_desde' => 'date_format:Y-m-d|after_or_equal:today',
-            'fecha_hasta' => 'date_format:Y-m-d|after_or_equal:fecha_desde',
+            'fecha_desde' => 'nullable|date_format:Y-m-d|after_or_equal:today',
+            'fecha_hasta' => 'nullable|date_format:Y-m-d|after_or_equal:fecha_desde',
         ];
     }
 

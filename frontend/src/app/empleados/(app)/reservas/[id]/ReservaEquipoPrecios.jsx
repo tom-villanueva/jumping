@@ -11,7 +11,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { DataTable } from '@/components/client-table/data-table'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { convertToUTC } from '@/lib/utils'
 
 export default function ReservaEquipoPrecios({
@@ -28,32 +28,24 @@ export default function ReservaEquipoPrecios({
       rows.push({
         fecha_desde: p.fecha_desde,
         fecha_hasta: p.fecha_hasta,
-        valor: p.precio,
-        tipo: 'Precio',
+        precio: p.precio,
+        descuento:
+          descuentos && descuentos.length > 0 ? descuentos[0].descuento : null,
+        precio_descontado:
+          descuentos && descuentos.length > 0
+            ? p.precio - p.precio * (descuentos[0].descuento / 100)
+            : null,
       })
     })
-    descuentos.forEach(d => {
-      rows.push({
-        fecha_desde: d.fecha_desde,
-        fecha_hasta: d.fecha_hasta,
-        valor: d.descuento,
-        tipo: 'Descuento',
-      })
-    })
+
     return rows
   }, [precios, descuentos])
 
-  const columns = [
-    {
-      header: 'Tipo',
-      accessorKey: 'tipo',
-    },
+  const columnsPrecios = [
     {
       accessorKey: 'fecha_desde',
       id: 'fecha_desde_after',
       header: 'Fecha Inicio',
-      accesorFn: row =>
-        convertToUTC(row.original.fecha_desde).toLocaleDateString(),
       cell: ({ row }) => {
         return (
           <span>
@@ -66,7 +58,6 @@ export default function ReservaEquipoPrecios({
       accessorKey: 'fecha_hasta',
       id: 'fecha_hasta_before',
       header: 'Fecha Fin',
-      accesorFn: row => convertToUTC(row.fecha_hasta).toLocaleDateString(),
       cell: ({ row }) => {
         return (
           <span>
@@ -76,30 +67,48 @@ export default function ReservaEquipoPrecios({
       },
     },
     {
-      header: 'Valor',
-      // accessorKey: 'valor',
+      header: 'Precio base',
       cell: ({ row }) => {
         return (
           <span>
-            {row.original.tipo === 'Precio' ? (
-              <>
-                {new Intl.NumberFormat('es-AR', {
+            {new Intl.NumberFormat('es-AR', {
+              style: 'currency',
+              currency: 'ARS',
+            }).format(row.original.precio)}
+          </span>
+        )
+      },
+    },
+    {
+      header: 'Descuento',
+      cell: ({ row }) => {
+        return (
+          <span>
+            {row.original.descuento ? `${row.original.descuento}%` : '-'}
+          </span>
+        )
+      },
+    },
+    {
+      header: 'Precio final',
+      cell: ({ row }) => {
+        return (
+          <span>
+            {row.original.precio_descontado
+              ? new Intl.NumberFormat('es-AR', {
                   style: 'currency',
                   currency: 'ARS',
-                }).format(row.original.valor)}
-              </>
-            ) : (
-              <>{`${row.original.valor}%`}</>
-            )}
+                }).format(row.original.precio_descontado)
+              : '-'}
           </span>
         )
       },
     },
   ]
 
-  const table = useReactTable({
+  const tablePrecios = useReactTable({
     data: tableRows || [],
-    columns,
+    columns: columnsPrecios,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   })
@@ -110,12 +119,21 @@ export default function ReservaEquipoPrecios({
         <DialogHeader>
           <DialogTitle>{`Desglose del equipo`}</DialogTitle>
           <DialogDescription>
-            Desglose de precios y descuentos.
+            Desglose de precios y descuento.
           </DialogDescription>
         </DialogHeader>
         <div className="grid grid-cols-12">
           <div className="col-span-12">
-            <DataTable table={table} columns={columns} filters={[]} />
+            {descuentos && descuentos.length > 0 && (
+              <span>{`Descuento de ${descuentos[0].descuento}% por reserva de ${descuentos[0].dias} días.`}</span>
+            )}
+          </div>
+          <div className="col-span-12">
+            <DataTable
+              table={tablePrecios}
+              columns={columnsPrecios}
+              filters={[]}
+            />
           </div>
         </div>
       </DialogContent>

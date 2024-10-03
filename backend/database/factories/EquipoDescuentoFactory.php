@@ -19,14 +19,15 @@ class EquipoDescuentoFactory extends Factory
      */
     public function definition(): array
     {
-        $today = Carbon::now()->format('Y-m-d');
-        $todayPlusTenDays = Carbon::now()->addDays(10)->format('Y-m-d');
+        // $today = Carbon::now()->format('Y-m-d');
+        // $todayPlusTenDays = Carbon::now()->addDays(10)->format('Y-m-d');
 
         return [
             'equipo_id' => Equipo::factory()->create()->id,
             'descuento_id' => 1,
-            'fecha_desde' => $today,
-            'fecha_hasta' => $todayPlusTenDays
+            'fecha_desde' => null,
+            'fecha_hasta' => null,
+            'dias' => 3
         ];
     }
 }

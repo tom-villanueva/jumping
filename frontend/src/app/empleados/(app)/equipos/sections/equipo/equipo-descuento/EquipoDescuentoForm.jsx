@@ -26,37 +26,42 @@ import { z } from 'zod'
 import { Button } from '@/components/ui/button'
 import axios from 'axios'
 
-const today = formatDate(convertToUTC(new Date().setHours(0, 0, 0, 0)))
+// const today = formatDate(convertToUTC(new Date().setHours(0, 0, 0, 0)))
 
-const equipoDescuentoSchema = z
-  .object({
-    equipo_id: z.number(),
-    descuento_id: z
-      .string({
-        required_error: 'Debe elegir un descuento',
-      })
-      .min(1, 'Debe elegir un descuento'),
-    fecha_desde: z
-      .string({
-        required_error: 'Se requiere fecha inicio',
-      })
-      .date('Se requiere fecha inicio')
-      .refine(data => convertToUTC(data) >= new Date().setHours(0, 0, 0, 0), {
-        message: 'Fecha inicio tiene que ser igual o mayor a hoy.',
-      }),
-    fecha_hasta: z
-      .string({
-        required_error: 'Se requiere fecha fin',
-      })
-      .date('Se requiere fecha fin'),
-  })
-  .refine(
-    data => convertToUTC(data.fecha_hasta) >= convertToUTC(data.fecha_desde),
-    {
-      message: 'Fecha fin no puede ser menor a fecha inicio',
-      path: ['fecha_hasta'],
-    },
-  )
+const equipoDescuentoSchema = z.object({
+  equipo_id: z.number(),
+  descuento_id: z
+    .string({
+      required_error: 'Debe elegir un descuento',
+    })
+    .min(1, 'Debe elegir un descuento'),
+  dias: z
+    .number({
+      required_error: 'Se requiere precio',
+      invalid_type_error: 'Tiene que ser un número',
+    })
+    .nonnegative('No puede ser negativo'),
+  // fecha_desde: z
+  //   .string({
+  //     required_error: 'Se requiere fecha inicio',
+  //   })
+  //   .date('Se requiere fecha inicio')
+  //   .refine(data => convertToUTC(data) >= new Date().setHours(0, 0, 0, 0), {
+  //     message: 'Fecha inicio tiene que ser igual o mayor a hoy.',
+  //   }),
+  // fecha_hasta: z
+  //   .string({
+  //     required_error: 'Se requiere fecha fin',
+  //   })
+  //   .date('Se requiere fecha fin'),
+})
+// .refine(
+//   data => convertToUTC(data.fecha_hasta) >= convertToUTC(data.fecha_desde),
+//   {
+//     message: 'Fecha fin no puede ser menor a fecha inicio',
+//     path: ['fecha_hasta'],
+//   },
+// )
 
 export default function EquipoDescuentoForm({ equipo, descuentos }) {
   const { toast } = useToast()
@@ -67,8 +72,9 @@ export default function EquipoDescuentoForm({ equipo, descuentos }) {
     defaultValues: {
       equipo_id: equipo?.id,
       descuento_id: '',
-      fecha_desde: '',
-      fecha_hasta: '',
+      dias: 1,
+      // fecha_desde: '',
+      // fecha_hasta: '',
     },
   })
 
@@ -104,6 +110,7 @@ export default function EquipoDescuentoForm({ equipo, descuentos }) {
           })
         }
       },
+      throwOnError: false,
     },
   )
 
@@ -120,7 +127,7 @@ export default function EquipoDescuentoForm({ equipo, descuentos }) {
           control={form.control}
           name="descuento_id"
           render={({ field }) => (
-            <FormItem className="col-span-12 sm:col-span-4">
+            <FormItem className="col-span-12 sm:col-span-5">
               <FormLabel>Descuento</FormLabel>
               <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
@@ -142,7 +149,30 @@ export default function EquipoDescuentoForm({ equipo, descuentos }) {
             </FormItem>
           )}
         />
+
         <FormField
+          control={form.control}
+          name="dias"
+          render={({ field }) => (
+            <FormItem className="col-span-12 sm:col-span-5">
+              <FormLabel>Días</FormLabel>
+              <FormControl>
+                <Input
+                  id="dias"
+                  name="dias"
+                  type="number"
+                  placeholder="Escriba dias"
+                  className="col-span-12"
+                  min="0"
+                  {...field}
+                  onChange={event => field.onChange(+event.target.value)}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        {/* <FormField
           control={form.control}
           name="fecha_desde"
           render={({ field }) => (
@@ -167,12 +197,12 @@ export default function EquipoDescuentoForm({ equipo, descuentos }) {
               <FormMessage />
             </FormItem>
           )}
-        />
+        /> */}
         <Button type="submit" className="col-span-12 sm:col-span-2">
           {isMutating ? 'Guardando...' : 'Guardar'}
         </Button>
 
-        <FormField
+        {/* <FormField
           control={form.control}
           name="equipo_id"
           render={({ field }) => (
@@ -183,7 +213,7 @@ export default function EquipoDescuentoForm({ equipo, descuentos }) {
               <FormMessage />
             </FormItem>
           )}
-        />
+        /> */}
 
         {form.formState.errors.root && (
           <p className="col-span-12 text-sm text-red-500">

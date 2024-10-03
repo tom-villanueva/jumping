@@ -73,7 +73,7 @@ class Equipo extends BaseModel implements HasMedia
     public function equipo_descuento() 
     {
         return $this->belongsToMany(Descuento::class, 'equipo_descuento', 'equipo_id', 'descuento_id')
-            ->withPivot(['id', 'fecha_desde', 'fecha_hasta', 'deleted_at'])
+            ->withPivot(['id', 'fecha_desde', 'fecha_hasta', 'dias', 'deleted_at'])
             ->wherePivotNull('deleted_at')
             ->withTimestamps();
     }
@@ -87,23 +87,23 @@ class Equipo extends BaseModel implements HasMedia
 
     public function descuentos_vigentes()
     {
-        $today = Carbon::now()->format('Y-m-d');
+        // $today = Carbon::now()->format('Y-m-d');
         return $this->equipo_descuento()
-            ->whereDate('fecha_hasta', '>=', $today)
-            ->orderBy("fecha_hasta", 'asc');
+            // ->whereDate('fecha_hasta', '>=', $today)
+            ->orderBy("dias", 'asc');
     }
 
-    public function descuentos_vigentes_en_rango($startDate, $endDate)
-    {
-        return $this->equipo_descuento()
-            ->where(function ($query) use ($startDate, $endDate) {
-                $query->where(function ($query) use ($startDate, $endDate) {
-                    $query->whereDate('fecha_desde', '<=', $endDate)
-                        ->whereDate('fecha_hasta', '>=', $startDate);
-                });
-            })
-            ->orderBy('fecha_hasta', 'asc');
-    }
+    // public function descuentos_vigentes_en_rango($startDate, $endDate)
+    // {
+    //     return $this->equipo_descuento()
+    //         ->where(function ($query) use ($startDate, $endDate) {
+    //             $query->where(function ($query) use ($startDate, $endDate) {
+    //                 $query->whereDate('fecha_desde', '<=', $endDate)
+    //                     ->whereDate('fecha_hasta', '>=', $startDate);
+    //             });
+    //         })
+    //         ->orderBy('fecha_hasta', 'asc');
+    // }
 
     // reservas 
     public function reservas()

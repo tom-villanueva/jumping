@@ -25,26 +25,27 @@ class UpdateEquipoDescuentoController extends Controller
             $descuentoEntrante = $request->only([
                 'equipo_id', 
                 'descuento_id', 
-                'fecha_desde', 
-                'fecha_hasta'
+                'dias'
             ]);
 
-            $cambioFechas = $this->checkCambioFechas($descuentoEntrante, $descuentoVigente);
+            // $cambioFechas = $this->checkCambioFechas($descuentoEntrante, $descuentoVigente);
             
-            $reservas = ReservaEquipoDescuento::where('equipo_descuento_id', $equipo_descuento_id)->count();
+            // $reservas = ReservaEquipoDescuento::where('equipo_descuento_id', $equipo_descuento_id)->count();
 
-            $tieneReservasAsociadas = $reservas > 0;
-            $updated_entity = $descuentoVigente;
+            // $tieneReservasAsociadas = $reservas > 0;
+            // $updated_entity = $descuentoVigente;
 
-            if($cambioFechas && $tieneReservasAsociadas) {
-                // soft delete
-                $this->repository->delete($equipo_descuento_id);
-                // attach nuevo
-                $updated_entity = $this->repository->create($descuentoEntrante);
-            } else if($cambioFechas && !$tieneReservasAsociadas) {
-                // sync de fechas
-                $updated_entity = $this->repository->update($equipo_descuento_id, $descuentoEntrante);
-            }
+            // if($cambioFechas && $tieneReservasAsociadas) {
+            //     // soft delete
+            //     $this->repository->delete($equipo_descuento_id);
+            //     // attach nuevo
+            //     $updated_entity = $this->repository->create($descuentoEntrante);
+            // } else if($cambioFechas && !$tieneReservasAsociadas) {
+            //     // sync de fechas
+            //     $updated_entity = $this->repository->update($equipo_descuento_id, $descuentoEntrante);
+            // }
+            $updated_entity = $this->repository->update($equipo_descuento_id, $descuentoEntrante);
+
 
             DB::commit();
         } catch (\Throwable $th) {

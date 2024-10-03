@@ -19,7 +19,11 @@ import { Button } from '@/components/ui/button'
 import DeleteEntityForm from '../../../../../../../components/crud/DeleteEntityForm'
 import EquipoDescuentoUpdateFormModal from './EquipoDescuentoUpdateFormModal'
 
-export default function EquipoDescuentoTable({ descuentos, equipo }) {
+export default function EquipoDescuentoTable({
+  descuentos,
+  equipo,
+  descuentosAll,
+}) {
   const [selectedDescuento, setSelectedDescuento] = useState(null)
   const [openUpdateFechasModal, setOpenUpdateFechasModal] = useState(false)
   const [openDeleteForm, setOpenDeleteForm] = useState(false)
@@ -47,25 +51,33 @@ export default function EquipoDescuentoTable({ descuentos, equipo }) {
       },
     },
     {
-      accessorKey: 'fecha_desde',
-      header: 'Fecha Inicio',
+      accesorKey: 'dias',
+      header: 'Días',
       cell: ({ row }) => {
         const pivot = row.original.pivot
-        return (
-          <span>{convertToUTC(pivot?.fecha_desde).toLocaleDateString()}</span>
-        )
+        return <span>{pivot?.dias}</span>
       },
     },
-    {
-      accessorKey: 'fecha_hasta',
-      header: 'Fecha Fin',
-      cell: ({ row }) => {
-        const pivot = row.original.pivot
-        return (
-          <span>{convertToUTC(pivot?.fecha_hasta).toLocaleDateString()}</span>
-        )
-      },
-    },
+    // {
+    //   accessorKey: 'fecha_desde',
+    //   header: 'Fecha Inicio',
+    //   cell: ({ row }) => {
+    //     const pivot = row.original.pivot
+    //     return (
+    //       <span>{convertToUTC(pivot?.fecha_desde).toLocaleDateString()}</span>
+    //     )
+    //   },
+    // },
+    // {
+    //   accessorKey: 'fecha_hasta',
+    //   header: 'Fecha Fin',
+    //   cell: ({ row }) => {
+    //     const pivot = row.original.pivot
+    //     return (
+    //       <span>{convertToUTC(pivot?.fecha_hasta).toLocaleDateString()}</span>
+    //     )
+    //   },
+    // },
     {
       accessorKey: 'acciones',
       header: 'Acciones',
@@ -128,6 +140,7 @@ export default function EquipoDescuentoTable({ descuentos, equipo }) {
           setSelectedDescuento(null)
           setOpenUpdateFechasModal(!openUpdateFechasModal)
         }}
+        descuentos={descuentosAll}
         descuento={selectedDescuento}
         equipo={equipo}
       />

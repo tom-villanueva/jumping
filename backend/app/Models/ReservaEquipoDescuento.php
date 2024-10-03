@@ -16,7 +16,8 @@ class ReservaEquipoDescuento extends BaseModel
         'equipo_descuento_id',
         'descuento',
         'fecha_desde',
-        'fecha_hasta'
+        'fecha_hasta',
+        'dias'
     ];
 
     /**

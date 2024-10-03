@@ -204,6 +204,8 @@ class Reserva extends BaseModel
 
         $startDate = Carbon::parse($this->fecha_desde);
         $endDate = Carbon::parse($this->fecha_hasta);
+
+        $descuento = $reservaEquipo->descuentos()->first();
         // $array = [];
         // Fetch the applicable prices within the reservation date range
         foreach ($reservaEquipo->precios as $reservaEquipoPrecio) {
@@ -218,17 +220,23 @@ class Reserva extends BaseModel
             $daysForThisPrice = $this->getOverlappingDays($startDate, $endDate, $precioStartDate, $precioEndDate);
             // $array[] = $daysForThisPrice;
             // Calculate the total price for this period
-            $priceForThisPeriod = $reservaEquipoPrecio->precio * $daysForThisPrice;
+            $priceForThisPeriod = 0;
+
+            if (!empty($descuento)) {
+                $priceForThisPeriod = ($reservaEquipoPrecio->precio - ($reservaEquipoPrecio->precio * ($descuento->descuento / 100))) * $daysForThisPrice;
+            } else {
+                $priceForThisPeriod = $reservaEquipoPrecio->precio * $daysForThisPrice;
+            }
 
             // Apply any overlapping discounts
-            $priceForThisPeriod -= $this->applyOverlappingDiscountsForPrice(
-                $reservaEquipo,
-                $reservaEquipoPrecio,
-                $precioStartDate,
-                $precioEndDate,
-                $startDate,
-                $endDate
-            );
+            // $priceForThisPeriod -= $this->applyOverlappingDiscountsForPrice(
+            //     $reservaEquipo,
+            //     $reservaEquipoPrecio,
+            //     $precioStartDate,
+            //     $precioEndDate,
+            //     $startDate,
+            //     $endDate
+            // );
 
             // Add the discounted price to the total price
             $totalPrice += $priceForThisPeriod;
@@ -250,44 +258,44 @@ class Reserva extends BaseModel
      * @param Carbon $reservaEndDate
      * @return float The total discount amount for the given price period
      */
-    private function applyOverlappingDiscountsForPrice(
-        ReservaEquipo $reservaEquipo,
-        ReservaEquipoPrecio $reservaEquipoPrecio,
-        Carbon $precioStartDate,
-        Carbon $precioEndDate,
-        Carbon $reservaStartDate,
-        Carbon $reservaEndDate,
-    ) {
-        $totalDiscount = 0;
-        // $array = [];
-        foreach ($reservaEquipo->descuentos as $reservaEquipoDescuento) {
-            // $equipoDescuento = $reservaEquipoDescuento->equipo_descuento()->withTrashed()->first();
+    // private function applyOverlappingDiscountsForPrice(
+    //     ReservaEquipo $reservaEquipo,
+    //     ReservaEquipoPrecio $reservaEquipoPrecio,
+    //     Carbon $precioStartDate,
+    //     Carbon $precioEndDate,
+    //     Carbon $reservaStartDate,
+    //     Carbon $reservaEndDate,
+    // ) {
+    //     $totalDiscount = 0;
+    //     // $array = [];
+    //     foreach ($reservaEquipo->descuentos as $reservaEquipoDescuento) {
+    //         // $equipoDescuento = $reservaEquipoDescuento->equipo_descuento()->withTrashed()->first();
 
-            // if ($equipoDescuento) {
-            // Compare the date ranges for the discount
-            $descuentoStartDate = Carbon::parse($reservaEquipoDescuento->fecha_desde);
-            $descuentoEndDate = Carbon::parse($reservaEquipoDescuento->fecha_hasta);
+    //         // if ($equipoDescuento) {
+    //         // Compare the date ranges for the discount
+    //         $descuentoStartDate = Carbon::parse($reservaEquipoDescuento->fecha_desde);
+    //         $descuentoEndDate = Carbon::parse($reservaEquipoDescuento->fecha_hasta);
 
-            $periodDescuento = Period::make($descuentoStartDate, $descuentoEndDate);
-            $periodPrecio = Period::make($precioStartDate, $precioEndDate);
+    //         $periodDescuento = Period::make($descuentoStartDate, $descuentoEndDate);
+    //         $periodPrecio = Period::make($precioStartDate, $precioEndDate);
 
-            if ($periodDescuento->overlapsWith($periodPrecio)) {
-                $periodReserva = Period::make($reservaStartDate, $reservaEndDate);
-                $periodWithReserva = $periodDescuento->overlap($periodPrecio, $periodReserva);
-                $daysForThisDiscount = $periodWithReserva->length();
+    //         if ($periodDescuento->overlapsWith($periodPrecio)) {
+    //             $periodReserva = Period::make($reservaStartDate, $reservaEndDate);
+    //             $periodWithReserva = $periodDescuento->overlap($periodPrecio, $periodReserva);
+    //             $daysForThisDiscount = $periodWithReserva->length();
 
-                if ($daysForThisDiscount > 0) {
-                    // Calculate the discount for the applicable overlapping days
-                    $discountPerDay = $reservaEquipoPrecio->precio * ($reservaEquipoDescuento->descuento / 100);
-                    $totalDiscount += $discountPerDay * $daysForThisDiscount;
-                    // $array[$periodWithReserva->asString()] = $discountPerDay * $daysForThisDiscount;
-                }
-            }
-            // }
-        }
+    //             if ($daysForThisDiscount > 0) {
+    //                 // Calculate the discount for the applicable overlapping days
+    //                 $discountPerDay = $reservaEquipoPrecio->precio * ($reservaEquipoDescuento->descuento / 100);
+    //                 $totalDiscount += $discountPerDay * $daysForThisDiscount;
+    //                 // $array[$periodWithReserva->asString()] = $discountPerDay * $daysForThisDiscount;
+    //             }
+    //         }
+    //         // }
+    //     }
 
-        return $totalDiscount;
-    }
+    //     return $totalDiscount;
+    // }
 
     /**
      * Calculate the number of overlapping days between two date ranges.

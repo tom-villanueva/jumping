@@ -25,10 +25,11 @@ class StoreEquipoDescuentoRequest extends FormRequest
     public function rules()
     {
         return [
-            'equipo_id' => ['required', 'exists:equipo,id', new NoOverlappingDiscounts()],
+            // 'equipo_id' => ['required', 'exists:equipo,id', new NoOverlappingDiscounts()],
             'descuento_id' => 'required|exists:descuentos,id',
-            'fecha_desde' => 'date_format:Y-m-d|after_or_equal:today',
-            'fecha_hasta' => 'date_format:Y-m-d|after_or_equal:fecha_desde',
+            'fecha_desde' => 'nullable|date_format:Y-m-d|after_or_equal:today',
+            'fecha_hasta' => 'nullable|date_format:Y-m-d|after_or_equal:fecha_desde',
+            'dias' => 'required|integer|min:1'
         ];
     }
 

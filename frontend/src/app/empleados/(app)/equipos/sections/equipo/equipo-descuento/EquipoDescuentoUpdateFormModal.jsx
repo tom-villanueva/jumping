@@ -23,33 +23,51 @@ import { z } from 'zod'
 import useSWRMutation from 'swr/mutation'
 import { useSWRConfig } from 'swr'
 import { Button } from '@/components/ui/button'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import axios from 'axios'
 
 const today = formatDate(convertToUTC(new Date().setHours(0, 0, 0, 0)))
 
-const equipoDescuentoEditSchema = z
-  .object({
-    equipo_id: z.number(),
-    fecha_desde: z
-      .string({
-        required_error: 'Se requiere fecha inicio',
-      })
-      .date('Se requiere fecha inicio')
-      .refine(data => convertToUTC(data) >= new Date().setHours(0, 0, 0, 0), {
-        message: 'Fecha inicio tiene que ser igual o mayor a hoy.',
-      }),
-    fecha_hasta: z
-      .string({
-        required_error: 'Se requiere fecha fin',
-      })
-      .date('Se requiere fecha fin'),
-  })
-  .refine(
-    data => convertToUTC(data.fecha_hasta) >= convertToUTC(data.fecha_desde),
-    {
-      message: 'Fecha fin no puede ser menor a fecha inicio',
-      path: ['fecha_hasta'],
-    },
-  )
+const equipoDescuentoEditSchema = z.object({
+  equipo_id: z.number(),
+  descuento_id: z
+    .string({
+      required_error: 'Debe elegir un descuento',
+    })
+    .min(1, 'Debe elegir un descuento'),
+  dias: z
+    .number({
+      required_error: 'Se requiere precio',
+      invalid_type_error: 'Tiene que ser un número',
+    })
+    .nonnegative('No puede ser negativo'),
+  // fecha_desde: z
+  //   .string({
+  //     required_error: 'Se requiere fecha inicio',
+  //   })
+  //   .date('Se requiere fecha inicio')
+  //   .refine(data => convertToUTC(data) >= new Date().setHours(0, 0, 0, 0), {
+  //     message: 'Fecha inicio tiene que ser igual o mayor a hoy.',
+  //   }),
+  // fecha_hasta: z
+  //   .string({
+  //     required_error: 'Se requiere fecha fin',
+  //   })
+  //   .date('Se requiere fecha fin'),
+})
+// .refine(
+//   data => convertToUTC(data.fecha_hasta) >= convertToUTC(data.fecha_desde),
+//   {
+//     message: 'Fecha fin no puede ser menor a fecha inicio',
+//     path: ['fecha_hasta'],
+//   },
+// )
 
 export default function EquipoDescuentoUpdateFormModal({
   openForm,
@@ -57,6 +75,7 @@ export default function EquipoDescuentoUpdateFormModal({
   onFormSubmit,
   descuento,
   equipo,
+  descuentos,
 }) {
   const { toast } = useToast()
   const { mutate } = useSWRConfig()
@@ -95,6 +114,7 @@ export default function EquipoDescuentoUpdateFormModal({
           })
         }
       },
+      throwOnError: false,
     },
   )
 
@@ -102,23 +122,28 @@ export default function EquipoDescuentoUpdateFormModal({
     resolver: zodResolver(equipoDescuentoEditSchema),
     defaultValues: {
       equipo_id: equipo?.id,
-      fecha_desde: '',
-      fecha_hasta: '',
+      descuento_id: String(descuento?.pivot?.descuento_id),
+      dias: descuento?.pivot?.dias,
+      // fecha_desde: '',
+      // fecha_hasta: '',
     },
   })
 
   useEffect(() => {
     form.setValue('equipo_id', equipo?.id)
-    form.setValue('fecha_desde', descuento?.pivot?.fecha_desde)
-    form.setValue('fecha_hasta', descuento?.pivot?.fecha_hasta)
+    form.setValue('descuento_id', String(descuento?.pivot?.descuento_id))
+    form.setValue('dias', descuento?.pivot?.dias)
+    // form.setValue('fecha_desde', descuento?.pivot?.fecha_desde)
+    // form.setValue('fecha_hasta', descuento?.pivot?.fecha_hasta)
   }, [descuento, equipo])
 
   function onSubmit(values) {
     const data = {
       id: descuento?.pivot?.id,
-      descuento_id: descuento?.id,
+      // descuento_id: descuento?.id,
       ...values,
     }
+
     trigger({ id: descuento?.pivot?.id, data })
   }
 
@@ -126,13 +151,13 @@ export default function EquipoDescuentoUpdateFormModal({
     <Dialog open={openForm} onOpenChange={() => setOpenForm(!openForm)}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Cambiar fechas a descuento</DialogTitle>
+          <DialogTitle>Editar descuento</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
             className="grid w-full grid-cols-12 gap-2">
-            <FormField
+            {/* <FormField
               name="fecha_desde"
               control={form.control}
               render={({ field }) => (
@@ -167,13 +192,62 @@ export default function EquipoDescuentoUpdateFormModal({
                   <FormMessage />
                 </FormItem>
               )}
+            /> */}
+            <FormField
+              control={form.control}
+              name="descuento_id"
+              render={({ field }) => (
+                <FormItem className="col-span-12 sm:col-span-6">
+                  <FormLabel>Descuento</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Seleccione un descuento" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {descuentos?.map(descuento => (
+                        <SelectItem
+                          key={descuento?.id}
+                          value={String(descuento?.id)}>
+                          {`${descuento?.descripcion} (${descuento?.valor}%)`}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
 
-            <Button type="submit" className="col-span-12 sm:col-span-2">
+            <FormField
+              control={form.control}
+              name="dias"
+              render={({ field }) => (
+                <FormItem className="col-span-12 sm:col-span-6">
+                  <FormLabel>Días</FormLabel>
+                  <FormControl>
+                    <Input
+                      id="dias"
+                      name="dias"
+                      type="number"
+                      placeholder="Escriba dias"
+                      className="col-span-12"
+                      min="0"
+                      {...field}
+                      onChange={event => field.onChange(+event.target.value)}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <Button type="submit" className="col-span-12">
               {isMutating ? 'Guardando...' : 'Guardar'}
             </Button>
 
-            <FormField
+            {/* <FormField
               control={form.control}
               name="equipo_id"
               render={({ field }) => (
@@ -184,7 +258,7 @@ export default function EquipoDescuentoUpdateFormModal({
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            /> */}
 
             {form.formState.errors.root && (
               <p className="col-span-12 text-sm text-red-500">

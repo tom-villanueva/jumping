@@ -78,21 +78,22 @@ class StoreReservaEquipoControllerTest extends TestCase
 
         $descuento0 = EquipoDescuento::factory()->create([
             'equipo_id' => $equipo->id,
-            'fecha_desde' => Carbon::now()->subDays(10),
-            'fecha_hasta' => Carbon::now()->subDays(1)
+            'dias' => 6
+            // 'fecha_desde' => Carbon::now()->subDays(10),
+            // 'fecha_hasta' => Carbon::now()->subDays(1)
         ]);
 
-        $descuento1 = EquipoDescuento::factory()->create([
-            'equipo_id' => $equipo->id,
-            'fecha_desde' => Carbon::now()->subDay(),
-            'fecha_hasta' => Carbon::now()->addDays(2)
-        ]);
+        // $descuento1 = EquipoDescuento::factory()->create([
+        //     'equipo_id' => $equipo->id,
+        //     'fecha_desde' => Carbon::now()->subDay(),
+        //     'fecha_hasta' => Carbon::now()->addDays(2)
+        // ]);
 
-        $descuento2 = EquipoDescuento::factory()->create([
-            'equipo_id' => $equipo->id,
-            'fecha_desde' => Carbon::now()->addDays(3),
-            'fecha_hasta' => Carbon::now()->addDays(10)
-        ]);
+        // $descuento2 = EquipoDescuento::factory()->create([
+        //     'equipo_id' => $equipo->id,
+        //     'fecha_desde' => Carbon::now()->addDays(3),
+        //     'fecha_hasta' => Carbon::now()->addDays(10)
+        // ]);
 
         // Prepare request data
         $data = [
@@ -138,20 +139,21 @@ class StoreReservaEquipoControllerTest extends TestCase
             'fecha_hasta' => $reserva->fecha_hasta
         ]);
 
-        // Assert that the correct ReservaEquipoDescuento records are created
+        // Assert that the correct ReservaEquipoDescuento recordD is created
         $this->assertDatabaseHas('reserva_equipo_descuento', [
             'reserva_equipo_id' => $response['id'],
-            'equipo_descuento_id' => $descuento1->id,
-            'descuento' => $descuento1->descuento->valor,
-            'fecha_desde' => $descuento1->fecha_desde,
-            'fecha_hasta' => $descuento1->fecha_hasta
+            'equipo_descuento_id' => $descuento0->id,
+            'descuento' => $descuento0->descuento->valor,
+            'dias' => $descuento0->dias
+            // 'fecha_desde' => $descuento1->fecha_desde,
+            // 'fecha_hasta' => $descuento1->fecha_hasta
         ]);
-        $this->assertDatabaseHas('reserva_equipo_descuento', [
-            'reserva_equipo_id' => $response['id'],
-            'equipo_descuento_id' => $descuento2->id,
-            'descuento' => $descuento2->descuento->valor,
-            'fecha_desde' => $descuento2->fecha_desde,
-            'fecha_hasta' => $descuento2->fecha_hasta
-        ]);
+        // $this->assertDatabaseHas('reserva_equipo_descuento', [
+        //     'reserva_equipo_id' => $response['id'],
+        //     'equipo_descuento_id' => $descuento2->id,
+        //     'descuento' => $descuento2->descuento->valor,
+        //     'fecha_desde' => $descuento2->fecha_desde,
+        //     'fecha_hasta' => $descuento2->fecha_hasta
+        // ]);
     }
 }

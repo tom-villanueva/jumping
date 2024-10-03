@@ -244,22 +244,24 @@ class ReservaTest extends ModelTestCase
         $equipoDescuento = EquipoDescuento::factory()->create([
             'descuento_id' => 2,
             'equipo_id' => $equipo->id,
-            'fecha_desde' => Carbon::now()->subDays(2),
-            'fecha_hasta' => Carbon::now()->addDays(2),
+            'dias' => 6
+            // 'fecha_desde' => Carbon::now()->subDays(2),
+            // 'fecha_hasta' => Carbon::now()->addDays(2),
         ]);
 
         ReservaEquipoDescuento::factory()->create([
             'reserva_equipo_id' => $reservaEquipo->id,
             'equipo_descuento_id' => $equipoDescuento->id,
-            'fecha_desde' => $equipoDescuento->fecha_desde,
-            'fecha_hasta' => $equipoDescuento->fecha_hasta,
+            'dias' => $equipoDescuento->dias,
+            // 'fecha_desde' => $equipoDescuento->fecha_desde,
+            // 'fecha_hasta' => $equipoDescuento->fecha_hasta,
             'descuento' => $equipoDescuento->descuento->valor,
         ]);
 
         // Call the getTotalPrice method
         $totalPrice = $reserva->calculateTotalPrice();
-
-        $this->assertEquals(540, $totalPrice);
+        // dd($totalPrice);
+        $this->assertEquals(480, $totalPrice);
     }
 
     /** @test */
@@ -325,7 +327,7 @@ class ReservaTest extends ModelTestCase
         // - 3 days at $100/day (for equipoPrecio1) = 3 * 100 = 300
         // - 3 days at $150/day (for equipoPrecio2) = 3 * 150 = 400
         $expectedTotalPrice = 300 + 450;
-
+        
         // Assert that the calculated total price is correct
         $this->assertEquals($expectedTotalPrice, round($totalPrice, 2));
     }
@@ -384,53 +386,45 @@ class ReservaTest extends ModelTestCase
         $equipoDescuento1 = EquipoDescuento::factory()->create([
             'descuento_id' => 2, // 20% discount
             'equipo_id' => $equipo->id,
-            'fecha_desde' => Carbon::now()->subDays(15), // 11-09
-            'fecha_hasta' => Carbon::now()->subDays(2),  // 24-09
+            'dias' => 6
+            // 'fecha_desde' => Carbon::now()->subDays(15), // 11-09
+            // 'fecha_hasta' => Carbon::now()->subDays(2),  // 24-09
         ]);
 
         // Create a discount for the overlapping period with the second EquipoPrecio
-        $equipoDescuento2 = EquipoDescuento::factory()->create([
-            'descuento_id' => 1, // 10% discount
-            'equipo_id' => $equipo->id,
-            'fecha_desde' => Carbon::now()->subDays(1),  // 25-09
-            'fecha_hasta' => Carbon::now()->addDays(3),  // 29-09
-        ]);
+        // $equipoDescuento2 = EquipoDescuento::factory()->create([
+        //     'descuento_id' => 1, // 10% discount
+        //     'equipo_id' => $equipo->id,
+            // 'fecha_desde' => Carbon::now()->subDays(1),  // 25-09
+            // 'fecha_hasta' => Carbon::now()->addDays(3),  // 29-09
+        // ]);
 
         // Attach both discounts to the ReservaEquipo
         ReservaEquipoDescuento::factory()->create([
             'reserva_equipo_id' => $reservaEquipo->id,
             'equipo_descuento_id' => $equipoDescuento1->id,
-            'fecha_desde' => $equipoDescuento1->fecha_desde,
-            'fecha_hasta' => $equipoDescuento1->fecha_hasta,
+            'dias' => 6,
+            // 'fecha_desde' => $equipoDescuento1->fecha_desde,
+            // 'fecha_hasta' => $equipoDescuento1->fecha_hasta,
             'descuento' => $equipoDescuento1->descuento->valor,
         ]);
 
-        ReservaEquipoDescuento::factory()->create([
-            'reserva_equipo_id' => $reservaEquipo->id,
-            'equipo_descuento_id' => $equipoDescuento2->id,
-            'fecha_desde' => $equipoDescuento2->fecha_desde,
-            'fecha_hasta' => $equipoDescuento2->fecha_hasta,
-            'descuento' => $equipoDescuento2->descuento->valor,
-        ]);
+        // ReservaEquipoDescuento::factory()->create([
+        //     'reserva_equipo_id' => $reservaEquipo->id,
+        //     'equipo_descuento_id' => $equipoDescuento2->id,
+        //     'fecha_desde' => $equipoDescuento2->fecha_desde,
+        //     'fecha_hasta' => $equipoDescuento2->fecha_hasta,
+        //     'descuento' => $equipoDescuento2->descuento->valor,
+        // ]);
 
         // Call the calculateTotalPrice method
         $totalPrice = $reserva->calculateTotalPrice();
 
         // Explanation of expected total price:
-        // - 3 days at $100/day (for equipoPrecio1) = 3 * 100 = 300
-        // - 3 days at $150/day (for equipoPrecio2) = 3 * 150 = 450
+        // - 3 days at $100/day (for equipoPrecio1) = 3 * (100 * 0.2) = 240
+        // - 3 days at $150/day (for equipoPrecio2) = 3 * (150 * 0.2) = 360
 
-        // Applying discounts:
-        // - Descuento1: 20% discount for 3 days (on $100/day): 3 * 100 * 0.2 = 60 discount
-        // - Descuento1: 20% discount for 1 days (on $150/day): 1 * 150 * 0.2 = 30 discount
-        // - Descuento2: 10% discount for 3 days (on $150/day): 2 * 150 * 0.1 = 30 discount
-
-        // Final expected total:
-        // 300 - 60 = 240  (for equipoPrecio1 with discount)
-        // 450 - 60 = 390  (for equipoPrecio2 with discount)
-        // Total: 240 + 390 = 630
-
-        $expectedTotalPrice = 240 + 390;
+        $expectedTotalPrice = 240 + 360;
 
         // Assert that the calculated total price is correct
         $this->assertEquals($expectedTotalPrice, round($totalPrice, 2));
