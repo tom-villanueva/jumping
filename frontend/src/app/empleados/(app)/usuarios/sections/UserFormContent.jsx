@@ -16,56 +16,48 @@ import {
 } from '@/components/ui/form'
 import { Button } from '@/components/ui/button'
 import { z } from 'zod'
-import { Checkbox } from '@/components/ui/checkbox'
 import axios from 'axios'
 
-const empleadoSchema = z.object({
+const userSchema = z.object({
   name: z.string().min(1, 'Se requiere nombre'),
   email: z.string().email().min(1, 'Se requiere email'),
   password: z.string().min(1, 'Se requiere contraseña'),
   password_confirmation: z.string().min(1, 'Se requiere repetir contraseña'),
-  isAdmin: z.boolean(),
 })
 
-const empleadoEditSchema = z.object({
+const userEditSchema = z.object({
   name: z.string().min(1, 'Se requiere nombre'),
   email: z.string().email().min(1, 'Se requiere email'),
   password: z.string().nullable(),
   password_confirmation: z.string().nullable(),
-  isAdmin: z.boolean(),
 })
 
-export default function EmpleadoFormContent({
-  onFormSubmit,
-  empleado,
-  editing,
-}) {
+export default function UserFormContent({ onFormSubmit, user, editing }) {
   const { toast } = useToast()
   const { mutate } = useSWRConfig()
 
   const form = useForm({
-    resolver: zodResolver(editing ? empleadoEditSchema : empleadoSchema),
+    resolver: zodResolver(editing ? userEditSchema : userSchema),
     defaultValues: {
-      name: empleado.name ?? '',
-      email: empleado.email ?? '',
-      password: empleado.password ?? '',
-      password_confirmation: empleado.password ?? '',
-      isAdmin: empleado.isAdmin ?? false,
+      name: user.name ?? '',
+      email: user.email ?? '',
+      password: user.password ?? '',
+      password_confirmation: user.password ?? '',
     },
   })
 
   const { trigger, isMutating } = useSWRMutation(
-    '/api/empleados',
+    '/api/users',
     editing ? updateFetcher : storeFetcher,
     {
       onSuccess() {
         toast({
           title: editing
-            ? `😄 Empleado modificada con éxito`
-            : `😄 Empleado agregada con éxito`,
+            ? `😄 User modificado con éxito`
+            : `😄 User agregado con éxito`,
         })
         form.reset()
-        mutate(key => Array.isArray(key) && key[0] === '/api/empleados')
+        mutate(key => Array.isArray(key) && key[0] === '/api/users')
         onFormSubmit()
       },
       onError(err) {
@@ -102,7 +94,7 @@ export default function EmpleadoFormContent({
     }
 
     if (editing) {
-      trigger({ id: empleado?.id, data })
+      trigger({ id: user?.id, data })
     } else {
       trigger({ data })
     }
@@ -196,26 +188,6 @@ export default function EmpleadoFormContent({
                 />
               </FormControl>
               <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="isAdmin"
-          render={({ field }) => (
-            <FormItem className="col-span-12 flex items-center space-x-2">
-              <FormControl>
-                <Checkbox
-                  id="isAdmin"
-                  name="isAdmin"
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              </FormControl>
-              <FormLabel className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                Es administrador
-              </FormLabel>
             </FormItem>
           )}
         />

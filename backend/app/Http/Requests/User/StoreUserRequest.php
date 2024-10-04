@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Empleado;
+namespace App\Http\Requests\User;
 
-use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateEmpleadoRequest extends FormRequest
+class StoreUserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,7 +23,6 @@ class UpdateEmpleadoRequest extends FormRequest
      */
     public function rules()
     {
-        $empleado_id = $this->route('id');
         return [
             'name' => [
                 'required',   // Name is required
@@ -36,19 +34,15 @@ class UpdateEmpleadoRequest extends FormRequest
                 'string',     // Should be a string
                 'email',      // Ensure valid email format
                 'max:255',    // Limit the email length
-                'unique:empleados,email,'.$empleado_id  // Ensure the email is unique in the users table
+                'unique:users,email'  // Ensure the email is unique in the users table
             ],
             'password' => [
-                'nullable',   // Password is not required
+                'required',   // Password is required
                 'string',     // Ensure it's a string
                 'min:8',      // Minimum password length for security
                 'confirmed',  // Make sure the password is confirmed
                 'regex:/[A-Z]/',       // At least one uppercase letter
                 'regex:/[@$!%*?&]/',   // At least one special character
-            ],
-            'isAdmin' => [
-                'required',   // isAdmin must be provided
-                'boolean'     // Ensure it's a boolean value
             ],
         ];
     }
@@ -56,6 +50,7 @@ class UpdateEmpleadoRequest extends FormRequest
     public function messages()
     {
         return [
+ 
         ];
     }
 }

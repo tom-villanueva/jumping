@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\QueryBuilder\AllowedFilter;
 
 class Empleado extends Authenticatable
 {
@@ -52,6 +53,8 @@ class Empleado extends Authenticatable
     public function allowedFilters()
     {
         return [
+            AllowedFilter::beginsWithStrict('email'),
+            AllowedFilter::beginsWithStrict('name'),
         ];
     }
 

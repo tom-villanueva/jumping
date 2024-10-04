@@ -1,29 +1,23 @@
 import { Button } from '@/components/ui/button'
 import { Edit, Trash } from 'lucide-react'
 import DeleteEntityForm from '@/components/crud/DeleteEntityForm'
-import { useAuth } from '@/hooks/auth-empleados'
 import { useState } from 'react'
 import CreateEditEntityModal from '@/components/crud/CreateEditEntityModal'
-import EmpleadoFormContent from './EmpleadoFormContent'
-import EmpleadosTable from './EmpleadosTable'
+import UserFormContent from './UserFormContent'
+import UsersTable from './UsersTable'
 
-const EMPLEADO_DEFAULT_VALUES = {
+const USER_DEFAULT_VALUES = {
   name: '',
   email: '',
   password: '',
   password_confirmation: '',
-  isAdmin: false,
 }
 
-export default function EmpleadosContainer({}) {
-  const { user } = useAuth({ middleware: 'auth' })
-
+export default function UsersContainer({}) {
   const [editing, setEditing] = useState(false)
   const [openForm, setOpenForm] = useState(false)
   const [openDeleteForm, setOpenDeleteForm] = useState(false)
-  const [selectedEmpleado, setSelectedEmpleado] = useState(
-    EMPLEADO_DEFAULT_VALUES,
-  )
+  const [selectedUser, setSelectedUser] = useState(USER_DEFAULT_VALUES)
 
   const columns = [
     {
@@ -39,37 +33,31 @@ export default function EmpleadosContainer({}) {
       header: 'Email',
     },
     {
-      accessorKey: 'isAdmin',
-      header: 'Es Admin',
-    },
-    {
       accessorKey: 'acciones',
       header: 'Acciones',
       cell: ({ row }) => {
-        const empleado = row.original
+        const user = row.original
         return (
           <div className="flex flex-row gap-2">
             <Button
               variant="outline"
               type="button"
               onClick={() => {
-                setSelectedEmpleado(empleado)
+                setSelectedUser(user)
                 setEditing(true)
                 setOpenForm(true)
               }}>
               <Edit className="h-4 w-4" />
             </Button>
-            {user.id !== empleado.id && (
-              <Button
-                variant="destructive"
-                type="button"
-                onClick={() => {
-                  setSelectedEmpleado(empleado)
-                  setOpenDeleteForm(true)
-                }}>
-                <Trash className="h-4 w-4" />
-              </Button>
-            )}
+            <Button
+              variant="destructive"
+              type="button"
+              onClick={() => {
+                setSelectedUser(user)
+                setOpenDeleteForm(true)
+              }}>
+              <Trash className="h-4 w-4" />
+            </Button>
           </div>
         )
       },
@@ -81,32 +69,32 @@ export default function EmpleadosContainer({}) {
       <div className="flex w-full justify-end pb-4">
         <Button
           onClick={() => {
-            setSelectedEmpleado(EMPLEADO_DEFAULT_VALUES)
+            setSelectedUser(USER_DEFAULT_VALUES)
             setEditing(false)
             setOpenForm(true)
           }}>
-          Nuevo Empleado
+          Nuevo User
         </Button>
       </div>
       <CreateEditEntityModal
         open={openForm}
         onOpenChange={() => setOpenForm(!openForm)}
         editing={editing}
-        name="empleado">
-        <EmpleadoFormContent
+        name="user">
+        <UserFormContent
           onFormSubmit={() => setOpenForm(!openForm)}
-          empleado={selectedEmpleado}
+          user={selectedUser}
           editing={editing}
         />
       </CreateEditEntityModal>
       <DeleteEntityForm
         openDeleteForm={openDeleteForm}
         setOpenDeleteForm={setOpenDeleteForm}
-        entity={selectedEmpleado}
-        apiKey="/api/empleados"
-        name="empleado"
+        entity={selectedUser}
+        apiKey="/api/users"
+        name="user"
       />
-      <EmpleadosTable columns={columns} />
+      <UsersTable columns={columns} />
     </div>
   )
 }

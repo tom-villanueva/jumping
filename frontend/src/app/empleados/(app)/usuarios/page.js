@@ -1,30 +1,11 @@
 'use client'
 
-import { useEmpleados } from '@/services/empleados'
 import Header from '../Header'
 import EmpleadosContainer from './sections/EmpleadosContainer'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import UsersContainer from './sections/UsersContainer'
 
 export default function ReservasPage() {
-  const {
-    empleados,
-    isLoading: isLoadingEmpleados,
-    isError: isErrorEmpleados,
-  } = useEmpleados({
-    params: {
-      sort: 'id',
-    },
-    filters: [],
-  })
-
-  if (isErrorEmpleados) {
-    return <p>Error cargando los empleados</p>
-  }
-
-  if (isLoadingEmpleados) {
-    return <p>Cargando...</p>
-  }
-
   return (
     <>
       <Header title="Usuarios" />
@@ -35,9 +16,11 @@ export default function ReservasPage() {
             <TabsTrigger value="clientes">Usuarios clientes</TabsTrigger>
           </TabsList>
           <TabsContent value="empleados">
-            <EmpleadosContainer empleados={empleados} />
+            <EmpleadosContainer />
           </TabsContent>
-          <TabsContent value="clientes">Clientes</TabsContent>
+          <TabsContent value="clientes">
+            <UsersContainer />
+          </TabsContent>
         </Tabs>
       </div>
     </>

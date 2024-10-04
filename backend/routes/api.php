@@ -33,3 +33,4 @@ require __DIR__.'/Pago.php';
 require __DIR__.'/MetodoPago.php';
 require __DIR__.'/Moneda.php';
 require __DIR__.'/Empleado.php';
+require __DIR__.'/User.php';

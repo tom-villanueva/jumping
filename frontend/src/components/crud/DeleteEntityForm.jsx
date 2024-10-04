@@ -61,6 +61,7 @@ export default function DeleteEntityForm({
         })
       }
     },
+    throwOnError: false,
   })
 
   function handleOnSubmit(e) {
