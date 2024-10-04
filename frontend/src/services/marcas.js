@@ -1,15 +1,27 @@
 import useSWR from 'swr'
 
-export function useMarcas({ params } = {}) {
-  const queryParams = new URLSearchParams(params)
+export function useMarcas({ params, filters } = {}) {
+  const filterParams = {}
+
+  filters.forEach(filter => {
+    filterParams[`filter[${filter.id}]`] = filter.value
+  })
+
+  const allParams = {
+    ...params,
+    ...filterParams,
+  }
+
+  const queryParams = new URLSearchParams(allParams)
 
   const qs = queryParams.toString()
 
-  const { data, error, isLoading } = useSWR(['/api/marcas', qs])
+  const { data, error, isLoading, ...rest } = useSWR(['/api/marcas', qs])
 
   return {
     marcas: data,
     isLoading,
     isError: error,
+    ...rest,
   }
 }

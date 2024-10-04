@@ -23,18 +23,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { useMarcas } from '@/services/marcas'
 
 const modeloSchema = z.object({
   descripcion: z.string().min(1, 'Se requiere descripcion'),
   marca_id: z.string().min(1, 'Se requiere descripcion'),
 })
 
-export default function ModeloFormContent({
-  onFormSubmit,
-  modelo,
-  editing,
-  marcas,
-}) {
+export default function ModeloFormContent({ onFormSubmit, modelo, editing }) {
   const { toast } = useToast()
   const { mutate } = useSWRConfig()
 
@@ -44,6 +40,17 @@ export default function ModeloFormContent({
       descripcion: modelo?.descripcion ?? '',
       marca_id: String(modelo?.marca_id) ?? '',
     },
+  })
+
+  const {
+    marcas,
+    isLoading: isLoadingMarcas,
+    isError: isErrorMarcas,
+  } = useMarcas({
+    params: {
+      sort: 'id',
+    },
+    filters: [],
   })
 
   const { trigger, isMutating } = useSWRMutation(
@@ -124,30 +131,34 @@ export default function ModeloFormContent({
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="marca_id"
-          render={({ field }) => (
-            <FormItem className="col-span-12">
-              <FormLabel>Marca</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Seleccione una marca" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {marcas?.map(marca => (
-                    <SelectItem key={marca?.id} value={String(marca?.id)}>
-                      {marca?.descripcion}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {isLoadingMarcas ? (
+          <p>Cargando marcas</p>
+        ) : (
+          <FormField
+            control={form.control}
+            name="marca_id"
+            render={({ field }) => (
+              <FormItem className="col-span-12">
+                <FormLabel>Marca</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Seleccione una marca" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {marcas?.map(marca => (
+                      <SelectItem key={marca?.id} value={String(marca?.id)}>
+                        {marca?.descripcion}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
 
         {form.formState.errors.root && (
           <p className="col-span-12 text-sm text-red-500">

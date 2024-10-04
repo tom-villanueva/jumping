@@ -141,6 +141,7 @@ class Equipo extends BaseModel implements HasMedia
     public function allowedFilters()
     {
         return [
+            'descripcion'
         ];
     }
 

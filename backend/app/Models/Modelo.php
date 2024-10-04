@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Core\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\QueryBuilder\AllowedFilter;
 
 class Modelo extends BaseModel
 {
@@ -30,6 +31,8 @@ class Modelo extends BaseModel
     public function allowedFilters()
     {
         return [
+            'descripcion',
+            AllowedFilter::exact('marca_id')
         ];
     }
 

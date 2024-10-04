@@ -26,8 +26,19 @@ import useSWR from 'swr'
 //   return json
 // }
 
-export function useEquipos({ params } = {}) {
-  const queryParams = new URLSearchParams(params)
+export function useEquipos({ params, filters } = {}) {
+  const filterParams = {}
+
+  filters.forEach(filter => {
+    filterParams[`filter[${filter.id}]`] = filter.value
+  })
+
+  const allParams = {
+    ...params,
+    ...filterParams,
+  }
+
+  const queryParams = new URLSearchParams(allParams)
 
   const qs = queryParams.toString()
 

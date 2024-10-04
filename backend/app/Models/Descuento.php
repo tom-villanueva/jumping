@@ -42,6 +42,7 @@ class Descuento extends BaseModel
     public function allowedFilters()
     {
         return [
+            'descripcion'
         ];
     }
 

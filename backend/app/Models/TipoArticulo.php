@@ -30,6 +30,7 @@ class TipoArticulo extends BaseModel
     public function allowedFilters()
     {
         return [
+            'descripcion'
         ];
     }
 

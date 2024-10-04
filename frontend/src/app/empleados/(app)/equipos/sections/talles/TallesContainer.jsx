@@ -1,17 +1,17 @@
 'use client'
 import { useState } from 'react'
 import DeleteEntityForm from '../../../../../../components/crud/DeleteEntityForm'
-import { DataTable } from '../data-table'
 import { Button } from '@/components/ui/button'
 import { Edit, Trash } from 'lucide-react'
 import TalleFormContent from './TalleFormContent'
 import CreateEditEntityModal from '../../../../../../components/crud/CreateEditEntityModal'
+import TallesTable from './TallesTable'
 
 const TALLE_DEFAULT_VALUES = {
   descripcion: '',
 }
 
-export default function TallesContainer({ talles }) {
+export default function TallesContainer({}) {
   const [editing, setEditing] = useState(false)
   const [openForm, setOpenForm] = useState(false)
   const [openDeleteForm, setOpenDeleteForm] = useState(false)
@@ -88,7 +88,7 @@ export default function TallesContainer({ talles }) {
           editing={editing}
         />
       </CreateEditEntityModal>
-      <DataTable columns={columns} data={talles} />
+      <TallesTable columns={columns} />
     </div>
   )
 }

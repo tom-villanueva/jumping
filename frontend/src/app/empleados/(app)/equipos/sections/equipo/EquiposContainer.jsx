@@ -17,6 +17,11 @@ import EquipoFormContent from './EquipoFormContent'
 import EquipoThumbnailUploadInput from './EquipoThumbnailUploadInput'
 import EquipoDescuentoFormModal from './equipo-descuento/EquipoDescuentoFormModal'
 import EquipoPrecioFormModal from './equipo-precio/EquipoPrecioFormModal'
+import { useDescuentos } from '@/services/descuentos'
+import { useTipoArticulos } from '@/services/tipo-articulos'
+import { useEquipos } from '@/services/equipos'
+import { useDebounce } from '@/hooks/useDebounce'
+import EquiposTable from './EquiposTable'
 
 const EQUIPO_DEFAULT_VALUES = {
   descripcion: '',
@@ -24,17 +29,42 @@ const EQUIPO_DEFAULT_VALUES = {
   disponible: false,
 }
 
-export default function EquiposContainer({
-  equipos,
-  tipoArticulos,
-  descuentos,
-}) {
+export default function EquiposContainer({}) {
   const [editing, setEditing] = useState(false)
   const [openForm, setOpenForm] = useState(false)
   const [openDeleteForm, setOpenDeleteForm] = useState(false)
   const [openDescuentoForm, setOpenDescuentoForm] = useState(false)
   const [openPrecioForm, setOpenPrecioForm] = useState(false)
   const [selectedEquipo, setSelectedEquipo] = useState(EQUIPO_DEFAULT_VALUES)
+
+  const {
+    descuentos,
+    isLoading: isLoadingDescuentos,
+    isError: isErrorDescuentos,
+  } = useDescuentos({ params: {}, filters: [] })
+
+  const {
+    tipoArticulos,
+    isLoading: isLoadingTipoArticulos,
+    isError: isErrorTipoArticulos,
+  } = useTipoArticulos({ params: {}, filters: [] })
+
+  const [columnFilters, setColumnFilters] = useState([])
+  const debouncedColumnFilters = useDebounce(columnFilters, 1000)
+  const [pagination, setPagination] = useState({
+    pageIndex: 0, //initial page index
+    pageSize: 10, //default page size
+  })
+
+  const { equipos, isLoading, isError, isValidating } = useEquipos({
+    params: {
+      page: pagination.pageIndex + 1,
+      page_size: pagination.pageSize,
+      include: 'equipo_tipo_articulo,descuentos_vigentes,precios_vigentes',
+      sort: 'id',
+    },
+    filters: debouncedColumnFilters,
+  })
 
   const columns = [
     {
@@ -168,7 +198,7 @@ export default function EquiposContainer({
     // funciona, no sé si es la mejor solución
     // también sirve para cuando se cargan descuentos a un equipo
     if (selectedEquipo?.hasOwnProperty('id')) {
-      const newSelectedEquipo = equipos.find(
+      const newSelectedEquipo = equipos?.data?.find(
         equipo => equipo.id === selectedEquipo.id,
       )
       setSelectedEquipo(newSelectedEquipo)
@@ -226,7 +256,17 @@ export default function EquiposContainer({
           />
         </SelectManyEntitiesContextProvider>
       </CreateEditEntityModal>
-      <DataTable columns={columns} data={equipos} />
+      <EquiposTable
+        columns={columns}
+        equipos={equipos}
+        isLoading={isLoading}
+        isValidating={isValidating}
+        isError={isError}
+        columnFilters={columnFilters}
+        setColumnFilters={setColumnFilters}
+        pagination={pagination}
+        setPagination={setPagination}
+      />
     </div>
   )
 }

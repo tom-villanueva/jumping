@@ -6,12 +6,13 @@ import { Button } from '@/components/ui/button'
 import CreateEditEntityModal from '../../../../../../components/crud/CreateEditEntityModal'
 import { Edit, Trash } from 'lucide-react'
 import MarcaFormContent from './MarcaFormContent'
+import MarcasTable from './MarcasTable'
 
 const MARCA_DEFAULT_VALUES = {
   descripcion: '',
 }
 
-export default function MarcasContainer({ marcas }) {
+export default function MarcasContainer({}) {
   const [editing, setEditing] = useState(false)
   const [openForm, setOpenForm] = useState(false)
   const [openDeleteForm, setOpenDeleteForm] = useState(false)
@@ -88,7 +89,7 @@ export default function MarcasContainer({ marcas }) {
           editing={editing}
         />
       </CreateEditEntityModal>
-      <DataTable columns={columns} data={marcas} />
+      <MarcasTable columns={columns} />
     </div>
   )
 }

@@ -1,15 +1,30 @@
 import useSWR from 'swr'
 
-export function useTipoArticulos({ params } = {}) {
-  const queryParams = new URLSearchParams(params)
+export function useTipoArticulos({ params, filters } = {}) {
+  const filterParams = {}
+
+  filters.forEach(filter => {
+    filterParams[`filter[${filter.id}]`] = filter.value
+  })
+
+  const allParams = {
+    ...params,
+    ...filterParams,
+  }
+
+  const queryParams = new URLSearchParams(allParams)
 
   const qs = queryParams.toString()
 
-  const { data, error, isLoading } = useSWR(['/api/tipo-articulos', qs])
+  const { data, error, isLoading, ...rest } = useSWR([
+    '/api/tipo-articulos',
+    qs,
+  ])
 
   return {
     tipoArticulos: data,
     isLoading,
     isError: error,
+    ...rest,
   }
 }

@@ -1,18 +1,17 @@
 'use client'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { DataTable } from '../data-table'
 import { Edit, Trash } from 'lucide-react'
 import DeleteEntityForm from '../../../../../../components/crud/DeleteEntityForm'
 import CreateEditEntityModal from '../../../../../../components/crud/CreateEditEntityModal'
-import { SelectManyEntitiesContextProvider } from '../SelectManyEntitiesContext'
 import TipoArticuloFormContent from './TipoArticuloFormContent'
+import TipoArticulosTable from './TipoArticulosTable'
 
 const TIPO_ARTICULO_DEFAULT_VALUES = {
   descripcion: '',
 }
 
-export default function TipoArticulosContainer({ tipoArticulos }) {
+export default function TipoArticulosContainer({}) {
   const [editing, setEditing] = useState(false)
   const [openForm, setOpenForm] = useState(false)
   const [openDeleteForm, setOpenDeleteForm] = useState(false)
@@ -91,7 +90,7 @@ export default function TipoArticulosContainer({ tipoArticulos }) {
           editing={editing}
         />
       </CreateEditEntityModal>
-      <DataTable columns={columns} data={tipoArticulos} />
+      <TipoArticulosTable columns={columns} />
     </div>
   )
 }

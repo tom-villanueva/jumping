@@ -1,18 +1,18 @@
 'use client'
 import { useState } from 'react'
 import DeleteEntityForm from '../../../../../../components/crud/DeleteEntityForm'
-import { DataTable } from '../data-table'
 import { Button } from '@/components/ui/button'
 import CreateEditEntityModal from '../../../../../../components/crud/CreateEditEntityModal'
 import { Edit, Trash } from 'lucide-react'
 import ModeloFormContent from './ModeloFormContent'
+import ModelosTable from './ModelosTable'
 
 const MODELO_DEFAULT_VALUES = {
   descripcion: '',
   marca_id: '',
 }
 
-export default function ModelosContainer({ modelos, marcas }) {
+export default function ModelosContainer({}) {
   const [editing, setEditing] = useState(false)
   const [openForm, setOpenForm] = useState(false)
   const [openDeleteForm, setOpenDeleteForm] = useState(false)
@@ -95,10 +95,9 @@ export default function ModelosContainer({ modelos, marcas }) {
           onFormSubmit={() => setOpenForm(!openForm)}
           modelo={selectedModelo}
           editing={editing}
-          marcas={marcas}
         />
       </CreateEditEntityModal>
-      <DataTable columns={columns} data={modelos} />
+      <ModelosTable columns={columns} />
     </div>
   )
 }

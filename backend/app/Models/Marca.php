@@ -22,6 +22,7 @@ class Marca extends BaseModel
     public function allowedFilters()
     {
         return [
+            'descripcion'
         ];
     }
 
