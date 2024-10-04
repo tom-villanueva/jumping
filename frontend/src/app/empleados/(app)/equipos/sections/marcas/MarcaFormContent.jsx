@@ -70,6 +70,7 @@ export default function MarcaFormContent({ onFormSubmit, marca, editing }) {
           })
         }
       },
+      throwOnError: false,
     },
   )
 

@@ -78,6 +78,7 @@ export default function TipoArticuloFormContent({
           })
         }
       },
+      throwOnError: false,
     },
   )
 

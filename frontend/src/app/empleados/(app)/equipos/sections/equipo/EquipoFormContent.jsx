@@ -86,6 +86,7 @@ export default function EquipoFormContent({ onFormSubmit, equipo, editing }) {
           })
         }
       },
+      throwOnError: false,
     },
   )
 

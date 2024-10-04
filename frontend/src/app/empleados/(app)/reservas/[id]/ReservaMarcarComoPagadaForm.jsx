@@ -86,6 +86,7 @@ export default function ReservaMarcarComoPagadaForm({
           })
         }
       },
+      throwOnError: false,
     },
   )
 

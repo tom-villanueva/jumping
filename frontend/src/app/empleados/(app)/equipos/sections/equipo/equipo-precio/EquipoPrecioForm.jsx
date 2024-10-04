@@ -84,6 +84,7 @@ export default function EquipoPrecioForm({ equipo }) {
           })
         }
       },
+      throwOnError: false,
     },
   )
 

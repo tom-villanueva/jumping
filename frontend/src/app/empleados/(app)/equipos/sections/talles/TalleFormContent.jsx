@@ -70,6 +70,7 @@ export default function TalleFormContent({ onFormSubmit, talle, editing }) {
           })
         }
       },
+      throwOnError: false,
     },
   )
 

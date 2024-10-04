@@ -91,6 +91,7 @@ export default function ModeloFormContent({ onFormSubmit, modelo, editing }) {
           })
         }
       },
+      throwOnError: false,
     },
   )
 

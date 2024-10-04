@@ -3,9 +3,10 @@ import useSWR from 'swr'
 export function useReservas({ params, filters } = {}) {
   const filterParams = {}
 
-  filters.forEach(filter => {
-    filterParams[`filter[${filter.id}]`] = filter.value
-  })
+  filters &&
+    filters.forEach(filter => {
+      filterParams[`filter[${filter.id}]`] = filter.value
+    })
 
   const allParams = {
     ...params,

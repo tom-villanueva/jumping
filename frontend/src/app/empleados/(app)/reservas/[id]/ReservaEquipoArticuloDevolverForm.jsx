@@ -64,6 +64,7 @@ export default function ReservaEquipoArticuloDevolverForm({
           })
         }
       },
+      throwOnError: false,
     },
   )
 

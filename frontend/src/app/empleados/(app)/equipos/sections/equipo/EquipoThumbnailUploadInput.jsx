@@ -76,6 +76,7 @@ export default function EquipoThumbnailUploadInput({ equipo }) {
           })
         }
       },
+      throwOnError: false,
     },
   )
 
