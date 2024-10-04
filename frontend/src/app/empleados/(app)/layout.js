@@ -1,28 +1,9 @@
-'use client'
-
-import { useAuth } from '@/hooks/auth-empleados'
-import Navigation from '@/app/empleados/(app)/Navigation'
-import Loading from '@/app/(app)/Loading'
-import { SWRConfig } from 'swr'
-import { fetcher } from '@/lib/utils'
+import App from './App'
 
 const AppLayout = ({ children, header }) => {
-  const { user, logout } = useAuth({ middleware: 'auth' })
-
-  if (!user) {
-    return <Loading />
-  }
-
   return (
     <div className="min-h-screen bg-slate-900 pb-10">
-      <Navigation user={user} logout={logout} />
-
-      <SWRConfig
-        value={{
-          fetcher: fetcher,
-        }}>
-        <main>{children}</main>
-      </SWRConfig>
+      <App>{children}</App>
     </div>
   )
 }
