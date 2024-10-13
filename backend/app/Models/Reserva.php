@@ -132,11 +132,17 @@ class Reserva extends BaseModel
     public function allowedFilters()
     {
         return [
+            // AllowedFilter::callback('estado_id', function (Builder $query, $value) {
+            //     $query->whereHas('estados', function ($query) use ($value) {
+            //         $query->latest('created_at') // Ensure we're using the latest estado
+            //             ->take(1) // Limit to the latest estado record
+            //             ->where('estado_id', $value); // Filter by the passed estado_id
+            //     });
+            // }),
             AllowedFilter::callback('estado_id', function (Builder $query, $value) {
-                $query->whereHas('estados', function ($query) use ($value) {
+                $query->whereHas('estados', function (Builder $query) use ($value) {
                     $query->where('estado_id', $value)
-                        ->orderBy('created_at', 'asc')
-                        ->limit(1);
+                        ->whereRaw('created_at = (SELECT MAX(created_at) FROM reserva_estado WHERE reserva_id = reservas.id)');
                 });
             }),
 
