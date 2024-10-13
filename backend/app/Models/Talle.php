@@ -19,7 +19,11 @@ class Talle extends BaseModel
     /**
      * Relaciones
      */
-
+    public function tipos() 
+    {
+        return $this->belongsToMany(TipoArticulo::class, 'tipo_articulo_talle', 'talle_id', 'tipo_articulo_id');
+    }
+    
     /**
      * query builder options
      */
@@ -39,6 +43,7 @@ class Talle extends BaseModel
     public function allowedIncludes()
     {
         return [
+            'tipos'
         ];
     }
 }

@@ -42,7 +42,7 @@ export default function TallesTable({
       page: pagination.pageIndex + 1,
       page_size: pagination.pageSize,
       sort: '-id',
-      include: '',
+      include: 'tipos',
     },
     filters: debouncedColumnFilters,
   })

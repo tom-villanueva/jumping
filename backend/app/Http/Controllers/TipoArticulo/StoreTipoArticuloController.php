@@ -27,6 +27,12 @@ class StoreTipoArticuloController extends Controller
             $new_entity->equipo_tipo_articulo()->attach($equipos);
         }
 
+        $talles = $request->talle_ids;
+
+        if($talles != null) {
+            $new_entity->talles()->attach($talles);
+        }
+
         DB::commit();
 
         return response()->json($new_entity, 201);

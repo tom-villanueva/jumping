@@ -6,6 +6,8 @@ import DeleteEntityForm from '../../../../../../components/crud/DeleteEntityForm
 import CreateEditEntityModal from '../../../../../../components/crud/CreateEditEntityModal'
 import TipoArticuloFormContent from './TipoArticuloFormContent'
 import TipoArticulosTable from './TipoArticulosTable'
+import { SelectManyEntitiesContextProvider } from '../SelectManyEntitiesContext'
+import { useTalles } from '@/services/talles'
 
 const TIPO_ARTICULO_DEFAULT_VALUES = {
   descripcion: '',
@@ -19,6 +21,17 @@ export default function TipoArticulosContainer({}) {
     TIPO_ARTICULO_DEFAULT_VALUES,
   )
 
+  const {
+    talles,
+    isLoading: isLoadingTalles,
+    isError: isErrorTalles,
+  } = useTalles({
+    params: {
+      sort: 'id',
+    },
+    filters: [],
+  })
+
   const columns = [
     {
       accessorKey: 'id',
@@ -28,6 +41,24 @@ export default function TipoArticulosContainer({}) {
       accessorKey: 'descripcion',
       header: 'Descripción',
     },
+    // {
+    //   accessorKey: 'talles',
+    //   header: 'Talles',
+    //   cell: ({ row }) => {
+    //     const talles = row.getValue('talles')
+
+    //     return (
+    //       <ul>
+    //         {talles.map(talle => (
+    //           <li key={talle.id} className="">
+    //             {'❄️ '}
+    //             {talle.descripcion}
+    //           </li>
+    //         ))}
+    //       </ul>
+    //     )
+    //   },
+    // },
     {
       accessorKey: 'acciones',
       header: 'Acciones',
@@ -84,11 +115,18 @@ export default function TipoArticulosContainer({}) {
         onOpenChange={() => setOpenForm(!openForm)}
         editing={editing}
         name="tipo de artículo">
-        <TipoArticuloFormContent
-          onFormSubmit={() => setOpenForm(!openForm)}
-          tipoArticulo={selectedTipoArticulo}
-          editing={editing}
-        />
+        <SelectManyEntitiesContextProvider
+          entities={talles}
+          defaultSelected={selectedTipoArticulo?.talles?.map(
+            // Le saco el atributo pivot
+            ({ pivot, ...rest }) => rest,
+          )}>
+          <TipoArticuloFormContent
+            onFormSubmit={() => setOpenForm(!openForm)}
+            tipoArticulo={selectedTipoArticulo}
+            editing={editing}
+          />
+        </SelectManyEntitiesContextProvider>
       </CreateEditEntityModal>
       <TipoArticulosTable columns={columns} />
     </div>

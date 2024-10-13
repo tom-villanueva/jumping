@@ -4,7 +4,9 @@ namespace App\Http\Controllers\TipoArticulo;
 use App\Http\Controllers\Controller;
 use App\Repositories\TipoArticulo\TipoArticuloRepository;
 use App\Http\Requests\TipoArticulo\UpdateTipoArticuloRequest;
+use App\Models\Articulo;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class UpdateTipoArticuloController extends Controller
 {
@@ -19,18 +21,49 @@ class UpdateTipoArticuloController extends Controller
     {
         DB::beginTransaction();
 
-        $result = $this->repository->update($id, $request->all());
+        $tipo = $this->repository->update($id, $request->all());
 
         $equipos = $request->equipo_ids;
 
         if($equipos !== null) {
             $equipos = array_column($equipos, 'equipo_id');
 
-            $result->equipo_tipo_articulo()->sync($equipos);
+            $tipo->equipo_tipo_articulo()->sync($equipos);
+        }
+
+        $talles = $request->talle_ids;
+
+        if($talles !== null) {
+            // $res = [];
+            $tallesActuales = $tipo->talles()->get()->toArray();
+            $tallesActuales = array_column($tallesActuales, 'id');
+            $talles = array_column($talles, 'talle_id');
+
+            $tallesEliminar = array_diff($tallesActuales, $talles);
+
+            if(count($tallesEliminar) > 0){
+                $articulosAsociados = Articulo::where('tipo_articulo_id', $id)
+                    ->whereIn('talle_id', $tallesEliminar)
+                    ->get();
+    
+                if(!empty($articulosAsociados)) {
+                    throw ValidationException::withMessages([
+                        'articulos_asociados' => 'Hay artículos asociados a los talles a eliminar.'
+                    ]);
+                }
+            }
+
+            // foreach($talles as $talle) {
+            //     $res[$talle['talle_id']] = ['stock' => $talle['stock']];
+            // }
+
+            // $talles = $res;
+            
+            $tipo->talles()->sync($talles);
         }
 
         DB::commit();
 
-        return response()->json($result);
+        return response()->json($tipo);
     }
 }

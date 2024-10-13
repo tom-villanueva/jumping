@@ -19,9 +19,14 @@ class TipoArticulo extends BaseModel
     /**
      * Relaciones
      */
-    public function equipo_tipo_articulo() 
+    public function equipo_tipo_articulo()
     {
         return $this->belongsToMany(Equipo::class, 'equipo_tipo_articulo', 'tipo_articulo_id', 'equipo_id');
+    }
+
+    public function talles()
+    {
+        return $this->belongsToMany(Talle::class, 'tipo_articulo_talle', 'tipo_articulo_id', 'talle_id');
     }
 
     /**
@@ -36,14 +41,14 @@ class TipoArticulo extends BaseModel
 
     public function allowedSorts()
     {
-        return [
-        ];
+        return [];
     }
 
     public function allowedIncludes()
     {
         return [
-            'equipo_tipo_articulo'
+            'equipo_tipo_articulo',
+            'talles'
         ];
     }
 }

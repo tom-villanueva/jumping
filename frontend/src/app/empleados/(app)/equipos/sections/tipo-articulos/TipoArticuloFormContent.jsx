@@ -34,6 +34,7 @@ export default function TipoArticuloFormContent({
   editing,
 }) {
   const { toast } = useToast()
+  const { selected } = useContext(SelectManyEntitiesContext)
   const { mutate } = useSWRConfig()
 
   const form = useForm({
@@ -84,6 +85,10 @@ export default function TipoArticuloFormContent({
 
   function onSubmit(values) {
     const data = {
+      talle_ids:
+        selected.length > 0
+          ? selected.map(talle => ({ talle_id: talle.id }))
+          : [],
       ...values,
     }
 
@@ -119,11 +124,27 @@ export default function TipoArticuloFormContent({
           )}
         />
 
+        <Separator className="col-span-12" />
+
         {form.formState.errors.root && (
           <p className="col-span-12 text-sm text-red-500">
             {form.formState.errors.root.serverError.message}
           </p>
         )}
+
+        <Label className="col-span-12 font-medium">Asociado a:</Label>
+        <TipoArticuloTalleTable />
+
+        <FormField
+          control={form.control}
+          name="articulos_asociados"
+          render={({ field }) => (
+            <FormItem className="col-span-12">
+              <FormControl></FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         <Button type="submit" className="col-span-6">
           {isMutating ? 'Guardando...' : 'Guardar'}

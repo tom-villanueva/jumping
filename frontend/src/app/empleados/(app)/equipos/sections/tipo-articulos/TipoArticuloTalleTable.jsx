@@ -33,42 +33,6 @@ export default function TipoArticuloTalleTable() {
       header: 'Descripción',
     },
     {
-      accessorKey: 'stock',
-      header: 'Stock Total',
-      // cell: ({ row }) => {
-      //   const talle = row.original
-      //   const talleId = row.getValue('id')
-
-      //   if (isEditing && talleId === selectedTalleId) {
-      //     return (
-      //       <input
-      //         autoFocus
-      //         className="max-w-[64px] text-black"
-      //         id="stock"
-      //         name="stock"
-      //         type="number"
-      //         placeholder="stock..."
-      //         defaultValue={talle.stock}
-      //         min="0"
-      //         onChange={e => {
-      //           if (Number(e.target.value) < 0) return
-      //           updateEntity({ ...talle, stock: Number(e.target.value) })
-      //         }}
-      //         onKeyDown={e => {
-      //           e.stopPropagation()
-      //           if (e.key === 'Enter' || e.key === 'Escape') {
-      //             setIsEditing(!isEditing)
-      //             setSelectedTalleId(null)
-      //           }
-      //         }}
-      //       />
-      //     )
-      //   } else {
-      //     return <span>{talle.stock}</span>
-      //   }
-      //   },
-    },
-    {
       accessorKey: 'acciones',
       header: 'Acciones',
       cell: ({ row }) => {

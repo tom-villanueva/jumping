@@ -27,6 +27,24 @@ export default function TallesContainer({}) {
       header: 'Descripción',
     },
     {
+      accessorKey: 'tipos',
+      header: 'Asociado a',
+      cell: ({ row }) => {
+        const tipo_articulos = row.getValue('tipos')
+
+        return (
+          <ul>
+            {tipo_articulos.map(tipo => (
+              <li key={tipo.id} className="">
+                {'❄️ '}
+                {tipo.descripcion}
+              </li>
+            ))}
+          </ul>
+        )
+      },
+    },
+    {
       accessorKey: 'acciones',
       header: 'Acciones',
       cell: ({ row }) => {
