@@ -3,6 +3,7 @@
 import { DataTable } from '@/components/client-table/data-table'
 import { useDebounce } from '@/hooks/useDebounce'
 import { useMarcas } from '@/services/marcas'
+import { useTipoArticulos } from '@/services/tipo-articulos'
 import {
   getCoreRowModel,
   getFacetedRowModel,
@@ -12,6 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import { DotIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 export default function MarcasTable({
@@ -42,9 +44,18 @@ export default function MarcasTable({
       page: pagination.pageIndex + 1,
       page_size: pagination.pageSize,
       sort: '-id',
-      include: '',
+      include: 'tipos',
     },
     filters: debouncedColumnFilters,
+  })
+
+  const {
+    tipoArticulos,
+    isLoading: isLoadingTipos,
+    isValidating: isValidatingTipos,
+  } = useTipoArticulos({
+    params: {},
+    filters: [],
   })
 
   const table = useReactTable({
@@ -82,13 +93,26 @@ export default function MarcasTable({
     <DataTable
       table={table}
       columns={columns}
-      isLoading={isLoading || isValidating}
+      isLoading={
+        isLoading || isValidating || isLoadingTipos || isValidatingTipos
+      }
       filters={[
         {
           type: 'text',
           columnName: 'descripcion',
           title: 'Descripción',
           options: [],
+        },
+        {
+          type: 'select',
+          columnName: 'tipo_articulo_id',
+          title: 'Tipos',
+          options:
+            tipoArticulos?.map(tipo => ({
+              label: tipo.descripcion,
+              value: tipo.id,
+              icon: DotIcon,
+            })) ?? [],
         },
       ]}
     />

@@ -24,16 +24,19 @@ import {
 import { Button } from '@/components/ui/button'
 import MultipleSelector from '@/components/ui/multiple-select'
 import axios from 'axios'
+import { useMemo } from 'react'
 
 const tipoArticuloSchema = z.object({
   descripcion: z.string().min(1, 'Se requiere descripcion'),
   talles: z.array(optionSchema).nullable(),
+  marcas: z.array(optionSchema).nullable(),
 })
 
 export default function TipoArticuloFormContent({
   onFormSubmit,
   tipoArticulo,
   talles,
+  marcas,
   editing,
 }) {
   const { toast } = useToast()
@@ -46,6 +49,11 @@ export default function TipoArticuloFormContent({
       talles: tipoArticulo?.talles?.map(t => ({
         label: t.descripcion,
         value: String(t.id),
+        disable: false,
+      })),
+      marcas: tipoArticulo?.marcas?.map(m => ({
+        label: m.descripcion,
+        value: String(m.id),
         disable: false,
       })),
     },
@@ -90,6 +98,26 @@ export default function TipoArticuloFormContent({
     },
   )
 
+  const tallesOptions = useMemo(() => {
+    return (
+      talles?.map(t => ({
+        label: t.descripcion,
+        value: String(t.id),
+        disable: false,
+      })) ?? []
+    )
+  }, [talles])
+
+  const marcasOptions = useMemo(() => {
+    return (
+      marcas?.map(m => ({
+        label: m.descripcion,
+        value: String(m.id),
+        disable: false,
+      })) ?? []
+    )
+  }, [marcas])
+
   function onSubmit(values) {
     const data = {
       descripcion: values.descripcion,
@@ -97,9 +125,11 @@ export default function TipoArticuloFormContent({
         values.talles.length > 0
           ? values.talles.map(talle => ({ talle_id: talle.value }))
           : [],
+      marca_ids:
+        values.marcas.length > 0
+          ? values.marcas.map(marca => ({ marca_id: marca.value }))
+          : [],
     }
-
-    console.log(data)
 
     if (editing) {
       trigger({ id: tipoArticulo?.id, data })
@@ -152,17 +182,34 @@ export default function TipoArticuloFormContent({
               <FormControl>
                 <MultipleSelector
                   {...field}
-                  defaultOptions={
-                    talles?.map(t => ({
-                      label: t.descripcion,
-                      value: String(t.id),
-                      disable: false,
-                    })) ?? []
-                  }
+                  defaultOptions={tallesOptions}
                   placeholder="Selecciona los talles relacionados"
                   emptyIndicator={
                     <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
-                      no se encuetran resultados.
+                      no se encuentran resultados.
+                    </p>
+                  }
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="marcas"
+          render={({ field }) => (
+            <FormItem className="col-span-12">
+              <FormLabel>Marcas</FormLabel>
+              <FormControl>
+                <MultipleSelector
+                  {...field}
+                  defaultOptions={marcasOptions}
+                  placeholder="Selecciona las marcas relacionados"
+                  emptyIndicator={
+                    <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+                      no se encuentran resultados.
                     </p>
                   }
                 />

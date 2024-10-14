@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\TipoArticulo;
 
 use App\Http\Controllers\Controller;
@@ -21,48 +22,77 @@ class UpdateTipoArticuloController extends Controller
     {
         DB::beginTransaction();
 
-        $tipo = $this->repository->update($id, $request->all());
+        try {
+            $tipo = $this->repository->update($id, $request->all());
 
-        $equipos = $request->equipo_ids;
+            $equipos = $request->equipo_ids;
 
-        if($equipos !== null) {
-            $equipos = array_column($equipos, 'equipo_id');
+            if ($equipos !== null) {
+                $equipos = array_column($equipos, 'equipo_id');
 
-            $tipo->equipo_tipo_articulo()->sync($equipos);
-        }
-
-        $talles = $request->talle_ids;
-
-        if($talles !== null) {
-            // $res = [];
-            $tallesActuales = $tipo->talles()->get()->toArray();
-            $tallesActuales = array_column($tallesActuales, 'id');
-            $talles = array_column($talles, 'talle_id');
-
-            $tallesEliminar = array_diff($tallesActuales, $talles);
-
-            if(count($tallesEliminar) > 0){
-                $articulosAsociados = Articulo::where('tipo_articulo_id', $id)
-                    ->whereIn('talle_id', $tallesEliminar)
-                    ->get();
-    
-                if(!empty($articulosAsociados)) {
-                    throw ValidationException::withMessages([
-                        'articulos_asociados' => 'Hay artículos asociados a los talles a eliminar.'
-                    ]);
-                }
+                $tipo->equipo_tipo_articulo()->sync($equipos);
             }
 
-            // foreach($talles as $talle) {
-            //     $res[$talle['talle_id']] = ['stock' => $talle['stock']];
-            // }
+            $talles = $request->talle_ids;
 
-            // $talles = $res;
-            
-            $tipo->talles()->sync($talles);
+            if ($talles !== null) {
+                // $res = [];
+                $tallesActuales = $tipo->talles()->get()->toArray();
+                $tallesActuales = array_column($tallesActuales, 'id');
+                $talles = array_column($talles, 'talle_id');
+
+                $tallesEliminar = array_diff($tallesActuales, $talles);
+
+                if (count($tallesEliminar) > 0) {
+                    $articulosAsociados = Articulo::where('tipo_articulo_id', $id)
+                        ->whereIn('talle_id', $tallesEliminar)
+                        ->get();
+
+                    if (!empty($articulosAsociados)) {
+                        throw ValidationException::withMessages([
+                            'articulos_asociados' => 'Hay artículos asociados a los talles a eliminar.'
+                        ]);
+                    }
+                }
+
+                // foreach($talles as $talle) {
+                //     $res[$talle['talle_id']] = ['stock' => $talle['stock']];
+                // }
+
+                // $talles = $res;
+
+                $tipo->talles()->sync($talles);
+            }
+
+            $marcas = $request->marca_ids;
+
+            if ($marcas !== null) {
+                $marcasActuales = $tipo->marcas()->get()->toArray();
+                $marcasActuales = array_column($marcasActuales, 'id');
+                $marcas = array_column($marcas, 'marca_id');
+
+                $marcasEliminar = array_diff($marcasActuales, $marcas);
+
+                if (count($marcasEliminar) > 0) {
+                    $articulosAsociados = Articulo::where('tipo_articulo_id', $id)
+                        ->whereIn('marca_id', $marcasEliminar)
+                        ->get();
+
+                    if (!empty($articulosAsociados)) {
+                        throw ValidationException::withMessages([
+                            'articulos_asociados' => 'Hay artículos asociados a las marcas a eliminar.'
+                        ]);
+                    }
+                }
+
+                $tipo->marcas()->sync($marcas);
+            }
+
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
         }
-
-        DB::commit();
 
         return response()->json($tipo);
     }

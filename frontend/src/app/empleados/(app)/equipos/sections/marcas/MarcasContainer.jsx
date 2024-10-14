@@ -28,6 +28,25 @@ export default function MarcasContainer({}) {
       header: 'Descripción',
     },
     {
+      accessorKey: 'tipos',
+      id: 'tipo_articulo_id',
+      header: 'Asociado a',
+      cell: ({ row }) => {
+        const tipo_articulos = row.getValue('tipo_articulo_id')
+
+        return (
+          <ul>
+            {tipo_articulos.map(tipo => (
+              <li key={tipo.id} className="">
+                {'❄️ '}
+                {tipo.descripcion}
+              </li>
+            ))}
+          </ul>
+        )
+      },
+    },
+    {
       accessorKey: 'acciones',
       header: 'Acciones',
       cell: ({ row }) => {

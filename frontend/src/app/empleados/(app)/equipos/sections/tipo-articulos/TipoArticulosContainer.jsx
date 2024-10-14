@@ -8,6 +8,7 @@ import TipoArticuloFormContent from './TipoArticuloFormContent'
 import TipoArticulosTable from './TipoArticulosTable'
 // import { SelectManyEntitiesContextProvider } from '../SelectManyEntitiesContext'
 import { useTalles } from '@/services/talles'
+import { useMarcas } from '@/services/marcas'
 
 const TIPO_ARTICULO_DEFAULT_VALUES = {
   descripcion: '',
@@ -26,6 +27,17 @@ export default function TipoArticulosContainer({}) {
     isLoading: isLoadingTalles,
     isError: isErrorTalles,
   } = useTalles({
+    params: {
+      sort: 'id',
+    },
+    filters: [],
+  })
+
+  const {
+    marcas,
+    isLoading: isLoadingMarcas,
+    isError: isErrorMarcas,
+  } = useMarcas({
     params: {
       sort: 'id',
     },
@@ -125,6 +137,7 @@ export default function TipoArticulosContainer({}) {
           onFormSubmit={() => setOpenForm(!openForm)}
           tipoArticulo={selectedTipoArticulo}
           talles={talles}
+          marcas={marcas}
           editing={editing}
         />
         {/* </SelectManyEntitiesContextProvider> */}

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\TipoArticulo;
 
 use App\Http\Controllers\Controller;
@@ -19,21 +20,32 @@ class StoreTipoArticuloController extends Controller
     {
         DB::beginTransaction();
 
-        $new_entity = $this->repository->create($request->all());
+        try {
+            $new_entity = $this->repository->create($request->all());
 
-        $equipos = $request->equipo_ids;
+            $equipos = $request->equipo_ids;
 
-        if($equipos != null) {
-            $new_entity->equipo_tipo_articulo()->attach($equipos);
+            if ($equipos != null) {
+                $new_entity->equipo_tipo_articulo()->attach($equipos);
+            }
+
+            $talles = $request->talle_ids;
+
+            if ($talles != null) {
+                $new_entity->talles()->attach($talles);
+            }
+
+            $marcas = $request->marca_ids;
+
+            if ($marcas != null) {
+                $new_entity->marcas()->attach($marcas);
+            }
+
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
         }
-
-        $talles = $request->talle_ids;
-
-        if($talles != null) {
-            $new_entity->talles()->attach($talles);
-        }
-
-        DB::commit();
 
         return response()->json($new_entity, 201);
     }

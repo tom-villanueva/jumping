@@ -431,7 +431,7 @@ const MultipleSelector = forwardRef(
                   : placeholder
               }
               className={cn(
-                'flex-1 bg-transparent outline-none placeholder:text-muted-foreground',
+                'flex-1 bg-transparent text-white outline-none placeholder:text-muted-foreground',
                 {
                   'w-full': hidePlaceholderWhenSelected,
                   'px-3 py-2': selected.length === 0,

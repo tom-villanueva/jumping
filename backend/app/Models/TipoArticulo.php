@@ -29,6 +29,11 @@ class TipoArticulo extends BaseModel
         return $this->belongsToMany(Talle::class, 'tipo_articulo_talle', 'tipo_articulo_id', 'talle_id');
     }
 
+    public function marcas()
+    {
+        return $this->belongsToMany(Marca::class, 'tipo_articulo_marca', 'tipo_articulo_id', 'marca_id');
+    }
+
     /**
      * query builder options
      */
@@ -48,7 +53,8 @@ class TipoArticulo extends BaseModel
     {
         return [
             'equipo_tipo_articulo',
-            'talles'
+            'talles',
+            'marcas'
         ];
     }
 }

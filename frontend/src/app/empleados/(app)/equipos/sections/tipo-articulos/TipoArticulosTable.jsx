@@ -42,7 +42,7 @@ export default function TipoArticulosTable({
       page: pagination.pageIndex + 1,
       page_size: pagination.pageSize,
       sort: '-id',
-      include: 'talles',
+      include: 'talles,marcas',
     },
     filters: debouncedColumnFilters,
   })
