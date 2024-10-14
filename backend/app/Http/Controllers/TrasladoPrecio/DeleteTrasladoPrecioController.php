@@ -1,19 +1,19 @@
 <?php
-namespace App\Http\Controllers\EquipoPrecio;
+namespace App\Http\Controllers\TrasladoPrecio;
 
 use App\Http\Controllers\Controller;
-use App\Models\EquipoPrecio;
-use App\Models\ReservaEquipoPrecio;
-use App\Repositories\EquipoPrecio\EquipoPrecioRepository;
+use App\Models\Traslado;
+use App\Models\TrasladoPrecio;
+use App\Repositories\TrasladoPrecio\TrasladoPrecioRepository;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
-class DeleteEquipoPrecioController extends Controller
+class DeleteTrasladoPrecioController extends Controller
 {
     private $repository;
 
-    public function __construct(EquipoPrecioRepository $repository)
+    public function __construct(TrasladoPrecioRepository $repository)
     {
         $this->repository = $repository;
     }
@@ -23,17 +23,17 @@ class DeleteEquipoPrecioController extends Controller
         DB::beginTransaction();
 
         try {
-            $reservas = ReservaEquipoPrecio::where('equipo_precio_id', $id)
+            $reservas = Traslado::where('traslado_precio_id', $id)
                 ->count();
             
-            $equipoPrecio = $this->repository->find($id);
-            $result = $equipoPrecio;
+            $trasladoPrecio = $this->repository->find($id);
+            $result = $trasladoPrecio;
 
-            $precios = EquipoPrecio::where('equipo_id', '=', $equipoPrecio->equipo_id);
+            $precios = TrasladoPrecio::all();
            
             if($precios->count() == 1) {
                 throw ValidationException::withMessages([
-                    'reserva_equipo_precio_id' => 'Es el único precio asociado a este equipo, modifíquelo poniendo misma fecha y nuevo precio.'
+                    'traslado_precio_id' => 'Es el único precio asociado a traslados, modifíquelo poniendo misma fecha y nuevo precio.'
                 ]);
             }
 
@@ -44,30 +44,28 @@ class DeleteEquipoPrecioController extends Controller
                 $this->repository->delete($id);
             } else {
                 // hard delete
-                DB::table('equipo_precio')
+                DB::table('traslado_precio')
                     ->where('id', '=', $id)
                     ->delete();
             }
 
-            $previousEquipoPrecio = EquipoPrecio::where('equipo_id', $equipoPrecio->equipo_id)
-                ->where('fecha_hasta', '<=', $equipoPrecio->fecha_desde)
+            $previousTrasladoPrecio = TrasladoPrecio::where('fecha_hasta', '<=', $trasladoPrecio->fecha_desde)
                 ->orderBy('fecha_hasta', 'desc')
                 ->first();
 
-            $nextEquipoPrecio = EquipoPrecio::where('equipo_id', $equipoPrecio->equipo_id)
-                ->where('fecha_desde', '>', $equipoPrecio->fecha_desde)
+            $nextTrasladoPrecio = TrasladoPrecio::where('fecha_desde', '>', $trasladoPrecio->fecha_desde)
                 ->orderBy('fecha_desde', 'asc')
                 ->first();
             
-            if ($previousEquipoPrecio) {
-                if ($nextEquipoPrecio) {
+            if ($previousTrasladoPrecio) {
+                if ($nextTrasladoPrecio) {
                     // If there is a next one, set previous.fecha_hasta to one day before next.fecha_desde
-                    $this->repository->update($previousEquipoPrecio->id, [
-                        'fecha_hasta' => Carbon::parse($nextEquipoPrecio->fecha_desde)->subDay()
+                    $this->repository->update($previousTrasladoPrecio->id, [
+                        'fecha_hasta' => Carbon::parse($nextTrasladoPrecio->fecha_desde)->subDay()
                     ]);
                 } else {
                     // If there's no next one, set previous.fecha_hasta to null
-                    $this->repository->update($previousEquipoPrecio->id, [
+                    $this->repository->update($previousTrasladoPrecio->id, [
                         'fecha_hasta' => null
                     ]);
                 }

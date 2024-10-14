@@ -6,33 +6,17 @@ use App\Core\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Traslado extends BaseModel
+class TrasladoPrecio extends BaseModel
 {
     use SoftDeletes, HasFactory;
 
-    protected $table = 'traslados';
+    protected $table = 'traslado_precio';
 
     protected $fillable = [
-        'direccion',
-        'fecha_desde',
-        'fecha_hasta',
-        'reserva_id',
         'precio',
-        'traslado_precio_id'
+        'fecha_desde',
+        'fecha_hasta'
     ];
-
-    /**
-     * Relaciones
-     */
-    public function reserva() 
-    {
-        return $this->belongsTo(Reserva::class, 'reserva_id');
-    }
-
-    public function precio() 
-    {
-        return $this->belongsTo(TrasladoPrecio::class, 'traslado_precio_id');
-    }
 
     /**
      * query builder options
@@ -40,7 +24,6 @@ class Traslado extends BaseModel
     public function allowedFilters()
     {
         return [
-            'reserva_id'
         ];
     }
 

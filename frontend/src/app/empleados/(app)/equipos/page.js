@@ -9,6 +9,7 @@ import DescuentosContainer from './sections/descuentos/DescuentosContainer'
 import MarcasContainer from './sections/marcas/MarcasContainer'
 import ModelosContainer from './sections/modelos/ModelosContainer'
 import Header from '../Header'
+import TrasladoPrecioContainer from './sections/traslado-precio/TrasladoPrecioContainer'
 
 const Equipos = () => {
   return (
@@ -23,6 +24,9 @@ const Equipos = () => {
             <TabsTrigger value="talles">Talles</TabsTrigger>
             <TabsTrigger value="marcas">Marcas</TabsTrigger>
             <TabsTrigger value="modelos">Modelos</TabsTrigger>
+            <TabsTrigger value="traslado_precios">
+              Precios de Traslados
+            </TabsTrigger>
             <TabsTrigger value="descuentos">Descuentos</TabsTrigger>
           </TabsList>
           <TabsContent value="equipos">
@@ -39,6 +43,9 @@ const Equipos = () => {
           </TabsContent>
           <TabsContent value="modelos">
             <ModelosContainer />
+          </TabsContent>
+          <TabsContent value="traslado_precios">
+            <TrasladoPrecioContainer />
           </TabsContent>
           <TabsContent value="descuentos">
             <DescuentosContainer />
