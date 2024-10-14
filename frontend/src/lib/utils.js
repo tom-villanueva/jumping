@@ -1,7 +1,7 @@
 // import axios from 'axios'
 import { clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
-import { ZodError } from 'zod'
+import { z, ZodError } from 'zod'
 import axios from './axios'
 
 export function cn(...inputs) {
@@ -128,7 +128,7 @@ export const chartColors = [
   '#FF6B6B', // Soft Red
   '#4ECDC4', // Aqua Blue
   '#1A535C', // Dark Cyan
-  '#F7FFF7', // Off White
+  '#e633ff', // Off White
   '#FFE66D', // Soft Yellow
   '#FF9F1C', // Bright Orange
   '#2EC4B6', // Teal
@@ -146,3 +146,9 @@ export const chartColors = [
   '#118AB2', // Bright Blue
   '#073B4C', // Dark Teal
 ]
+
+export const optionSchema = z.object({
+  label: z.string(),
+  value: z.string(),
+  disable: z.boolean().optional(),
+})

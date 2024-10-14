@@ -3,6 +3,7 @@
 import { DataTable } from '@/components/client-table/data-table'
 import { useDebounce } from '@/hooks/useDebounce'
 import { useTalles } from '@/services/talles'
+import { useTipoArticulos } from '@/services/tipo-articulos'
 import {
   getCoreRowModel,
   getFacetedRowModel,
@@ -12,6 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import { DotIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 export default function TallesTable({
@@ -45,6 +47,15 @@ export default function TallesTable({
       include: 'tipos',
     },
     filters: debouncedColumnFilters,
+  })
+
+  const {
+    tipoArticulos,
+    isLoading: isLoadingTipos,
+    isValidating: isValidatingTipos,
+  } = useTipoArticulos({
+    params: {},
+    filters: [],
   })
 
   const table = useReactTable({
@@ -82,13 +93,26 @@ export default function TallesTable({
     <DataTable
       table={table}
       columns={columns}
-      isLoading={isLoading || isValidating}
+      isLoading={
+        isLoading || isValidating || isLoadingTipos || isValidatingTipos
+      }
       filters={[
         {
           type: 'text',
           columnName: 'descripcion',
           title: 'Descripción',
           options: [],
+        },
+        {
+          type: 'select',
+          columnName: 'tipo_articulo_id',
+          title: 'Tipos',
+          options:
+            tipoArticulos?.map(tipo => ({
+              label: tipo.descripcion,
+              value: tipo.id,
+              icon: DotIcon,
+            })) ?? [],
         },
       ]}
     />

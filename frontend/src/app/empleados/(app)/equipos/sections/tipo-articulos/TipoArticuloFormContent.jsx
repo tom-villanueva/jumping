@@ -3,11 +3,11 @@
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
-import { storeFetcher, updateFetcher } from '@/lib/utils'
-import { useContext } from 'react'
+import { optionSchema, storeFetcher, updateFetcher } from '@/lib/utils'
+// import { useContext } from 'react'
 import { useToast } from '@/components/ui/use-toast'
-import SelectManyEntitiesContext from '../SelectManyEntitiesContext'
-import TipoArticuloTalleTable from './TipoArticuloTalleTable'
+// import SelectManyEntitiesContext from '../SelectManyEntitiesContext'
+// import TipoArticuloTalleTable from './TipoArticuloTalleTable'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useSWRConfig } from 'swr'
@@ -22,25 +22,32 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Button } from '@/components/ui/button'
+import MultipleSelector from '@/components/ui/multiple-select'
+import axios from 'axios'
 
 const tipoArticuloSchema = z.object({
   descripcion: z.string().min(1, 'Se requiere descripcion'),
-  // talle_ids: z.array(talleSchema).nullable(),
+  talles: z.array(optionSchema).nullable(),
 })
 
 export default function TipoArticuloFormContent({
   onFormSubmit,
   tipoArticulo,
+  talles,
   editing,
 }) {
   const { toast } = useToast()
-  const { selected } = useContext(SelectManyEntitiesContext)
   const { mutate } = useSWRConfig()
 
   const form = useForm({
     resolver: zodResolver(tipoArticuloSchema),
     defaultValues: {
       descripcion: tipoArticulo?.descripcion ?? '',
+      talles: tipoArticulo?.talles?.map(t => ({
+        label: t.descripcion,
+        value: String(t.id),
+        disable: false,
+      })),
     },
   })
 
@@ -85,12 +92,14 @@ export default function TipoArticuloFormContent({
 
   function onSubmit(values) {
     const data = {
+      descripcion: values.descripcion,
       talle_ids:
-        selected.length > 0
-          ? selected.map(talle => ({ talle_id: talle.id }))
+        values.talles.length > 0
+          ? values.talles.map(talle => ({ talle_id: talle.value }))
           : [],
-      ...values,
     }
+
+    console.log(data)
 
     if (editing) {
       trigger({ id: tipoArticulo?.id, data })
@@ -133,7 +142,35 @@ export default function TipoArticuloFormContent({
         )}
 
         <Label className="col-span-12 font-medium">Asociado a:</Label>
-        <TipoArticuloTalleTable />
+        {/* <TipoArticuloTalleTable /> */}
+        <FormField
+          control={form.control}
+          name="talles"
+          render={({ field }) => (
+            <FormItem className="col-span-12">
+              <FormLabel>Talles</FormLabel>
+              <FormControl>
+                <MultipleSelector
+                  {...field}
+                  defaultOptions={
+                    talles?.map(t => ({
+                      label: t.descripcion,
+                      value: String(t.id),
+                      disable: false,
+                    })) ?? []
+                  }
+                  placeholder="Selecciona los talles relacionados"
+                  emptyIndicator={
+                    <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+                      no se encuetran resultados.
+                    </p>
+                  }
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         <FormField
           control={form.control}

@@ -28,9 +28,10 @@ export default function TallesContainer({}) {
     },
     {
       accessorKey: 'tipos',
+      id: 'tipo_articulo_id',
       header: 'Asociado a',
       cell: ({ row }) => {
-        const tipo_articulos = row.getValue('tipos')
+        const tipo_articulos = row.getValue('tipo_articulo_id')
 
         return (
           <ul>

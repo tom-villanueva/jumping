@@ -13,7 +13,7 @@ export default function TotalStockChart({ data }) {
             label
             dataKey="value"
             nameKey="name"
-            outerRadius={50}>
+            outerRadius={200}>
             <LabelList
               dataKey="name"
               position="right"

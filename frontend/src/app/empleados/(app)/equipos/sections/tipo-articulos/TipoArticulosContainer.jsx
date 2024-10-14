@@ -6,7 +6,7 @@ import DeleteEntityForm from '../../../../../../components/crud/DeleteEntityForm
 import CreateEditEntityModal from '../../../../../../components/crud/CreateEditEntityModal'
 import TipoArticuloFormContent from './TipoArticuloFormContent'
 import TipoArticulosTable from './TipoArticulosTable'
-import { SelectManyEntitiesContextProvider } from '../SelectManyEntitiesContext'
+// import { SelectManyEntitiesContextProvider } from '../SelectManyEntitiesContext'
 import { useTalles } from '@/services/talles'
 
 const TIPO_ARTICULO_DEFAULT_VALUES = {
@@ -115,18 +115,19 @@ export default function TipoArticulosContainer({}) {
         onOpenChange={() => setOpenForm(!openForm)}
         editing={editing}
         name="tipo de artículo">
-        <SelectManyEntitiesContextProvider
+        {/* <SelectManyEntitiesContextProvider
           entities={talles}
           defaultSelected={selectedTipoArticulo?.talles?.map(
             // Le saco el atributo pivot
             ({ pivot, ...rest }) => rest,
-          )}>
-          <TipoArticuloFormContent
-            onFormSubmit={() => setOpenForm(!openForm)}
-            tipoArticulo={selectedTipoArticulo}
-            editing={editing}
-          />
-        </SelectManyEntitiesContextProvider>
+          )}> */}
+        <TipoArticuloFormContent
+          onFormSubmit={() => setOpenForm(!openForm)}
+          tipoArticulo={selectedTipoArticulo}
+          talles={talles}
+          editing={editing}
+        />
+        {/* </SelectManyEntitiesContextProvider> */}
       </CreateEditEntityModal>
       <TipoArticulosTable columns={columns} />
     </div>
