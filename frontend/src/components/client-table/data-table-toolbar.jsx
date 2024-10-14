@@ -10,7 +10,7 @@ export function DataTableToolbar({ table, filters }) {
   const isFiltered = table.getState().columnFilters.length > 0
 
   return (
-    <div className="flex items-center justify-between overflow-x-auto">
+    <div className="flex items-center justify-between overflow-x-auto pb-2">
       <div className="flex flex-1 items-end space-x-2">
         {filters &&
           filters.length > 0 &&
