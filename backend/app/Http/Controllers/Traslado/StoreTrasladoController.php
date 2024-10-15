@@ -1,10 +1,13 @@
 <?php
+
 namespace App\Http\Controllers\Traslado;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Repositories\Traslado\TrasladoRepository;
 use App\Http\Requests\Traslado\StoreTrasladoRequest;
+use App\Models\Reserva;
+use App\Models\TrasladoPrecio;
+use Illuminate\Support\Facades\DB;
 
 class StoreTrasladoController extends Controller
 {
@@ -17,7 +20,40 @@ class StoreTrasladoController extends Controller
 
     public function __invoke(StoreTrasladoRequest $request)
     {
-        $new_entity = $this->repository->create($request->all());
+        DB::beginTransaction();
+
+        try {
+            $reserva = Reserva::find($request->reserva_id);
+
+            $startDate = $reserva->fecha_desde;
+            $endDate = $reserva->fecha_hasta;
+
+            $precio = TrasladoPrecio::where(function ($query) use ($startDate, $endDate) {
+                $query->where(function ($query) use ($startDate, $endDate) {
+                    $query->whereDate('fecha_desde', '<=', $endDate)
+                        ->whereDate('fecha_hasta', '>=', $startDate);
+                })
+                    ->orWhere(function ($query) use ($startDate, $endDate) {
+                        $query->whereDate('fecha_desde', '<=', $endDate)
+                            ->whereNull('fecha_hasta');
+                    });
+            })
+                ->orderBy('fecha_hasta', 'asc')
+                ->first();
+
+            $data = [
+                'precio' => $precio->precio,
+                'traslado_precio_id' => $precio->id,
+                ...$request->all()
+            ];
+
+            $new_entity = $this->repository->create($data);
+
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
+        }
 
         return response()->json($new_entity, 201);
     }

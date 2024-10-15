@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\Traslado;
 
+use App\Rules\AfterReservaFechaDesde;
+use App\Rules\BeforeReservaFechaHasta;
 use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -26,8 +28,17 @@ class UpdateTrasladoRequest extends FormRequest
     {
         return [
             'direccion' => 'required',
-            'fecha_desde' => 'required|date_format:Y-m-d|after_or_equal:today',
-            'fecha_hasta' => 'required|date_format:Y-m-d|after_or_equal:fecha_desde',
+            'fecha_desde' => [
+                'required',
+                'date_format:Y-m-d',
+                new AfterReservaFechaDesde()
+            ],
+            'fecha_hasta' => [
+                'required',
+                'date_format:Y-m-d',
+                'after_or_equal:fecha_desde',
+                new BeforeReservaFechaHasta()
+            ],
             'reserva_id' => 'required|exists:reservas,id'
         ];
     }

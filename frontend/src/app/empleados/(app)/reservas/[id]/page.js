@@ -15,6 +15,7 @@ import ReservaEquipoList from './ReservaEquipoList'
 import { Separator } from '@/components/ui/separator'
 import ReservaDetailLabel from './ReservaDetailLabel'
 import ReservaDetailActions from './ReservaDetailActions'
+import ReservaTrasladoList from './ReservaTrasladoList'
 
 export default function ReservaDetailPage({ params }) {
   const [open, setOpen] = useState(false)
@@ -49,6 +50,35 @@ export default function ReservaDetailPage({ params }) {
 
   return (
     <div className="container mx-auto pt-10">
+      <Collapsible
+        open={open}
+        onOpenChange={setOpen}
+        className="mt-2 space-y-2">
+        <div className="flex w-[250px] items-center justify-between space-x-4 px-2">
+          <h4 className="text-sm font-semibold">Datos de la reserva</h4>
+          <CollapsibleTrigger asChild>
+            <Button variant="ghost" size="sm" className="w-9 p-0">
+              <Edit className="h-4 w-4" />
+              <span className="sr-only">Toggle</span>
+            </Button>
+          </CollapsibleTrigger>
+        </div>
+        <CollapsibleContent>
+          {!isValidating ? (
+            <ReservaFormContent
+              onFormSubmit={() => {}}
+              reserva={reserva}
+              apiKey={`/api/reservas/${params.id}`}
+              editing
+            />
+          ) : (
+            <div className="flex w-full items-center justify-center">
+              <p className="">Cargando...</p>
+            </div>
+          )}
+        </CollapsibleContent>
+      </Collapsible>
+
       <div className="rounded-md border px-2 py-3 text-base">
         <ReservaDetailLabel
           title="Reserva Nro."
@@ -103,41 +133,20 @@ export default function ReservaDetailPage({ params }) {
         estadoId={reserva?.estado_actual?.estado_id}
       />
 
-      <Separator className="mt-8 w-full" />
+      {/* <Separator className="mt-8 w-full" /> */}
 
       <ReservaEquipoList
         reservaId={params.id}
         estadoId={reserva?.estado_actual?.estado_id}
       />
 
-      <Collapsible
-        open={open}
-        onOpenChange={setOpen}
-        className="mt-2 space-y-2">
-        <div className="flex w-[250px] items-center justify-between space-x-4 px-2">
-          <h4 className="text-sm font-semibold">Datos de la reserva</h4>
-          <CollapsibleTrigger asChild>
-            <Button variant="ghost" size="sm" className="w-9 p-0">
-              <Edit className="h-4 w-4" />
-              <span className="sr-only">Toggle</span>
-            </Button>
-          </CollapsibleTrigger>
-        </div>
-        <CollapsibleContent>
-          {!isValidating ? (
-            <ReservaFormContent
-              onFormSubmit={() => {}}
-              reserva={reserva}
-              apiKey={`/api/reservas/${params.id}`}
-              editing
-            />
-          ) : (
-            <div className="flex w-full items-center justify-center">
-              <p className="">Cargando...</p>
-            </div>
-          )}
-        </CollapsibleContent>
-      </Collapsible>
+      {/* <Separator className="mt-8 w-full" /> */}
+
+      <ReservaTrasladoList
+        reserva={reserva}
+        reservaId={params.id}
+        estadoId={reserva?.estado_actual?.estado_id}
+      />
     </div>
   )
 }

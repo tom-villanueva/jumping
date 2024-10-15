@@ -125,7 +125,7 @@ export default function ReservaEquipoPrecios({
         <div className="grid grid-cols-12">
           <div className="col-span-12">
             {descuentos && descuentos.length > 0 && (
-              <span>{`Descuento de ${descuentos[0].descuento}% por reserva de ${descuentos[0].dias} días.`}</span>
+              <span>{`Descuento de ${descuentos[0].descuento}% por reserva de al menos ${descuentos[0].dias} días.`}</span>
             )}
           </div>
           <div className="col-span-12">

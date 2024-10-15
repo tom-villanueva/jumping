@@ -201,6 +201,10 @@ class Reserva extends BaseModel
             $totalPrice += $this->calculateReservaEquipoPrice($reservaEquipo);
         }
 
+        foreach ($this->traslados as $traslado) {
+            $totalPrice += $this->calculateReservaTrasladoPrice($traslado);
+        }
+
         return round($totalPrice, 2);
     }
 
@@ -250,6 +254,23 @@ class Reserva extends BaseModel
         }
 
         return $totalPrice;
+    }
+
+    private function calculateReservaTrasladoPrice(Traslado $traslado)
+    {
+        $startDate = Carbon::parse($this->fecha_desde);
+        $endDate = Carbon::parse($this->fecha_hasta);
+
+        $precioStartDate = Carbon::parse($traslado->fecha_desde);
+        $precioEndDate = Carbon::parse($traslado->fecha_hasta);
+
+        $daysForThisPrice = $this->getOverlappingDays($startDate, $endDate, $precioStartDate, $precioEndDate);
+
+        $priceForThisPeriod = 0;
+
+        $priceForThisPeriod = $traslado->precio * $daysForThisPrice;
+
+        return $priceForThisPeriod;
     }
 
     /**
