@@ -66,7 +66,7 @@ export default function ReservasContainer() {
     params: {
       page: pagination.pageIndex + 1,
       page_size: pagination.pageSize,
-      sort: 'fecha_desde',
+      sort: '-fecha_desde',
     },
     filters: debouncedColumnFilters,
   })

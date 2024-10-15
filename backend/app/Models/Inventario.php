@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Core\AllowedSorts\TalleDescripcionSort;
 use App\Core\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\AllowedSort;
 
 class Inventario extends BaseModel
 {
@@ -60,6 +62,8 @@ class Inventario extends BaseModel
     public function allowedSorts()
     {
         return [
+            AllowedSort::custom('talle_descripcion', new TalleDescripcionSort()),
+            'stock',
         ];
     }
 

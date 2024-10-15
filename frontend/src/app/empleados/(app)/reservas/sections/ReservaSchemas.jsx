@@ -37,13 +37,6 @@ export const reservaSchema = z
       path: ['fecha_hasta'],
     },
   )
-  .refine(
-    data => convertToUTC(data.fecha_prueba) >= convertToUTC(data.fecha_desde),
-    {
-      message: 'Fecha prueba no puede ser menor a fecha inicio',
-      path: ['fecha_prueba'],
-    },
-  )
 
 export const reservaSchemaEdit = z.object(
   {

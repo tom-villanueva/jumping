@@ -47,7 +47,6 @@ export default function StockTable({
       page: pagination.pageIndex + 1,
       page_size: pagination.pageSize,
       include: 'tipo_articulo,talle,marca,modelo',
-      sort: 'id',
     },
     filters: debouncedColumnFilters,
   })

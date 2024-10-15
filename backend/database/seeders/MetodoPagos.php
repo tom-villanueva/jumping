@@ -17,9 +17,10 @@ class MetodoPagos extends Seeder
         MetodoPago::truncate();
 
         $metodos = [
-            "Transferencia",
-            "Débito",
-            "Crédito"
+            "Efectivo",
+            "Tarjeta de crédito",
+            "Mercado Pago",
+            "Transferencia"
         ];
 
         foreach ($metodos as $metodo) {
