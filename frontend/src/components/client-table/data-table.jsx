@@ -7,6 +7,7 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -80,6 +81,25 @@ export function DataTable({
               </TableRow>
             )}
           </TableBody>
+
+          {table.getFooterGroups().length > 0 && (
+            <TableFooter>
+              {table.getFooterGroups().map(footerGroup => (
+                <TableRow key={footerGroup.id}>
+                  {footerGroup.headers.map(header => (
+                    <TableHead key={header.id} colSpan={header.colSpan}>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.footer,
+                            header.getContext(),
+                          )}
+                    </TableHead>
+                  ))}
+                </TableRow>
+              ))}
+            </TableFooter>
+          )}
         </Table>
       </div>
       <DataTablePagination table={table} />

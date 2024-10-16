@@ -112,7 +112,7 @@ export default function ReservaEquipoList({ reservaId, estadoId }) {
 
   return (
     <div className="flex flex-col gap-2 rounded-md border px-2 py-3 text-base">
-      <div className="flex w-full items-center justify-between gap-4">
+      <div className="flex w-full items-center justify-end gap-4">
         <Button
           disabled={estadoId === RESERVA_PAGADA_ID}
           onClick={() => {

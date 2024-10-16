@@ -6,12 +6,14 @@ import DeleteEntityForm from '@/components/crud/DeleteEntityForm'
 import { useRouter } from 'next/navigation'
 import ReservaExtenderDialog from './ReservaExtenderDialog'
 import ReservaExtenderFechasDialog from './ReservaExtenderFechasDialog'
+import ReservaVerDesgloseDePreciosDialog from './ReservaVerDesgloseDePreciosDialog'
 
 export default function ReservaDetailActions({ reservaId, estadoId, reserva }) {
   const [openPagar, setOpenPagar] = useState(false)
   const [openExtender, setOpenExtender] = useState(false)
   const [openEliminar, setOpenEliminar] = useState(false)
   const [openExtenderFechas, setOpenExtenderFechas] = useState(false)
+  const [openDesglosePrecios, setOpenDesglosePrecios] = useState(false)
 
   const router = useRouter()
 
@@ -34,6 +36,14 @@ export default function ReservaDetailActions({ reservaId, estadoId, reserva }) {
 
         <Button type="button" onClick={() => setOpenExtender(true)}>
           Crear nueva reserva desde esta reserva
+        </Button>
+
+        <Button type="button" onClick={() => setOpenDesglosePrecios(true)}>
+          Ver desglose de precios
+        </Button>
+
+        <Button type="button" onClick={() => setOpenExtender(true)}>
+          Imprimir contrato
         </Button>
 
         <Button
@@ -72,6 +82,13 @@ export default function ReservaDetailActions({ reservaId, estadoId, reserva }) {
       <ReservaExtenderFechasDialog
         openForm={openExtenderFechas}
         setOpenForm={setOpenExtenderFechas}
+        reservaId={reservaId}
+        reserva={reserva}
+      />
+
+      <ReservaVerDesgloseDePreciosDialog
+        openForm={openDesglosePrecios}
+        setOpenForm={setOpenDesglosePrecios}
         reservaId={reservaId}
         reserva={reserva}
       />

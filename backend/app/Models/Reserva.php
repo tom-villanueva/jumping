@@ -79,7 +79,7 @@ class Reserva extends BaseModel
 
     public function equipos_reservados()
     {
-        return $this->hasMany(ReservaEquipo::class, 'reserva_id');
+        return $this->hasMany(ReservaEquipo::class, 'reserva_id')->with('equipo')->with('descuentos');
     }
 
     /**

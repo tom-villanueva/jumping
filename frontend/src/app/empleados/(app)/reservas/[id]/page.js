@@ -23,7 +23,7 @@ export default function ReservaDetailPage({ params }) {
   const { reserva, isLoading, isError, isValidating } = useReservaById({
     id: params.id,
     params: {
-      include: 'user,equipos,pagos.metodo_pago',
+      include: 'user,equipos,pagos.metodo_pago,traslados',
     },
   })
 
