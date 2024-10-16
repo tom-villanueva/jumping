@@ -2,15 +2,9 @@
 
 import { useToast } from '@/components/ui/use-toast'
 import useSWRMutation from 'swr/mutation'
-import { useSWRConfig } from 'swr'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import {
-  convertToUTC,
-  formatDate,
-  storeFetcher,
-  updateFetcher,
-} from '@/lib/utils'
+import { convertToUTC, formatDate, updateFetcher } from '@/lib/utils'
 import {
   Form,
   FormControl,
@@ -23,23 +17,13 @@ import {
 import { z } from 'zod'
 import axios from 'axios'
 import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
-import { useReservaEquipos } from '@/services/reserva-equipos'
-import {
-  getCoreRowModel,
-  getPaginationRowModel,
-  useReactTable,
-} from '@tanstack/react-table'
-import { useState } from 'react'
-import { DataTable } from '@/components/client-table/data-table'
-import { useRouter } from 'next/navigation'
+import { useSWRConfig } from 'swr'
 
 const today = formatDate(convertToUTC(new Date().setHours(0, 0, 0, 0)))
 
 const reservaExtenderSchema = z
   .object({
-    es_extension: z.boolean(),
     fecha_desde: z
       .string({
         required_error: 'Se requiere fecha inicio',
@@ -67,94 +51,37 @@ const reservaExtenderSchema = z
     },
   )
 
-export default function ReservaExtenderForm({
+export default function ReservaExtenderFechasForm({
   reserva,
   reservaId,
   onFormSubmit = () => {},
 }) {
   const { toast } = useToast()
-  const router = useRouter()
-  const [rowSelection, setRowSelection] = useState({})
-
-  const { reservaEquipos, isLoading, isError } = useReservaEquipos({
-    params: {
-      include: 'equipo',
-    },
-    filters: [{ id: 'reserva_id', value: reservaId }],
-  })
-
-  const columns = [
-    {
-      id: 'select',
-      header: ({ table }) => (
-        <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && 'indeterminate')
-          }
-          onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-          className="translate-y-0.5"
-        />
-      ),
-      cell: ({ row }) => (
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={value => row.toggleSelected(!!value)}
-          aria-label="Select row"
-          className="translate-y-0.5"
-        />
-      ),
-      enableSorting: false,
-      enableHiding: false,
-    },
-    {
-      header: 'Equipo',
-      accessorKey: 'equipo.descripcion',
-    },
-    {
-      header: 'Apellido',
-      accessorKey: 'apellido',
-    },
-    {
-      header: 'Nombre',
-      accessorKey: 'nombre',
-    },
-  ]
-
-  const table = useReactTable({
-    data: reservaEquipos || [],
-    state: {
-      rowSelection,
-    },
-    columns,
-    enableRowSelection: true,
-    onRowSelectionChange: setRowSelection,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getRowId: row => row.id,
-  })
+  const { mutate } = useSWRConfig()
 
   const form = useForm({
     resolver: zodResolver(reservaExtenderSchema),
     defaultValues: {
-      es_extension: true,
-      fecha_desde: today,
-      fecha_hasta: '',
-      fecha_prueba: today,
+      fecha_desde: reserva?.fecha_desde ?? '',
+      fecha_hasta: reserva?.fecha_hasta ?? '',
+      fecha_prueba: reserva?.fecha_prueba ?? '',
     },
   })
 
   const { trigger, isMutating } = useSWRMutation(
-    '/api/reservas/extender',
+    '/api/reservas/extender-fechas',
     updateFetcher,
     {
       onSuccess(data) {
         toast({
-          title: `😄 Reserva extendida con éxito`,
+          title: `😄 Fechas de reserva extendida con éxito`,
         })
         form.reset()
-        router.push(`${data?.data?.id}`)
+        mutate(
+          key => Array.isArray(key) && key[0] === `/api/reservas/${reservaId}`,
+        )
+        mutate(key => Array.isArray(key) && key[0] === `/api/reserva-equipos`)
+        onFormSubmit()
       },
       onError(err) {
         if (axios.isAxiosError(err)) {
@@ -182,19 +109,8 @@ export default function ReservaExtenderForm({
   )
 
   function onSubmit(values) {
-    const reserva_equipo_ids = []
-
-    for (let key in rowSelection) {
-      if (rowSelection[key]) {
-        reserva_equipo_ids.push({
-          reserva_equipo_id: key,
-        })
-      }
-    }
-
     const data = {
       ...values,
-      reserva_equipo_ids,
     }
 
     trigger({ id: reservaId, data })
@@ -205,35 +121,6 @@ export default function ReservaExtenderForm({
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         className="grid w-full grid-cols-12 gap-2 gap-y-4 rounded p-2">
-        <FormField
-          control={form.control}
-          name="es_extension"
-          render={({ field }) => (
-            <FormItem className="col-span-12 flex items-center space-x-2">
-              <FormControl>
-                <Checkbox
-                  id="es_extension"
-                  name="es_extension"
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              </FormControl>
-              <FormLabel className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                Es extensión
-              </FormLabel>
-            </FormItem>
-          )}
-        />
-
-        <div className="col-span-12">
-          <DataTable
-            table={table}
-            columns={columns}
-            isLoading={isLoading}
-            filters={[]}
-          />
-        </div>
-
         <FormField
           control={form.control}
           name="fecha_desde"
@@ -276,14 +163,14 @@ export default function ReservaExtenderForm({
 
         <FormField
           control={form.control}
-          name="pagada"
+          name="extender"
           render={({ field }) => (
             <FormItem className="col-span-12 flex flex-row items-center justify-between rounded-lg border p-4">
               <div className="space-y-0.5">
-                <FormLabel className="text-base">Extender reserva</FormLabel>
+                <FormLabel className="text-base">Modificar fechas</FormLabel>
                 <FormDescription>
-                  Se marcarán los artículos como devueltos. Si "es extensión"
-                  está tildado, se pasan los artículos a la nueva reserva.
+                  Se actualizarán las fechas y se recalcula el precio de los
+                  equipos.
                 </FormDescription>
               </div>
               <FormControl>
@@ -291,7 +178,7 @@ export default function ReservaExtenderForm({
                   disabled={isMutating}
                   type="submit"
                   className="col-span-6">
-                  {isMutating ? 'Marcando...' : 'Aceptar'}
+                  {isMutating ? 'Actualizando...' : 'Aceptar'}
                 </Button>
               </FormControl>
             </FormItem>

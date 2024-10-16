@@ -54,8 +54,10 @@ export default function ReservaDetailPage({ params }) {
         open={open}
         onOpenChange={setOpen}
         className="mt-2 space-y-2">
-        <div className="flex w-[250px] items-center justify-between space-x-4 px-2">
-          <h4 className="text-sm font-semibold">Datos de la reserva</h4>
+        <div className="flex w-[300px] items-center justify-between space-x-4 px-2">
+          <p className="p-5 text-xl font-bold text-white">
+            Datos de la reserva
+          </p>
           <CollapsibleTrigger asChild>
             <Button variant="ghost" size="sm" className="w-9 p-0">
               <Edit className="h-4 w-4" />
@@ -145,6 +147,8 @@ export default function ReservaDetailPage({ params }) {
         />
       </div>
 
+      <p className="p-5 text-xl font-bold text-white">Acciones</p>
+
       <ReservaDetailActions
         reserva={reserva}
         reservaId={params.id}
@@ -152,6 +156,7 @@ export default function ReservaDetailPage({ params }) {
       />
 
       {/* <Separator className="mt-8 w-full" /> */}
+      <p className="p-5 text-xl font-bold text-white">Equipos</p>
 
       <ReservaEquipoList
         reservaId={params.id}
@@ -159,6 +164,7 @@ export default function ReservaDetailPage({ params }) {
       />
 
       {/* <Separator className="mt-8 w-full" /> */}
+      <p className="p-5 text-xl font-bold text-white">Traslados</p>
 
       <ReservaTrasladoList
         reserva={reserva}

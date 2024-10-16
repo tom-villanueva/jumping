@@ -111,9 +111,8 @@ export default function ReservaTrasladoList({ reserva, reservaId, estadoId }) {
   })
 
   return (
-    <div className="mt-8 flex flex-col gap-2 rounded-md border px-2 py-3 text-base">
-      <div className="flex w-full items-center justify-between gap-4 py-4">
-        <h2>Traslados de la reserva</h2>
+    <div className="flex flex-col gap-2 rounded-md border px-2 py-3 text-base">
+      <div className="flex w-full items-center justify-between gap-4">
         <Button
           disabled={estadoId === RESERVA_PAGADA_ID}
           onClick={() => {
@@ -121,7 +120,7 @@ export default function ReservaTrasladoList({ reserva, reservaId, estadoId }) {
             setEditing(false)
             setOpenFormModal(true)
           }}>
-          Agregar traslado a reserva
+          Agregar traslado
         </Button>
       </div>
       <CreateEditEntityModal

@@ -5,18 +5,19 @@ import { RESERVA_PAGADA_ID } from '@/lib/utils'
 import DeleteEntityForm from '@/components/crud/DeleteEntityForm'
 import { useRouter } from 'next/navigation'
 import ReservaExtenderDialog from './ReservaExtenderDialog'
+import ReservaExtenderFechasDialog from './ReservaExtenderFechasDialog'
 
 export default function ReservaDetailActions({ reservaId, estadoId, reserva }) {
   const [openPagar, setOpenPagar] = useState(false)
   const [openExtender, setOpenExtender] = useState(false)
   const [openEliminar, setOpenEliminar] = useState(false)
+  const [openExtenderFechas, setOpenExtenderFechas] = useState(false)
 
   const router = useRouter()
 
   return (
-    <div className="mt-8 flex flex-col gap-2 rounded-md border px-2 py-3 text-base">
-      <h2>Acciones</h2>
-      <div className="flex flex-row justify-between">
+    <div className="flex flex-col gap-2 rounded-md border px-2 py-3 text-base">
+      <div className="flex flex-row flex-wrap justify-between gap-2">
         <Button
           type="button"
           disabled={estadoId === RESERVA_PAGADA_ID}
@@ -24,8 +25,15 @@ export default function ReservaDetailActions({ reservaId, estadoId, reserva }) {
           Marcar como paga
         </Button>
 
+        <Button
+          type="button"
+          disabled={estadoId === RESERVA_PAGADA_ID}
+          onClick={() => setOpenExtenderFechas(true)}>
+          Modificar fechas
+        </Button>
+
         <Button type="button" onClick={() => setOpenExtender(true)}>
-          Extender (reserva desde reserva)
+          Crear nueva reserva desde esta reserva
         </Button>
 
         <Button
@@ -57,6 +65,13 @@ export default function ReservaDetailActions({ reservaId, estadoId, reserva }) {
       <ReservaExtenderDialog
         openForm={openExtender}
         setOpenForm={setOpenExtender}
+        reservaId={reservaId}
+        reserva={reserva}
+      />
+
+      <ReservaExtenderFechasDialog
+        openForm={openExtenderFechas}
+        setOpenForm={setOpenExtenderFechas}
         reservaId={reservaId}
         reserva={reserva}
       />
