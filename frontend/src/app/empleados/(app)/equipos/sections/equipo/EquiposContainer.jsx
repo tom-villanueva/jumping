@@ -243,18 +243,12 @@ export default function EquiposContainer({}) {
         editing={editing}
         name="equipo">
         {editing && <EquipoThumbnailUploadInput equipo={selectedEquipo} />}
-        <SelectManyEntitiesContextProvider
-          entities={tipoArticulos}
-          defaultSelected={selectedEquipo?.equipo_tipo_articulo?.map(
-            // Le saco el atributo pivot
-            ({ pivot, ...rest }) => rest,
-          )}>
-          <EquipoFormContent
-            onFormSubmit={() => setOpenForm(!openForm)}
-            equipo={selectedEquipo}
-            editing={editing}
-          />
-        </SelectManyEntitiesContextProvider>
+        <EquipoFormContent
+          onFormSubmit={() => setOpenForm(!openForm)}
+          equipo={selectedEquipo}
+          tipoArticulos={tipoArticulos}
+          editing={editing}
+        />
       </CreateEditEntityModal>
       <EquiposTable
         columns={columns}

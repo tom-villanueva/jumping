@@ -3,16 +3,14 @@
 import { Input } from '@/components/ui/input'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
-import EquipoTipoArticuloTable from './EquipoTipoArticuloTable'
 import { Separator } from '@/components/ui/separator'
-import { useContext } from 'react'
+import { useContext, useMemo } from 'react'
 import { useToast } from '@/components/ui/use-toast'
-import SelectManyEntitiesContext from '../SelectManyEntitiesContext'
 import useSWRMutation from 'swr/mutation'
 import { useSWRConfig } from 'swr'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { storeFetcher, updateFetcher } from '@/lib/utils'
+import { optionSchema, storeFetcher, updateFetcher } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -24,6 +22,7 @@ import {
 } from '@/components/ui/form'
 import { z } from 'zod'
 import axios from 'axios'
+import MultipleSelector from '@/components/ui/multiple-select'
 
 const equipoSchema = z.object({
   descripcion: z.string().min(1, 'Se requiere descripcion'),
@@ -34,12 +33,16 @@ const equipoSchema = z.object({
     })
     .nonnegative('No puede ser negativo'),
   disponible: z.boolean(),
-  // tipo_articulo_ids: z.array(tipoArticuloSchema).nullable(),
+  tipoArticulos: z.array(optionSchema).nullable(),
 })
 
-export default function EquipoFormContent({ onFormSubmit, equipo, editing }) {
+export default function EquipoFormContent({
+  onFormSubmit,
+  equipo,
+  tipoArticulos,
+  editing,
+}) {
   const { toast } = useToast()
-  const { selected } = useContext(SelectManyEntitiesContext)
   const { mutate } = useSWRConfig()
 
   const form = useForm({
@@ -48,6 +51,11 @@ export default function EquipoFormContent({ onFormSubmit, equipo, editing }) {
       descripcion: equipo?.descripcion ?? '',
       precio: equipo?.precio_vigente?.precio ?? 0,
       disponible: equipo?.disponible ?? false,
+      tipoArticulos: equipo?.equipo_tipo_articulo?.map(t => ({
+        label: t.descripcion,
+        value: String(t.id),
+        disable: false,
+      })),
     },
   })
 
@@ -90,13 +98,25 @@ export default function EquipoFormContent({ onFormSubmit, equipo, editing }) {
     },
   )
 
+  const tiposOptions = useMemo(() => {
+    return (
+      tipoArticulos?.map(t => ({
+        label: t.descripcion,
+        value: String(t.id),
+        disable: false,
+      })) ?? []
+    )
+  }, [tipoArticulos])
+
   function onSubmit(values) {
     const data = {
+      descripcion: values.descripcion,
+      precio: values.precio,
+      disponible: values.disponible,
       tipo_articulo_ids:
-        selected.length > 0
-          ? selected.map(tipo => ({ tipo_articulo_id: tipo.id }))
+        values.tipoArticulos.length > 0
+          ? values.tipoArticulos.map(tipo => ({ tipo_articulo_id: tipo.value }))
           : [],
-      ...values,
     }
 
     if (editing) {
@@ -185,7 +205,29 @@ export default function EquipoFormContent({ onFormSubmit, equipo, editing }) {
         )}
 
         <Label className="col-span-12 font-medium">Compuesto por:</Label>
-        <EquipoTipoArticuloTable />
+        {/* <EquipoTipoArticuloTable /> */}
+        <FormField
+          control={form.control}
+          name="tipoArticulos"
+          render={({ field }) => (
+            <FormItem className="col-span-12">
+              <FormLabel>Tipos</FormLabel>
+              <FormControl>
+                <MultipleSelector
+                  {...field}
+                  defaultOptions={tiposOptions}
+                  placeholder="Selecciona los tipos relacionados"
+                  emptyIndicator={
+                    <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+                      no se encuentran resultados.
+                    </p>
+                  }
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         <Button type="submit" className="col-span-6">
           {isMutating ? 'Guardando...' : 'Guardar'}
