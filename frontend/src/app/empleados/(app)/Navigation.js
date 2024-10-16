@@ -46,7 +46,7 @@ const Navigation = ({ user, logout }) => {
                 <NavLink
                   key={route.id}
                   href={`/empleados/${route.name}`}
-                  active={pathname === `/empleados/${route.name}`}>
+                  active={pathname.startsWith(`/empleados/${route.name}`)}>
                   {capitalize(route.name)}
                 </NavLink>
               ))}
@@ -91,7 +91,7 @@ const Navigation = ({ user, logout }) => {
               <ResponsiveNavLink
                 key={route.id}
                 href={`/empleados/${route.name}`}
-                active={pathname === `/empleados/${route.name}`}>
+                active={pathname.startsWith(`/empleados/${route.name}`)}>
                 {capitalize(route.name)}
               </ResponsiveNavLink>
             ))}
