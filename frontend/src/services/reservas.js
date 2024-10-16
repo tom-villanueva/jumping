@@ -55,3 +55,17 @@ export function useReservaById({ id, params } = {}) {
     ...rest,
   }
 }
+
+export function useReservasEstadisticas() {
+  const { data, error, isLoading, ...rest } = useSWR([
+    '/api/reservas/estadisticas',
+    '',
+  ])
+
+  return {
+    estadisticas: data,
+    isLoading,
+    isError: error,
+    ...rest,
+  }
+}

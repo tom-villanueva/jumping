@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Core\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\QueryBuilder\AllowedFilter;
 
 class Pago extends BaseModel
 {
@@ -45,6 +46,9 @@ class Pago extends BaseModel
     public function allowedFilters()
     {
         return [
+            AllowedFilter::exact('metodo_pago_id'),
+            AllowedFilter::exact('moneda_id'),
+            AllowedFilter::exact('reserva_id')
         ];
     }
 
@@ -58,7 +62,8 @@ class Pago extends BaseModel
     {
         return [
             'metodo_pago',
-            'moneda'
+            'moneda',
+            'reserva'
         ];
     }
 }

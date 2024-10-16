@@ -18,7 +18,7 @@ const InfoCard = ({ title, number, percentage, footer }) => {
       <CardContent>
         <p className="text-white">{number}</p>
         <p className={percentage > 5 ? 'text-green-600' : 'text-red-700'}>
-          {percentage}%
+          {Math.round(percentage)}%
         </p>
       </CardContent>
       <CardFooter>

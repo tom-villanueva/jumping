@@ -89,7 +89,7 @@ class MigrarReservas extends Command
                         'total' => $oldReserva->res_importe_total,
                         'moneda_id' => 1,
                         'metodo_pago_id' => $oldReserva->res_forma_pago,
-                        'created_at' => now(),
+                        'created_at' => Carbon::parse($oldReserva->res_fecha_fin),
                         'updated_at' => now(),
                     ];
 
