@@ -55,9 +55,19 @@ export default function StockTable({
     {},
   )
 
-  const { talles, isLoading: isLoadingTalles } = useTalles({})
-  const { marcas, isLoading: isLoadingMarcas } = useMarcas({})
-  const { modelos, isLoading: isLoadingModelos } = useModelos({})
+  const { talles, isLoading: isLoadingTalles } = useTalles({
+    filters: debouncedColumnFilters.filter(
+      dcf => dcf.id === 'tipo_articulo_id',
+    ),
+  })
+  const { marcas, isLoading: isLoadingMarcas } = useMarcas({
+    filters: debouncedColumnFilters.filter(
+      dcf => dcf.id === 'tipo_articulo_id',
+    ),
+  })
+  const { modelos, isLoading: isLoadingModelos } = useModelos({
+    filters: debouncedColumnFilters.filter(dcf => dcf.id === 'marca_id'),
+  })
 
   const table = useReactTable({
     data: inventarios?.data || [],

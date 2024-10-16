@@ -127,7 +127,7 @@ export async function deleteFetcher(url, { arg }) {
 export const chartColors = [
   '#FF6B6B', // Soft Red
   '#4ECDC4', // Aqua Blue
-  '#1A535C', // Dark Cyan
+  '#FF8E9C', // Dark Cyan
   '#e633ff', // Off White
   '#FFE66D', // Soft Yellow
   '#FF9F1C', // Bright Orange
