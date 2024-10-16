@@ -10,7 +10,7 @@ import {
 import { useState } from 'react'
 import { Edit } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { convertToUTC } from '@/lib/utils'
+import { convertToUTC, RESERVA_PAGADA_ID } from '@/lib/utils'
 import ReservaEquipoList from './ReservaEquipoList'
 import { Separator } from '@/components/ui/separator'
 import ReservaDetailLabel from './ReservaDetailLabel'
@@ -23,7 +23,7 @@ export default function ReservaDetailPage({ params }) {
   const { reserva, isLoading, isError, isValidating } = useReservaById({
     id: params.id,
     params: {
-      include: 'user,equipos',
+      include: 'user,equipos,pagos.metodo_pago',
     },
   })
 
@@ -111,14 +111,32 @@ export default function ReservaDetailPage({ params }) {
           isValidating={isValidating}
         />
         <Separator className="my-2 w-full" />
-        <ReservaDetailLabel
-          title="Total"
-          label={new Intl.NumberFormat('es-AR', {
-            style: 'currency',
-            currency: 'ARS',
-          }).format(reserva?.precio_total)}
-          isValidating={isValidating}
-        />
+        {reserva?.estado_actual?.estado_id === RESERVA_PAGADA_ID ? (
+          <>
+            <ReservaDetailLabel
+              title="Total"
+              label={`${new Intl.NumberFormat('es-AR', {
+                style: 'currency',
+                currency: 'ARS',
+              }).format(reserva?.pagos[0].total)}`}
+              isValidating={isValidating}
+            />
+            <ReservaDetailLabel
+              title="Método de pago"
+              label={reserva?.pagos[0].metodo_pago?.descripcion}
+              isValidating={isValidating}
+            />
+          </>
+        ) : (
+          <ReservaDetailLabel
+            title="Total"
+            label={new Intl.NumberFormat('es-AR', {
+              style: 'currency',
+              currency: 'ARS',
+            }).format(reserva?.precio_total)}
+            isValidating={isValidating}
+          />
+        )}
         <Separator className="my-2 w-full" />
         <ReservaDetailLabel
           title="Comentario"

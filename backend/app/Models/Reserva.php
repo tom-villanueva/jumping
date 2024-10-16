@@ -180,7 +180,9 @@ class Reserva extends BaseModel
         return [
             'user',
             'traslados',
-            'equipos'
+            'equipos',
+            'pagos',
+            'pagos.metodo_pago'
         ];
     }
 
