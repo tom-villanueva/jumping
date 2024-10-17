@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Models\Articulo;
+use App\Models\ReservaEquipoArticulo;
 use App\Observers\ArticuloObserver;
+use App\Observers\ReservaEquipoArticuloObserver;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\ServiceProvider;
 
@@ -32,5 +34,6 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Articulo::observe(ArticuloObserver::class);
+        ReservaEquipoArticulo::observe(ReservaEquipoArticuloObserver::class);
     }
 }

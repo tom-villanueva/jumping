@@ -7,20 +7,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { useMemo } from 'react'
+// import { useMemo } from 'react'
 import {
   getCoreRowModel,
   getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table'
 import { DataTable } from '@/components/client-table/data-table'
-
-const differenceInDays = (fecha_desde, fecha_hasta) => {
-  const dateFrom = new Date(fecha_desde)
-  const dateTo = new Date(fecha_hasta)
-  const diffTime = Math.abs(dateTo - dateFrom)
-  return Math.ceil(diffTime / (1000 * 60 * 60 * 24)) // Convert milliseconds to days
-}
+import { useReservaDesglosePrecios } from '@/services/reservas'
 
 export default function ReservaVerDesgloseDePreciosDialog({
   openForm,
@@ -28,48 +22,16 @@ export default function ReservaVerDesgloseDePreciosDialog({
   reservaId,
   reserva,
 }) {
-  const tableRows = useMemo(() => {
-    if (!reserva.equipos_reservados) return []
-    const rows = []
-
-    reserva.equipos_reservados.forEach(equipo_reserva => {
-      const equipo = equipo_reserva.equipo.descripcion
-      const nombre = `${equipo_reserva.nombre ?? ''} ${equipo_reserva.apellido ?? ''}`
-
-      equipo_reserva.precios.map(precio_item => {
-        const precio = precio_item.precio
-        const descuento =
-          equipo_reserva.descuentos.length > 0
-            ? equipo_reserva.descuentos[0].descuento
-            : 0
-        const dias = differenceInDays(
-          precio_item.fecha_desde,
-          precio_item.fecha_hasta,
-        )
-        const total = (precio - precio * (descuento / 100)) * dias
-
-        rows.push({
-          nombre,
-          equipo,
-          dias,
-          precio,
-          descuento,
-          total,
-        })
-      })
+  const { precios, isLoading, isError, isValidating } =
+    useReservaDesglosePrecios({
+      id: reservaId,
+      params: {},
     })
-
-    return rows
-  }, [reserva])
 
   const columnsPrecios = [
     {
       header: 'Equipo',
-      accessorKey: 'equipo',
-    },
-    {
-      header: 'Nombre',
-      accessorKey: 'nombre',
+      accessorKey: 'equipo_descripcion',
     },
     {
       header: 'Precio base',
@@ -120,7 +82,7 @@ export default function ReservaVerDesgloseDePreciosDialog({
   ]
 
   const tablePrecios = useReactTable({
-    data: tableRows || [],
+    data: precios || [],
     columns: columnsPrecios,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -140,6 +102,7 @@ export default function ReservaVerDesgloseDePreciosDialog({
             <DataTable
               table={tablePrecios}
               columns={columnsPrecios}
+              isLoading={isLoading || isValidating}
               filters={[]}
             />
           </div>

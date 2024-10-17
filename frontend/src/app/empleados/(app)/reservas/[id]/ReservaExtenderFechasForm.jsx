@@ -78,6 +78,11 @@ export default function ReservaExtenderFechasForm({
           key => Array.isArray(key) && key[0] === `/api/reservas/${reservaId}`,
         )
         mutate(key => Array.isArray(key) && key[0] === `/api/reserva-equipos`)
+        mutate(
+          key =>
+            Array.isArray(key) &&
+            key[0] === `/api/reservas/desglose-precios/${reservaId}`,
+        )
         onFormSubmit()
       },
       onError(err) {

@@ -80,7 +80,7 @@ export default function ArticulosPage() {
       header: 'Modelo',
     },
     {
-      header: 'Disponible',
+      header: 'Disponible Alquilar',
       accessorKey: 'disponible',
       cell: ({ row }) => {
         const disponible = row.getValue('disponible')

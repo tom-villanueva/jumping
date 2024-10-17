@@ -9,6 +9,16 @@ import ReservaExtenderFechasDialog from './ReservaExtenderFechasDialog'
 import ReservaVerDesgloseDePreciosDialog from './ReservaVerDesgloseDePreciosDialog'
 import Link from 'next/link'
 import ReservaEnviarMailContratoDialog from './ReservaEnviarMailContratoDialog'
+import {
+  CalendarClock,
+  CircleDollarSign,
+  Copy,
+  CreditCard,
+  HandCoins,
+  Mail,
+  ReceiptText,
+  Trash,
+} from 'lucide-react'
 
 export default function ReservaDetailActions({ reservaId, estadoId, reserva }) {
   const [openPagar, setOpenPagar] = useState(false)
@@ -28,6 +38,7 @@ export default function ReservaDetailActions({ reservaId, estadoId, reserva }) {
             type="button"
             disabled={estadoId === RESERVA_PAGADA_ID}
             onClick={() => setOpenPagar(true)}>
+            <HandCoins className="mr-2 h-4 w-4" />
             Marcar como paga
           </Button>
 
@@ -36,6 +47,7 @@ export default function ReservaDetailActions({ reservaId, estadoId, reserva }) {
             variant="secondary"
             disabled={estadoId === RESERVA_PAGADA_ID}
             onClick={() => setOpenExtenderFechas(true)}>
+            <CalendarClock className="mr-2 h-4 w-4" />
             Modificar fechas
           </Button>
 
@@ -43,6 +55,7 @@ export default function ReservaDetailActions({ reservaId, estadoId, reserva }) {
             variant="secondary"
             type="button"
             onClick={() => setOpenDesglosePrecios(true)}>
+            <CircleDollarSign className="mr-2 h-4 w-4" />
             Ver desglose de precios
           </Button>
         </div>
@@ -54,19 +67,22 @@ export default function ReservaDetailActions({ reservaId, estadoId, reserva }) {
             <Link
               target="_blank"
               href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reservas/contrato?reserva_id=${reservaId}`}>
+              <ReceiptText className="mr-2 h-4 w-4" />
               Imprimir Contrato
             </Link>
           </Button>
 
           <Button type="button" onClick={() => setOpenEnviarContrato(true)}>
+            <Mail className="mr-2 h-4 w-4" />
             Enviar contrato
           </Button>
         </div>
       </div>
 
-      <div className="mb-8 flex flex-col gap-2 rounded-md border px-2 py-3 text-base">
+      <div className="mb-8 flex flex-col gap-2 rounded-md border border-red-500 px-2 py-3 text-base">
         <div className="flex flex-row flex-wrap justify-normal gap-2">
           <Button type="button" onClick={() => setOpenExtender(true)}>
+            <Copy className="mr-2 h-4 w-4" />
             Copiar
           </Button>
 
@@ -75,6 +91,7 @@ export default function ReservaDetailActions({ reservaId, estadoId, reserva }) {
             variant="destructive"
             disabled={estadoId === RESERVA_PAGADA_ID}
             onClick={() => setOpenEliminar(true)}>
+            <Trash className="mr-2 h-4 w-4" />
             Eliminar
           </Button>
         </div>

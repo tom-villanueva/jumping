@@ -55,7 +55,7 @@ class ExtenderFechasReservaController extends Controller
                 ReservaEquipoPrecio::where('reserva_equipo_id', $reservaEquipo->id)
                     ->delete();
 
-                $equipo = Equipo::find($reservaEquipo->equipo_id);
+                $equipo = Equipo::withTrashed()->find($reservaEquipo->equipo_id);
 
                 $precios = $equipo->precios_vigentes_en_rango($fechaDesde, $fechaHasta)
                     ->get();

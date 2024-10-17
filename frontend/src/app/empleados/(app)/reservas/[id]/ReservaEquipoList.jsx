@@ -51,22 +51,27 @@ export default function ReservaEquipoList({ reservaId, estadoId }) {
     {
       header: 'Apellido',
       accessorKey: 'apellido',
+      cell: ({ row }) => <span>{row.original.apellido ?? '-'}</span>,
     },
     {
       header: 'Nombre',
       accessorKey: 'nombre',
+      cell: ({ row }) => <span>{row.original.nombre ?? '-'}</span>,
     },
     {
       header: 'Altura',
       accessorKey: 'altura',
+      cell: ({ row }) => <span>{row.original.altura ?? '-'}</span>,
     },
     {
       header: 'Peso',
       accessorKey: 'peso',
+      cell: ({ row }) => <span>{row.original.peso ?? '-'}</span>,
     },
     {
       header: 'Num. Calzado',
       accessorKey: 'num_calzado',
+      cell: ({ row }) => <span>{row.original.num_calzado ?? '-'}</span>,
     },
     {
       header: 'Acciones',

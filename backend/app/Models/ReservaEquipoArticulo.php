@@ -9,7 +9,7 @@ use Spatie\QueryBuilder\AllowedFilter;
 
 class ReservaEquipoArticulo extends BaseModel
 {
-    use SoftDeletes, HasFactory;
+    use HasFactory;
 
     protected $table = 'reserva_equipo_articulo';
 

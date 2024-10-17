@@ -3,6 +3,7 @@ namespace App\Http\Controllers\ReservaEquipo;
 
 use App\Http\Controllers\Controller;
 use App\Repositories\ReservaEquipo\ReservaEquipoRepository;
+use Illuminate\Support\Facades\DB;
 
 class DeleteReservaEquipoController extends Controller
 {
@@ -15,7 +16,25 @@ class DeleteReservaEquipoController extends Controller
 
     public function __invoke($id)
     {
-        $result = $this->repository->delete($id);
+        DB::beginTransaction();
+
+        try {
+            $reservaEquipo = $this->repository->find($id);
+
+            foreach ($reservaEquipo->articulos as $reservaEquipoArticulo) {
+                $articulo = $reservaEquipoArticulo->articulo()->first();
+
+                $articulo->disponible = true;
+                $articulo->save();
+            }
+
+            $result = $this->repository->delete($id);
+
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
+        }
 
         return response()->json($result);
     }

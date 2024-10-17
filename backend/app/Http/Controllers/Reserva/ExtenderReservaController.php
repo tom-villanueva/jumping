@@ -52,7 +52,7 @@ class ExtenderReservaController extends Controller
 
             foreach ($reservaEquipoIds as $id) {
                 $oldReservaEquipo = ReservaEquipo::find($id);
-                $equipo = Equipo::find($oldReservaEquipo->equipo_id);
+                $equipo = Equipo::withTrashed()->find($oldReservaEquipo->equipo_id);
 
                 $newReservaEquipo = $this->storeReservaEquipo($oldReservaEquipo, $newReserva, $equipo);
 

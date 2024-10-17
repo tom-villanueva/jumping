@@ -9,7 +9,7 @@ use Spatie\QueryBuilder\AllowedFilter;
 
 class ReservaEquipo extends BaseModel
 {
-    use SoftDeletes, HasFactory;
+    use HasFactory;
 
     protected $table = 'reserva_equipo';
 
@@ -30,7 +30,7 @@ class ReservaEquipo extends BaseModel
 
     public function equipo()
     {
-        return $this->belongsTo(Equipo::class, 'equipo_id');
+        return $this->belongsTo(Equipo::class, 'equipo_id')->withTrashed();
     }
 
     public function articulos()
