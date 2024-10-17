@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import ReservaExtenderDialog from './ReservaExtenderDialog'
 import ReservaExtenderFechasDialog from './ReservaExtenderFechasDialog'
 import ReservaVerDesgloseDePreciosDialog from './ReservaVerDesgloseDePreciosDialog'
+import Link from 'next/link'
 
 export default function ReservaDetailActions({ reservaId, estadoId, reserva }) {
   const [openPagar, setOpenPagar] = useState(false)
@@ -34,16 +35,20 @@ export default function ReservaDetailActions({ reservaId, estadoId, reserva }) {
           Modificar fechas
         </Button>
 
-        <Button type="button" onClick={() => setOpenExtender(true)}>
-          Crear nueva reserva desde esta reserva
-        </Button>
-
         <Button type="button" onClick={() => setOpenDesglosePrecios(true)}>
           Ver desglose de precios
         </Button>
 
+        <Button type="button" asChild>
+          <Link
+            target="_blank"
+            href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reservas/contrato?reserva_id=${reservaId}`}>
+            Imprimir Contrato
+          </Link>
+        </Button>
+
         <Button type="button" onClick={() => setOpenExtender(true)}>
-          Imprimir contrato
+          Copiar reserva
         </Button>
 
         <Button
