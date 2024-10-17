@@ -28,10 +28,7 @@ const reservaExtenderSchema = z
       .string({
         required_error: 'Se requiere fecha inicio',
       })
-      .date('Se requiere fecha inicio')
-      .refine(data => convertToUTC(data) >= new Date().setHours(0, 0, 0, 0), {
-        message: 'Fecha inicio tiene que ser igual o mayor a hoy.',
-      }),
+      .date('Se requiere fecha inicio'),
     fecha_hasta: z
       .string({
         required_error: 'Se requiere fecha fin',
@@ -128,7 +125,7 @@ export default function ReservaExtenderFechasForm({
             <FormItem className="col-span-12 md:col-span-4">
               <FormLabel>Fecha Inicio</FormLabel>
               <FormControl>
-                <Input type="date" name="fecha_desde" min={today} {...field} />
+                <Input type="date" name="fecha_desde" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -141,7 +138,7 @@ export default function ReservaExtenderFechasForm({
             <FormItem className="col-span-12 md:col-span-4">
               <FormLabel>Fecha Fin</FormLabel>
               <FormControl>
-                <Input type="date" name="fecha_hasta" min={today} {...field} />
+                <Input type="date" name="fecha_hasta" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -154,7 +151,7 @@ export default function ReservaExtenderFechasForm({
             <FormItem className="col-span-12 md:col-span-4">
               <FormLabel>Fecha Prueba</FormLabel>
               <FormControl>
-                <Input type="date" name="fecha_prueba" min={today} {...field} />
+                <Input type="date" name="fecha_prueba" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

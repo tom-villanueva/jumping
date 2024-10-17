@@ -8,6 +8,7 @@ import ReservaExtenderDialog from './ReservaExtenderDialog'
 import ReservaExtenderFechasDialog from './ReservaExtenderFechasDialog'
 import ReservaVerDesgloseDePreciosDialog from './ReservaVerDesgloseDePreciosDialog'
 import Link from 'next/link'
+import ReservaEnviarMailContratoDialog from './ReservaEnviarMailContratoDialog'
 
 export default function ReservaDetailActions({ reservaId, estadoId, reserva }) {
   const [openPagar, setOpenPagar] = useState(false)
@@ -15,49 +16,68 @@ export default function ReservaDetailActions({ reservaId, estadoId, reserva }) {
   const [openEliminar, setOpenEliminar] = useState(false)
   const [openExtenderFechas, setOpenExtenderFechas] = useState(false)
   const [openDesglosePrecios, setOpenDesglosePrecios] = useState(false)
+  const [openEnviarContrato, setOpenEnviarContrato] = useState(false)
 
   const router = useRouter()
 
   return (
-    <div className="flex flex-col gap-2 rounded-md border px-2 py-3 text-base">
-      <div className="flex flex-row flex-wrap justify-between gap-2">
-        <Button
-          type="button"
-          disabled={estadoId === RESERVA_PAGADA_ID}
-          onClick={() => setOpenPagar(true)}>
-          Marcar como paga
-        </Button>
+    <div>
+      <div className="mb-8 flex flex-col gap-2 rounded-md border px-2 py-3 text-base">
+        <div className="flex flex-row flex-wrap justify-normal gap-2">
+          <Button
+            type="button"
+            disabled={estadoId === RESERVA_PAGADA_ID}
+            onClick={() => setOpenPagar(true)}>
+            Marcar como paga
+          </Button>
 
-        <Button
-          type="button"
-          disabled={estadoId === RESERVA_PAGADA_ID}
-          onClick={() => setOpenExtenderFechas(true)}>
-          Modificar fechas
-        </Button>
+          <Button
+            type="button"
+            variant="secondary"
+            disabled={estadoId === RESERVA_PAGADA_ID}
+            onClick={() => setOpenExtenderFechas(true)}>
+            Modificar fechas
+          </Button>
 
-        <Button type="button" onClick={() => setOpenDesglosePrecios(true)}>
-          Ver desglose de precios
-        </Button>
+          <Button
+            variant="secondary"
+            type="button"
+            onClick={() => setOpenDesglosePrecios(true)}>
+            Ver desglose de precios
+          </Button>
+        </div>
+      </div>
 
-        <Button type="button" asChild>
-          <Link
-            target="_blank"
-            href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reservas/contrato?reserva_id=${reservaId}`}>
-            Imprimir Contrato
-          </Link>
-        </Button>
+      <div className="mb-8 flex flex-col gap-2 rounded-md border px-2 py-3 text-base">
+        <div className="flex flex-row flex-wrap justify-normal gap-2">
+          <Button type="button" asChild>
+            <Link
+              target="_blank"
+              href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reservas/contrato?reserva_id=${reservaId}`}>
+              Imprimir Contrato
+            </Link>
+          </Button>
 
-        <Button type="button" onClick={() => setOpenExtender(true)}>
-          Copiar reserva
-        </Button>
+          <Button type="button" onClick={() => setOpenEnviarContrato(true)}>
+            Enviar contrato
+          </Button>
+        </div>
+      </div>
 
-        <Button
-          type="button"
-          variant="destructive"
-          disabled={estadoId === RESERVA_PAGADA_ID}
-          onClick={() => setOpenEliminar(true)}>
-          Eliminar reserva
-        </Button>
+      <div className="mb-8 flex flex-col gap-2 rounded-md border px-2 py-3 text-base">
+        <div className="flex flex-row flex-wrap justify-normal gap-2">
+          <Button type="button" onClick={() => setOpenExtender(true)}>
+            Copiar
+          </Button>
+
+          <Button
+            type="button"
+            variant="destructive"
+            disabled={estadoId === RESERVA_PAGADA_ID}
+            onClick={() => setOpenEliminar(true)}>
+            Eliminar
+          </Button>
+        </div>
       </div>
 
       <DeleteEntityForm
@@ -94,6 +114,13 @@ export default function ReservaDetailActions({ reservaId, estadoId, reserva }) {
       <ReservaVerDesgloseDePreciosDialog
         openForm={openDesglosePrecios}
         setOpenForm={setOpenDesglosePrecios}
+        reservaId={reservaId}
+        reserva={reserva}
+      />
+
+      <ReservaEnviarMailContratoDialog
+        openForm={openEnviarContrato}
+        setOpenForm={setOpenEnviarContrato}
         reservaId={reservaId}
         reserva={reserva}
       />
