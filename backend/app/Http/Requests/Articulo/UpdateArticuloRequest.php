@@ -26,8 +26,13 @@ class UpdateArticuloRequest extends FormRequest
     {
         $articulo_id = $this->route('id');
         return [
-            'codigo' => 'required|unique:articulo,codigo,'.$articulo_id,
-            'descripcion' => 'required|unique:articulo,descripcion,'.$articulo_id,
+            'codigo' => [
+                'required',
+                Rule::unique('articulo')
+                    ->where('tipo_articulo_id', $this->input('tipo_articulo_id'))
+                    ->ignore($articulo_id)
+            ],
+            'descripcion' => 'required',
             'observacion' => 'nullable',
             'tipo_articulo_id' => 'required|exists:tipo_articulos,id',
             'talle_id' => 'required|exists:talle,id',

@@ -835,6 +835,15 @@ class Modelos extends Seeder
             ]);
         }
 
+        $marcas = Marca::all();
+
+        foreach ($marcas as $marca) {
+            Modelo::updateOrCreate([
+                "descripcion" => "SIN MODELO ({$marca->descripcion})",
+                'marca_id' => $marca->id
+            ]);
+        }
+        
         // enable fk check
     }
 }

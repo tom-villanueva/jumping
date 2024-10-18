@@ -25,8 +25,12 @@ class StoreArticuloRequest extends FormRequest
     public function rules()
     {
         return [
-            'codigo' => 'required|unique:articulo,codigo',
-            'descripcion' => 'required|unique:articulo,descripcion',
+            'codigo' => [
+                'required',
+                Rule::unique('articulo')
+                    ->where('tipo_articulo_id', $this->input('tipo_articulo_id'))
+            ],
+            'descripcion' => 'required',
             'observacion' => 'nullable',
             'tipo_articulo_id' => 'required|exists:tipo_articulos,id',
             'talle_id' => 'required|exists:talle,id',

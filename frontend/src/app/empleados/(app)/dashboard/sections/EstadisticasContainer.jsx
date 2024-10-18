@@ -17,6 +17,17 @@ export default function EstadisticasContainer() {
     return <div>Cargando</div>
   }
 
+  if (
+    estadisticas.yearly_estadisticas.length === 0 ||
+    estadisticas.monthly_estadisticas.length === 0
+  ) {
+    return (
+      <div className="col-span-2 mb-5 grid w-full grid-cols-2 gap-2 sm:my-0 sm:gap-5">
+        No hay datos.
+      </div>
+    )
+  }
+
   return (
     <>
       <div className="col-span-2 mb-5 grid w-full grid-cols-2 gap-2 sm:my-0 sm:gap-5">

@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Talle;
+use App\Models\TipoArticulo;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -634,6 +635,16 @@ class Talles extends Seeder
             ]);
 
             $newTalle->tipos()->attach($talle["tipo_articulo_id"]);
+        }
+
+        $tipos = TipoArticulo::all();
+
+        $newTalle = Talle::updateOrCreate([
+            "descripcion" => "SIN TALLE",
+        ]);
+
+        foreach ($tipos as $tipo) {
+            $newTalle->tipos()->attach($tipo->id);
         }
 
         // enable fk check

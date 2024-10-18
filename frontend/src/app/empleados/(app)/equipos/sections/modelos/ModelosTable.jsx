@@ -41,7 +41,7 @@ export default function ModelosTable({
     params: {
       page: pagination.pageIndex + 1,
       page_size: pagination.pageSize,
-      sort: '-id',
+      sort: 'id',
       include: 'marca',
     },
     filters: debouncedColumnFilters,
