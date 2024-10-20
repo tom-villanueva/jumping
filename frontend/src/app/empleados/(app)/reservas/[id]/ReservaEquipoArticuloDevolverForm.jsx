@@ -44,6 +44,7 @@ export default function ReservaEquipoArticuloDevolverForm({
         // onFormSubmit()
       },
       onError(err) {
+        form.setValue('devuelto', reservaEquipoArticulo?.devuelto)
         if (axios.isAxiosError(err)) {
           if (err.response.status === 422) {
             const errors = err.response.data.errors ?? {}

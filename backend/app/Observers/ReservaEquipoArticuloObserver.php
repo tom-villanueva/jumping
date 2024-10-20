@@ -18,8 +18,10 @@ class ReservaEquipoArticuloObserver implements ShouldHandleEventsAfterCommit
     {
         $articulo = $reservaEquipoArticulo->articulo()->first();
 
-        $articulo->disponible = false;
-        $articulo->save();
+        if(empty($articulo->inventario()->first())) {
+            $articulo->disponible = false;
+            $articulo->saveQuietly();
+        }
     }
 
     /**
@@ -33,14 +35,16 @@ class ReservaEquipoArticuloObserver implements ShouldHandleEventsAfterCommit
         $articulo = $reservaEquipoArticulo->articulo()->first();
 
         $articulo->disponible = true;
-        $articulo->save();
+        $articulo->saveQuietly();
     }
     
     public function updated(ReservaEquipoArticulo $reservaEquipoArticulo)
     {
         $articulo = $reservaEquipoArticulo->articulo()->first();
 
-        $articulo->disponible = $reservaEquipoArticulo->devuelto;
-        $articulo->save();
+        if(empty($articulo->inventario()->first())) {
+            $articulo->disponible = $reservaEquipoArticulo->devuelto;
+            $articulo->saveQuietly();
+        }
     }
 }
