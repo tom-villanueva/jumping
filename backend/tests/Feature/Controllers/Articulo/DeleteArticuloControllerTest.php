@@ -43,6 +43,54 @@ class DeleteArticuloControllerTest extends TestCase
         ]);
     }
 
+    /** @test */
+    public function test_user_can_delete_articulo_with_inventario()
+    {
+        $user = $this->createStubUser();
+
+        $tipo_articulo = TipoArticulo::factory()->create();
+        $talle = Talle::factory()->create();
+        $marca =  Marca::factory()->create();
+        $modelo =  Modelo::factory()->create([
+            'marca_id' => $marca->id
+        ]);
+
+        $articulo = new Articulo([
+            'descripcion' => 'sss',
+            'codigo' => '001',
+            'talle_id' => $talle->id,
+            'tipo_articulo_id' => $tipo_articulo->id,
+            'marca_id' => $marca->id,
+            'modelo_id' => $modelo->id,
+        ]);
+
+        $articulo->saveQuietly();
+
+        $inventario = Inventario::factory()->create([
+            'articulo_id' => $articulo->id,
+            'talle_id' => $talle->id,
+            'tipo_articulo_id' => $tipo_articulo->id,
+            'marca_id' => $marca->id,
+            'modelo_id' => $modelo->id,
+            'stock' => 1
+        ]);
+
+        $response = $this->actingAs($user, $user->getModelGuard())
+                        ->deleteJson("/api/articulos/{$articulo->id}");
+        
+        $response->assertStatus(200);
+        
+        $this->assertSoftDeleted('articulo', [
+            'id' => $articulo->id,
+            'codigo' => $articulo->codigo,
+            'descripcion' => $articulo->descripcion
+        ]);
+
+        $this->assertSoftDeleted('inventario', [
+            'id' => $inventario->id
+        ]);
+    }
+
     public function test_articulo_observer_updates_stock_on_delete()
     {
         $tipo_articulo = TipoArticulo::factory()->create();

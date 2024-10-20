@@ -25,10 +25,10 @@ class UpdateInventarioRequest extends FormRequest
     public function rules()
     {
         return [
-            'tipo_articulo_id' => 'required|exists:tipo_articulos,id',
-            'talle_id' => 'required|exists:talle,id',
-            'marca_id' => 'required|exists:marca,id',
-            'modelo_id' => 'required|exists:modelo,id',
+            'tipo_articulo_id' => 'nullable|exists:tipo_articulos,id',
+            'talle_id' => 'nullable|exists:talle,id',
+            'marca_id' => 'nullable|exists:marca,id',
+            'modelo_id' => 'nullable|exists:modelo,id',
             'stock' => 'required|integer|min:0'
         ];
     }

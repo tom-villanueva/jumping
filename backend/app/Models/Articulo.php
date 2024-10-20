@@ -50,6 +50,11 @@ class Articulo extends BaseModel
         return $this->belongsTo(Modelo::class, 'modelo_id');
     }
 
+    public function inventario()
+    {
+        return $this->hasOne(Inventario::class, 'articulo_id');
+    }
+
     /**
      * query builder options
      */
@@ -79,7 +84,8 @@ class Articulo extends BaseModel
             'tipo_articulo',
             'talle',
             'marca',
-            'modelo'
+            'modelo',
+            'inventario'
         ];
     }
 }

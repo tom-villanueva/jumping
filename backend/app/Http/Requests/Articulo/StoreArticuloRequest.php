@@ -37,7 +37,9 @@ class StoreArticuloRequest extends FormRequest
             'marca_id' => 'required|exists:marca,id',
             'modelo_id' => 'required|exists:modelo,id',
             'nro_serie' => 'nullable|unique:articulo,nro_serie',
-            'disponible' => 'nullable'
+            'disponible' => 'nullable',
+            'es_generico' => 'required|boolean',
+            'stock' => 'nullable|required_if:es_generico,true|integer|min:0'
         ];
     }
 

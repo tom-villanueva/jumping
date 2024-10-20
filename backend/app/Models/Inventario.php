@@ -20,6 +20,7 @@ class Inventario extends BaseModel
         'talle_id',
         'marca_id',
         'modelo_id',
+        'articulo_id', // nullable
         'stock'
     ];
 
@@ -46,6 +47,11 @@ class Inventario extends BaseModel
         return $this->belongsTo(Modelo::class, 'modelo_id');
     }
 
+    public function articulo()
+    {
+        return $this->belongsTo(Articulo::class, 'articulo_id');
+    }
+
     /**
      * query builder options
      */
@@ -56,6 +62,7 @@ class Inventario extends BaseModel
             AllowedFilter::exact('tipo_articulo_id'),
             AllowedFilter::exact('marca_id'),
             AllowedFilter::exact('modelo_id'),
+            AllowedFilter::exact('articulo_id'),
         ];
     }
 
@@ -73,7 +80,8 @@ class Inventario extends BaseModel
             'talle',
             'tipo_articulo',
             'modelo',
-            'marca'
+            'marca',
+            'articulo'
         ];
     }
 }

@@ -242,4 +242,92 @@ class UpdateArticuloControllerTest extends TestCase
             'stock' => 0
         ]);
     }
+
+    /** @test */
+    public function test_user_can_update_articulo_with_inventario()
+    {
+        $user = $this->createStubUser();
+
+        $tipo_articulo = TipoArticulo::factory()->create();
+        $talle = Talle::factory()->create();
+        $marca =  Marca::factory()->create();
+        $modelo =  Modelo::factory()->create([
+            'marca_id' => $marca->id
+        ]);
+
+        $tipo_articulo2 = TipoArticulo::factory()->create();
+
+        $articulo = new Articulo([
+            'descripcion' => 'sss',
+            'codigo' => '001',
+            'talle_id' => $talle->id,
+            'tipo_articulo_id' => $tipo_articulo->id,
+            'marca_id' => $marca->id,
+            'modelo_id' => $modelo->id,
+        ]);
+
+        $articulo->saveQuietly();
+
+        $inventario = Inventario::factory()->create([
+            'articulo_id' => $articulo->id,
+            'talle_id' => $talle->id,
+            'tipo_articulo_id' => $tipo_articulo->id,
+            'marca_id' => $marca->id,
+            'modelo_id' => $modelo->id,
+            'stock' => 10
+        ]);
+
+        $data = [
+            'descripcion' => 'Probando cambio',
+            'codigo' => $articulo->codigo,
+            'observacion' => $articulo->observacion,
+            'talle_id' => $talle->id,
+            'tipo_articulo_id' => $tipo_articulo2->id,
+            'marca_id' => $marca->id,
+            'modelo_id' => $modelo->id,
+            'nro_serie' => 123,
+            'disponible' => true
+        ];
+
+        $response = $this->actingAs($user, $user->getModelGuard())
+                        ->putJson("/api/articulos/{$articulo->id}", $data);
+
+        $response->assertStatus(200);
+        $response->assertJson([
+            "descripcion" => $data['descripcion'],
+            "codigo" => $data['codigo'],
+            "observacion" => null,
+            "talle_id" => $talle->id,
+            "tipo_articulo_id" => $tipo_articulo2->id,
+            "marca_id" => $marca->id,
+            "modelo_id" => $modelo->id,
+            "nro_serie" => $data['nro_serie'],
+            "disponible" => $data['disponible'],
+        ]);
+        
+        $this->assertDatabaseHas('articulo', [
+            "id" => $response['id'],
+            "descripcion" => $data['descripcion'],
+            "codigo" => $data['codigo'],
+            "talle_id" => $talle->id,
+            "tipo_articulo_id" => $tipo_articulo2->id,
+            "marca_id" => $marca->id,
+            "modelo_id" => $modelo->id,
+            "nro_serie" => $data['nro_serie'],
+            "disponible" => $data['disponible'],
+        ]);
+
+        $this->assertSoftDeleted('inventario', [
+            'id' => $inventario->id
+        ]);
+
+        $this->assertDatabaseHas('inventario', [
+            'articulo_id' => $articulo->id,
+            'talle_id' => $talle->id,
+            'tipo_articulo_id' => $tipo_articulo->id,
+            'marca_id' => $marca->id,
+            'modelo_id' => $modelo->id,
+            'stock' => 10
+        ]);
+    }
 }

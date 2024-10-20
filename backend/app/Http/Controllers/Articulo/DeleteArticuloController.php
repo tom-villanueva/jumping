@@ -15,7 +15,16 @@ class DeleteArticuloController extends Controller
 
     public function __invoke($id)
     {
-        $result = $this->repository->delete($id);
+        $articulo = $this->repository->find($id);
+
+        $inventario = $articulo->inventario()->first();
+
+        if(!empty($inventario)) {
+            $result = $articulo->deleteQuietly();
+            $inventario->delete();
+        } else {
+            $result = $this->repository->delete($id);
+        }
 
         return response()->json($result);
     }

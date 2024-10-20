@@ -26,10 +26,10 @@ class StoreArticuloControllerTest extends TestCase
             'codigo' => '', // Invalid data (codigo is required)
             'descripcion' => '',
 			'observacion' => '',
-            'tipo_articulo_id' => 25,
-            'talle_id' => 25,
-			'marca_id' => 25,
-            'modelo_id' => 25,
+            'tipo_articulo_id' => null,
+            'talle_id' => null,
+			'marca_id' => null,
+            'modelo_id' => null,
             'nro_serie' => $articulo->nro_serie,
         ];
 
@@ -40,7 +40,6 @@ class StoreArticuloControllerTest extends TestCase
         $response->assertStatus(422);
         $response->assertJsonValidationErrors([
             'codigo', 
-            'descripcion',
             'tipo_articulo_id', 
             'talle_id', 
             'nro_serie',
@@ -76,7 +75,8 @@ class StoreArticuloControllerTest extends TestCase
             'marca_id' => $marca->id,
             'modelo_id' => $modelo->id,
             'nro_serie' => 123,
-            'disponible' => true
+            'disponible' => true,
+            'es_generico' => false
         ];
 
         // ES NECESARIO EN EL ACTING AS PONERLE EL GUARD, SINO VA AL DEFAULT (OBVIO xD)
@@ -105,6 +105,70 @@ class StoreArticuloControllerTest extends TestCase
             'tipo_articulo_id' => $tipo_articulo->id,
             'marca_id' => $marca->id,
             'modelo_id' => $modelo->id,
+        ]);
+    }
+
+    /** @test */
+    public function test_user_can_es_generico_articulo()
+    {
+        $user = $this->createStubUser();
+
+        $tipo_articulo = TipoArticulo::factory()->create();
+        $talle = Talle::factory()->create();
+        $marca =  Marca::factory()->create();
+        $modelo =  Modelo::factory()->create([
+            'marca_id' => $marca->id
+        ]);
+
+        $data = [
+            'descripcion' => 'Articulo test',
+            'codigo' => "001",
+            'observacion' => "",
+            'talle_id' => $talle->id,
+            'tipo_articulo_id' => $tipo_articulo->id,
+            'marca_id' => $marca->id,
+            'modelo_id' => $modelo->id,
+            'nro_serie' => null,
+            'disponible' => true,
+            'es_generico' => true,
+            'stock' => 0
+        ];
+
+        // ES NECESARIO EN EL ACTING AS PONERLE EL GUARD, SINO VA AL DEFAULT (OBVIO xD)
+        $response = $this->actingAs($user, $user->getModelGuard())->postJson("/api/articulos", $data);
+
+        $response->assertStatus(201);
+        $response->assertJson([
+            "descripcion" => $data['descripcion'],
+            "codigo" => $data['codigo'],
+            "observacion" => null,
+            'talle_id' => $talle->id,
+            'tipo_articulo_id' => $tipo_articulo->id,
+            'marca_id' => $marca->id,
+            'modelo_id' => $modelo->id,
+            "nro_serie" => $data['nro_serie'],
+            "disponible" => $data['disponible'],
+        ]);
+        
+        $this->assertDatabaseHas('articulo', [
+            "id" => $response['id'],
+            "descripcion" => $data['descripcion'],
+            "codigo" => $data['codigo'],
+            "nro_serie" => $data['nro_serie'],
+            "disponible" => $data['disponible'],
+            'talle_id' => $talle->id,
+            'tipo_articulo_id' => $tipo_articulo->id,
+            'marca_id' => $marca->id,
+            'modelo_id' => $modelo->id,
+        ]);
+
+        $this->assertDatabaseHas('inventario', [
+            'articulo_id' => $response['id'],
+            'talle_id' => $talle->id,
+            'tipo_articulo_id' => $tipo_articulo->id,
+            'marca_id' => $marca->id,
+            'modelo_id' => $modelo->id,
+            'stock' => 0
         ]);
     }
 

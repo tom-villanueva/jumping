@@ -40,6 +40,13 @@ const equipoSchema = z.object({
   modelo_id: z.string().min(1, 'Se requiere modelo'),
   nro_serie: z.string().nullable(),
   disponible: z.boolean(),
+  es_generico: z.boolean(),
+  stock: z
+    .number({
+      invalid_type_error: 'Tiene que ser un número',
+    })
+    .nonnegative('No puede ser negativo')
+    .nullable(),
 })
 
 export default function ArticuloFormContent({
@@ -68,10 +75,14 @@ export default function ArticuloFormContent({
       modelo_id: articulo?.modelo ? String(articulo?.modelo?.id) : '',
       nro_serie: articulo?.nro_serie ?? '',
       disponible: articulo?.disponible ?? false,
+      es_generico: false,
+      stock: 0,
     },
   })
 
   const marcaId = form.watch('marca_id')
+
+  const esGenerico = form.watch('es_generico')
 
   const filteredModelos = useMemo(() => {
     return marcaId !== ''
@@ -194,6 +205,54 @@ export default function ArticuloFormContent({
             </FormItem>
           )}
         />
+
+        {!editing && (
+          <>
+            <FormField
+              control={form.control}
+              name="es_generico"
+              render={({ field }) => (
+                <FormItem className="col-span-12 flex items-center space-x-2">
+                  <FormControl>
+                    <Checkbox
+                      id="es_generico"
+                      name="es_generico"
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormLabel className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    Es genérico (crea un registro en stock manual)
+                  </FormLabel>
+                </FormItem>
+              )}
+            />
+            {esGenerico && (
+              <FormField
+                control={form.control}
+                name="stock"
+                render={({ field }) => (
+                  <FormItem className="col-span-12">
+                    <FormLabel>Stock Inicial</FormLabel>
+                    <FormControl>
+                      <Input
+                        id="stock"
+                        name="stock"
+                        type="number"
+                        placeholder="Escriba stock"
+                        className="col-span-12"
+                        min="0"
+                        {...field}
+                        onChange={event => field.onChange(+event.target.value)}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+          </>
+        )}
 
         <Label className="col-span-12 font-medium">Es un:</Label>
         <FormField
