@@ -1,6 +1,6 @@
 import useSWR from 'swr'
 
-export function useMetodoPagos({ params, filters } = {}) {
+export function useTipoPersonas({ params, filters } = {}) {
   const filterParams = {}
 
   filters &&
@@ -17,10 +17,10 @@ export function useMetodoPagos({ params, filters } = {}) {
 
   const qs = queryParams.toString()
 
-  const { data, error, isLoading, ...rest } = useSWR(['/api/metodo-pagos', qs])
+  const { data, error, isLoading, ...rest } = useSWR(['/api/tipo-personas', qs])
 
   return {
-    metodos: data,
+    tipoPersonas: data,
     isLoading,
     isError: error,
     ...rest,

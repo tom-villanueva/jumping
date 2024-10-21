@@ -27,6 +27,7 @@ class MetodoPago extends BaseModel
     public function allowedFilters()
     {
         return [
+            'descripcion'
         ];
     }
 
@@ -39,6 +40,7 @@ class MetodoPago extends BaseModel
     public function allowedIncludes()
     {
         return [
+            'descuento'
         ];
     }
 }

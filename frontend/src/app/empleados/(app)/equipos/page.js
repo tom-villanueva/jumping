@@ -10,6 +10,8 @@ import MarcasContainer from './sections/marcas/MarcasContainer'
 import ModelosContainer from './sections/modelos/ModelosContainer'
 import Header from '../Header'
 import TrasladoPrecioContainer from './sections/traslado-precio/TrasladoPrecioContainer'
+import MetodoPagosContainer from './sections/metodo-pagos/MetodoPagosContainer'
+import TipoPersonasContainer from './sections/tipo-personas/TipoPersonasContainer'
 
 const Equipos = () => {
   return (
@@ -18,7 +20,7 @@ const Equipos = () => {
       <div className="container mx-auto pt-10">
         {/* <Suspense fallback={<p>Loading...</p>}> */}
         <Tabs defaultValue="equipos" className="">
-          <TabsList className="mb-10">
+          <TabsList className="mb-10 flex h-auto flex-wrap items-center justify-start space-y-1">
             <TabsTrigger value="equipos">Equipos</TabsTrigger>
             <TabsTrigger value="tipo_articulos">Tipos de Artículos</TabsTrigger>
             <TabsTrigger value="talles">Talles</TabsTrigger>
@@ -28,6 +30,8 @@ const Equipos = () => {
               Precios de Traslados
             </TabsTrigger>
             <TabsTrigger value="descuentos">Descuentos</TabsTrigger>
+            <TabsTrigger value="metodos">Método de pagos</TabsTrigger>
+            <TabsTrigger value="tipo_personas">Tipos de personas</TabsTrigger>
           </TabsList>
           <TabsContent value="equipos">
             <EquiposContainer />
@@ -49,6 +53,12 @@ const Equipos = () => {
           </TabsContent>
           <TabsContent value="descuentos">
             <DescuentosContainer />
+          </TabsContent>
+          <TabsContent value="metodos">
+            <MetodoPagosContainer />
+          </TabsContent>
+          <TabsContent value="tipo_personas">
+            <TipoPersonasContainer />
           </TabsContent>
         </Tabs>
         {/* </Suspense> */}

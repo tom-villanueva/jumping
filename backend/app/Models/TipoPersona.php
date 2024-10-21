@@ -26,6 +26,7 @@ class TipoPersona extends BaseModel
     public function allowedFilters()
     {
         return [
+            'descripcion'
         ];
     }
 
@@ -38,6 +39,7 @@ class TipoPersona extends BaseModel
     public function allowedIncludes()
     {
         return [
+            'descuento'
         ];
     }
 }
