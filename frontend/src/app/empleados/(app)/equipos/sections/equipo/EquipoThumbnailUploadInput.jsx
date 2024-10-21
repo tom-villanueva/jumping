@@ -11,6 +11,7 @@ import { useSWRConfig } from 'swr'
 import useSWRMutation from 'swr/mutation'
 import { z } from 'zod'
 import { Button } from '@/components/ui/button'
+import axios from 'axios'
 
 const ACCEPTED_IMAGE_TYPES = [
   'image/jpeg',

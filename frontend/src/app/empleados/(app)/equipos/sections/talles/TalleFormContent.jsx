@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/form'
 import { Button } from '@/components/ui/button'
 import { z } from 'zod'
+import axios from 'axios'
 
 const talleSchema = z.object({
   descripcion: z.string().min(1, 'Se requiere descripcion'),

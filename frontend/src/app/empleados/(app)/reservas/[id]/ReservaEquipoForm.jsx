@@ -24,6 +24,7 @@ import { storeFetcher, updateFetcher } from '@/lib/utils'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
+import axios from 'axios'
 
 const reservaEquipoSchema = z.object({
   altura: z.string().nullable(),
