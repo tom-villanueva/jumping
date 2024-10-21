@@ -49,7 +49,18 @@ export default function StockPage() {
     {
       accessorKey: 'stock',
       id: 'stock',
-      header: 'Stock Total',
+      header: 'Total',
+    },
+    {
+      accessorKey: 'stock_alquilado',
+      id: 'stock_alquilado',
+      header: 'Alquilado',
+    },
+    {
+      header: 'Disponible',
+      cell: ({ row }) => (
+        <span>{row.original.stock - row.original.stock_alquilado}</span>
+      ),
     },
     {
       header: 'Acciones',

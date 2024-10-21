@@ -15,6 +15,10 @@ class Inventario extends BaseModel
 
     protected $table = 'inventario';
 
+    protected $appends = [
+        'stock_alquilado'
+    ];
+
     protected $fillable = [
         'tipo_articulo_id',
         'talle_id',
@@ -27,22 +31,22 @@ class Inventario extends BaseModel
     /**
      * Relaciones
      */
-    public function tipo_articulo() 
+    public function tipo_articulo()
     {
         return $this->belongsTo(TipoArticulo::class, 'tipo_articulo_id');
     }
 
-    public function talle() 
+    public function talle()
     {
         return $this->belongsTo(Talle::class, 'talle_id');
     }
 
-    public function marca() 
+    public function marca()
     {
         return $this->belongsTo(Marca::class, 'marca_id');
     }
 
-    public function modelo() 
+    public function modelo()
     {
         return $this->belongsTo(Modelo::class, 'modelo_id');
     }
@@ -50,6 +54,29 @@ class Inventario extends BaseModel
     public function articulo()
     {
         return $this->belongsTo(Articulo::class, 'articulo_id');
+    }
+
+    public function getStockAlquiladoAttribute()
+    {
+        $stockAlquilado = 0;
+
+        if ($this->articulo_id == null) {
+            $stockAlquilado = ReservaEquipoArticulo::with('articulo')
+                ->where('devuelto', false)
+                ->whereHas('articulo', function ($query) {
+                    $query->where('tipo_articulo_id', $this->tipo_articulo_id)
+                        ->where('talle_id', $this->talle_id)
+                        ->where('marca_id', $this->marca_id)
+                        ->where('modelo_id', $this->modelo_id);
+                })
+                ->count();
+        } else {
+            $stockAlquilado = ReservaEquipoArticulo::where('devuelto', false)
+                ->where('articulo_id', $this->articulo_id)
+                ->count();
+        }
+
+        return $stockAlquilado;
     }
 
     /**
