@@ -23,7 +23,7 @@ export default function ReservaDetailPage({ params }) {
   const { reserva, isLoading, isError, isValidating } = useReservaById({
     id: params.id,
     params: {
-      include: 'user,equipos,pagos.metodo_pago,traslados',
+      include: 'user,equipos,pagos.metodo_pago,pagos.tipo_persona,traslados',
     },
   })
 
@@ -126,6 +126,11 @@ export default function ReservaDetailPage({ params }) {
             <ReservaDetailLabel
               title="Método de pago"
               label={reserva?.pagos[0].metodo_pago?.descripcion}
+              isValidating={isValidating}
+            />
+            <ReservaDetailLabel
+              title="Tier persona"
+              label={reserva?.pagos[0].tipo_persona?.descripcion ?? '-'}
               isValidating={isValidating}
             />
           </>

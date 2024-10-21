@@ -27,7 +27,7 @@ class MarcarReservaPagadaRequest extends FormRequest
         return [
             'metodo_pago_id' => 'required|exists:metodo_pago,id',
             'moneda_id' => 'required|exists:monedas,id',
-            'tipo_persona_id' => 'required|exists:tipo_persona,id',
+            'tipo_persona_id' => 'nullable|exists:tipo_persona,id',
         ];
     }
 

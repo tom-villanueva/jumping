@@ -112,6 +112,7 @@ export default function ReservaDetailActions({ reservaId, estadoId, reserva }) {
         openForm={openPagar}
         setOpenForm={setOpenPagar}
         reservaId={reservaId}
+        reserva={reserva}
       />
 
       <ReservaExtenderDialog

@@ -27,29 +27,42 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { useTipoPersonas } from '@/services/tipo-personas'
+import ReservaMarcarComoPagadaDetallePrecio from './ReservaMarcarComoPagadaDetallePrecio'
 
 const reservaMarcarPagadaSchema = z.object({
   metodo_pago_id: z.string().min(1, 'Se requiere metodo'),
   moneda_id: z.string().min(1, 'Se requiere moneda'),
+  tipo_persona_id: z.string().nullable(),
 })
 
 export default function ReservaMarcarComoPagadaForm({
   reservaId,
+  reserva,
   onFormSubmit = () => {},
 }) {
   const { toast } = useToast()
   const { mutate } = useSWRConfig()
 
   const { monedas, isLoading: isLoadingMonedas } = useMonedas({})
-  const { metodos, isLoading: isLoadingMetodos } = useMetodoPagos({})
+  const { metodos, isLoading: isLoadingMetodos } = useMetodoPagos({
+    params: { include: 'descuento' },
+  })
+  const { tipoPersonas, isLoading: isLoadingTipos } = useTipoPersonas({
+    params: { include: 'descuento' },
+  })
 
   const form = useForm({
     resolver: zodResolver(reservaMarcarPagadaSchema),
     defaultValues: {
       metodo_pago_id: String(1),
       moneda_id: String(1),
+      tipo_persona_id: '',
     },
   })
+
+  const metodoSeleccionado = form.watch('metodo_pago_id')
+  const tipoSeleccionado = form.watch('tipo_persona_id')
 
   const { trigger, isMutating } = useSWRMutation(
     '/api/reservas/marcar-pagada',
@@ -108,7 +121,7 @@ export default function ReservaMarcarComoPagadaForm({
             control={form.control}
             name="moneda_id"
             render={({ field }) => (
-              <FormItem className="col-span-6">
+              <FormItem className="col-span-12">
                 <FormLabel>Moneda</FormLabel>
                 <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
@@ -135,7 +148,7 @@ export default function ReservaMarcarComoPagadaForm({
             control={form.control}
             name="metodo_pago_id"
             render={({ field }) => (
-              <FormItem className="col-span-6">
+              <FormItem className="col-span-12">
                 <FormLabel>Método de Pago</FormLabel>
                 <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
@@ -146,7 +159,8 @@ export default function ReservaMarcarComoPagadaForm({
                   <SelectContent>
                     {metodos?.map(metodo => (
                       <SelectItem key={metodo?.id} value={String(metodo?.id)}>
-                        {metodo?.descripcion}
+                        {metodo?.descripcion}{' '}
+                        {`(${metodo?.descuento ? metodo?.descuento?.descripcion : '-'})`}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -156,6 +170,42 @@ export default function ReservaMarcarComoPagadaForm({
             )}
           />
         )}
+
+        {!isLoadingTipos && (
+          <FormField
+            control={form.control}
+            name="tipo_persona_id"
+            render={({ field }) => (
+              <FormItem className="col-span-12">
+                <FormLabel>Tipo de Persona</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Seleccione un Tipo de persona" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {tipoPersonas?.map(tipo => (
+                      <SelectItem key={tipo?.id} value={String(tipo?.id)}>
+                        {tipo?.descripcion}{' '}
+                        {`(${tipo?.descuento ? tipo?.descuento?.descripcion : '-'})`}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
+
+        <ReservaMarcarComoPagadaDetallePrecio
+          precioTotal={reserva.precio_total}
+          metodoSeleccionado={metodoSeleccionado}
+          tipoSeleccionado={tipoSeleccionado}
+          metodos={metodos}
+          tipoPersonas={tipoPersonas}
+        />
 
         <FormField
           control={form.control}

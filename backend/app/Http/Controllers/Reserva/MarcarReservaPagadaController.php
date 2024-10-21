@@ -33,7 +33,7 @@ class MarcarReservaPagadaController extends Controller
             
             if(!empty($estado)) {
                 throw ValidationException::withMessages([
-                    'reserva_pagada' => 'La reserva ya esta paga.'
+                    'reserva_pagada' => 'La reserva ya está paga.'
                 ]);
             }
 
@@ -42,13 +42,20 @@ class MarcarReservaPagadaController extends Controller
                 'estado_id' => 2
             ]);
 
-            $tipoPersona = TipoPersona::find($request->tipo_persona_id);
-            $metodoPago = MetodoPago::find($request->metodo_pago_id);
-
             $reservaTotal = $reserva->calculateTotalPrice();
-
-            $tipoPersonaDescuento = $reservaTotal * ($tipoPersona->descuento->valor / 100);
-            $metodoPagoDescuento = $reservaTotal * ($metodoPago->descuento->valor / 100);
+            
+            $metodoPago = MetodoPago::find($request->metodo_pago_id);
+            
+            $metodoPagoDescuento = 0;
+            if(!empty($metodoPago->descuento)) {
+                $metodoPagoDescuento = $reservaTotal * ($metodoPago->descuento->valor / 100);
+            }
+            
+            $tipoPersonaDescuento = 0;
+            if(!empty($request->tipo_persona_id)) {
+                $tipoPersona = TipoPersona::find($request->tipo_persona_id);
+                $tipoPersonaDescuento = $reservaTotal * ($tipoPersona->descuento->valor / 100);
+            }
             
             $total = $reservaTotal - $metodoPagoDescuento - $tipoPersonaDescuento;
 
@@ -60,7 +67,7 @@ class MarcarReservaPagadaController extends Controller
                 'metodo_pago_id' => $request->metodo_pago_id,
                 'moneda_id' => $request->moneda_id,
                 'tipo_persona_id' => $request->tipo_persona_id,
-                'tipo_persona_descuento' => $tipoPersona->descuento->valor,
+                'tipo_persona_descuento' => !empty($request->tipo_persona_id) ? $tipoPersona->descuento->valor : 0,
                 'metodo_pago_descuento' => $metodoPago->descuento->valor,
             ]);
 

@@ -184,7 +184,8 @@ class Reserva extends BaseModel
             'traslados',
             'equipos',
             'pagos',
-            'pagos.metodo_pago'
+            'pagos.metodo_pago',
+            'pagos.tipo_persona'
         ];
     }
 

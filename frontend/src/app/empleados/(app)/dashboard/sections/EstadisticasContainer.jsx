@@ -12,7 +12,7 @@ function calcularPorcentaje(value1, value2) {
 
 export default function EstadisticasContainer() {
   const { estadisticas, isLoading, isError } = useReservasEstadisticas()
-
+  console.log(estadisticas)
   if (isLoading) {
     return <div>Cargando</div>
   }

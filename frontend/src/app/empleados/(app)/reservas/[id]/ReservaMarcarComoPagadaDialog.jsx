@@ -13,6 +13,7 @@ export default function ReservaMarcarComoPagadaDialog({
   openForm,
   setOpenForm,
   reservaId,
+  reserva,
 }) {
   return (
     <Dialog open={openForm} onOpenChange={() => setOpenForm(!openForm)}>
@@ -27,6 +28,7 @@ export default function ReservaMarcarComoPagadaDialog({
         </DialogHeader>
         <ReservaMarcarComoPagadaForm
           reservaId={reservaId}
+          reserva={reserva}
           onFormSubmit={() => setOpenForm(!openForm)}
         />
       </DialogContent>
