@@ -3,9 +3,10 @@
 namespace Database\Seeders;
 
 use App\Models\MetodoPago;
+use App\Models\TipoPersona;
 use Illuminate\Database\Seeder;
 
-class MetodoPagos extends Seeder
+class TipoPersonas extends Seeder
 {
     /**
      * Run the database seeds.
@@ -14,24 +15,22 @@ class MetodoPagos extends Seeder
     {
         // // db truncate
         // disable fk check
-        MetodoPago::truncate();
+        TipoPersona::truncate();
 
         $metodos = [
-            "Efectivo",
-            "Tarjeta de crédito",
-            "Mercado Pago",
-            "Transferencia"
+            'Cliente Tier 1',
+            'Cliente Tier 2',
+            'Cliente Tier 3',
         ];
 
         foreach ($metodos as $metodo) {
-            MetodoPago::updateOrCreate([
+            TipoPersona::updateOrCreate([
               "descripcion" => $metodo,
+              "descuento_id" => 1
             ]);
         }
-
-        MetodoPago::where('descripcion', 'Efectivo')
-            ->update(['descuento_id' => 1]);
         
+
         // enable fk check
     }
 }

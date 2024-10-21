@@ -50,7 +50,8 @@ class MarcarReservaPagadaControllerTest extends TestCase
         $response->assertStatus(401); // Unauthorized
     }
 
-    public function test_user_can_store_reserva()
+    /** @test */
+    public function test_user_can_pagar_reserva()
     {
         $user = $this->createStubUser();
 
@@ -85,19 +86,23 @@ class MarcarReservaPagadaControllerTest extends TestCase
 
         $data = [
             'metodo_pago_id' => 1,
-            'moneda_id' => 1
+            'moneda_id' => 1,
+            'tipo_persona_id' => 1,
         ];
 
         $response = $this->actingAs($user, $user->getModelGuard())->putJson("/api/reservas/marcar-pagada/{$reserva->id}", $data);
-
+        
         $response->assertStatus(201);
         $response->assertJson([
-            'total' => $reserva->calculateTotalPrice(), // 600
+            'total' => $reserva->calculateTotalPrice() - 60 - 60, // 600
             'status' => '',
             'reserva_id' => $reserva->id,
             'numero_comprobante' => '',
             'metodo_pago_id' => $data["metodo_pago_id"],
-            'moneda_id' => $data["moneda_id"]
+            'moneda_id' => $data["moneda_id"],
+            'tipo_persona_id' => $data["tipo_persona_id"],
+            'tipo_persona_descuento' => 10,
+            'metodo_pago_descuento' => 10,
         ]);
 
         $this->assertDatabaseHas('pagos', [

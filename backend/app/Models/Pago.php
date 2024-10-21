@@ -19,7 +19,10 @@ class Pago extends BaseModel
         'reserva_id',
         'numero_comprobante',
         'metodo_pago_id',
-        'moneda_id'
+        'moneda_id',
+        'tipo_persona_id',
+        'tipo_persona_descuento',
+        'metodo_pago_descuento',
     ];
 
     /**
@@ -40,6 +43,11 @@ class Pago extends BaseModel
         return $this->belongsTo(Reserva::class, 'reserva_id');
     }
 
+    public function tipo_persona() 
+    {
+        return $this->belongsTo(TipoPersona::class, 'tipo_persona_id');
+    }
+
     /**
      * query builder options
      */
@@ -48,7 +56,8 @@ class Pago extends BaseModel
         return [
             AllowedFilter::exact('metodo_pago_id'),
             AllowedFilter::exact('moneda_id'),
-            AllowedFilter::exact('reserva_id')
+            AllowedFilter::exact('reserva_id'),
+            AllowedFilter::exact('tipo_persona_id'),
         ];
     }
 
@@ -63,7 +72,8 @@ class Pago extends BaseModel
         return [
             'metodo_pago',
             'moneda',
-            'reserva'
+            'reserva',
+            'tipo_persona'
         ];
     }
 }

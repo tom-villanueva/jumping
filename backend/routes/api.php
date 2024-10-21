@@ -35,3 +35,4 @@ require __DIR__.'/Moneda.php';
 require __DIR__.'/Empleado.php';
 require __DIR__.'/User.php';
 require __DIR__.'/TrasladoPrecio.php';
+require __DIR__.'/TipoPersona.php';

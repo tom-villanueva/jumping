@@ -55,6 +55,7 @@ class DatabaseSeeder extends Seeder
         $this->call(Monedas::class);
         $this->call(MetodoPagos::class);
         $this->call(TrasladoPrecios::class);
+        $this->call(TipoPersonas::class);
         // $this->call(Reservas::class);
     }
 }

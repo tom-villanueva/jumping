@@ -4,17 +4,16 @@ namespace App\Models;
 
 use App\Core\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
-class MetodoPago extends BaseModel
+class TipoPersona extends BaseModel
 {
-    use SoftDeletes, HasFactory;
+    use HasFactory;
 
-    protected $table = 'metodo_pago';
+    protected $table = 'tipo_persona';
 
     protected $fillable = [
         'descripcion',
-        'descuento_id' // nullable
+        'descuento_id'
     ];
 
     public function descuento() {

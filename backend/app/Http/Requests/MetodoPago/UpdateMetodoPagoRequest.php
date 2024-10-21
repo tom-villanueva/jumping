@@ -25,6 +25,8 @@ class UpdateMetodoPagoRequest extends FormRequest
     public function rules()
     {
         return [
+            'descripcion' => 'required',
+            'descuento_id' => 'nullable|exists:descuentos,id',
         ];
     }
 

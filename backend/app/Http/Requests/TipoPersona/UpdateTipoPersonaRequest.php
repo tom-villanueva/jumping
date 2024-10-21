@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Reserva;
+namespace App\Http\Requests\TipoPersona;
 
 use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class MarcarReservaPagadaRequest extends FormRequest
+class UpdateTipoPersonaRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,9 +25,8 @@ class MarcarReservaPagadaRequest extends FormRequest
     public function rules()
     {
         return [
-            'metodo_pago_id' => 'required|exists:metodo_pago,id',
-            'moneda_id' => 'required|exists:monedas,id',
-            'tipo_persona_id' => 'required|exists:tipo_persona,id',
+            'descripcion' => 'required',
+            'descuento_id' => 'required|exists:descuentos,id',
         ];
     }
 
