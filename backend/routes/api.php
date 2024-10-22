@@ -15,6 +15,9 @@ Route::middleware(['auth:empleado'])->get('/empleados/user', function (Request $
     return $request->user();
 });
 
+require __DIR__.'/auth.php';
+require __DIR__.'/auth_empleados.php';
+
 require __DIR__.'/tipo_articulo.php';
 require __DIR__.'/talle.php';
 require __DIR__.'/equipo.php';

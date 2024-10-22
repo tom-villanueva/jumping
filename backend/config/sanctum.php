@@ -64,6 +64,8 @@ return [
 
     'token_prefix' => env('SANCTUM_TOKEN_PREFIX', ''),
 
+    'prefix' => 'api/sanctum',
+
     /*
     |--------------------------------------------------------------------------
     | Sanctum Middleware
