@@ -199,13 +199,15 @@ export default function ReservaMarcarComoPagadaForm({
           />
         )}
 
-        <ReservaMarcarComoPagadaDetallePrecio
-          precioTotal={reserva.precio_total}
-          metodoSeleccionado={metodoSeleccionado}
-          tipoSeleccionado={tipoSeleccionado}
-          metodos={metodos}
-          tipoPersonas={tipoPersonas}
-        />
+        {!isLoadingMetodos && !isLoadingTipos && (
+          <ReservaMarcarComoPagadaDetallePrecio
+            precioTotal={reserva.precio_total}
+            metodoSeleccionado={metodoSeleccionado}
+            tipoSeleccionado={tipoSeleccionado}
+            metodos={metodos}
+            tipoPersonas={tipoPersonas}
+          />
+        )}
 
         <FormField
           control={form.control}

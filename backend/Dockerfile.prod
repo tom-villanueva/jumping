@@ -1,0 +1,54 @@
+FROM serversideup/php:8.3-fpm
+
+# Allow HTTP and HTTPS.
+# ENV SSL_MODE=mixed
+
+# Switch to root user to install packages
+# USER root
+
+# Install necessary dependencies and PHP extensions
+# RUN apk update && apk add --no-cache \
+#     libpng-dev \
+#     libjpeg-turbo-dev \
+#     freetype-dev \
+#     oniguruma-dev \
+#     icu-dev \
+#     libzip-dev \
+#     zlib-dev \
+#     curl-dev \
+#     libxml2-dev \
+#     openssl-dev && \
+#     docker-php-ext-configure gd --with-freetype --with-jpeg && \
+#     docker-php-ext-install gd mbstring pdo pdo_pgsql zip intl curl dom xml openssl
+
+# Install PHP extensions
+# RUN docker-php-ext-configure gd --with-freetype --with-jpeg && \
+#     docker-php-ext-install gd mbstring pdo pdo_pgsql zip intl
+
+# Set working directory
+WORKDIR /var/www/html
+
+USER www-data
+
+# Install Composer
+# COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Install production composer dependencies
+COPY --chown=www-data:www-data composer.json composer.lock ./
+RUN composer install --no-dev --prefer-dist --no-scripts --no-autoloader --no-progress --ignore-platform-reqs
+
+# Copy the app files to the container
+COPY --chown=www-data:www-data . .
+
+# Set correct permissions
+RUN chown -R www-data:www-data /var/www/html
+
+# Autoload files
+RUN composer dump-autoload --optimize
+
+# Expose port 9000 for PHP-FPM
+EXPOSE 9000
+
+# Start PHP-FPM
+CMD ["php-fpm"]
+# CMD ["php-fpm", "-R", "-F", "--nodaemonize", "--force-stderr", "-O", "-p", "9000"]
