@@ -1,3 +1,5 @@
 .DS_Store
 .env
 storage_logs
+storage_public
+certbot

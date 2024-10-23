@@ -1,41 +1,26 @@
 FROM serversideup/php:8.3-fpm
 
-# Allow HTTP and HTTPS.
-# ENV SSL_MODE=mixed
+# Set the user ID and group ID for www-data
+ARG USER_ID
+ARG GROUP_ID
 
-# Switch to root user to install packages
-# USER root
+# Switch to root so we can set the user ID and group ID
+USER root
 
-# Install necessary dependencies and PHP extensions
-# RUN apk update && apk add --no-cache \
-#     libpng-dev \
-#     libjpeg-turbo-dev \
-#     freetype-dev \
-#     oniguruma-dev \
-#     icu-dev \
-#     libzip-dev \
-#     zlib-dev \
-#     curl-dev \
-#     libxml2-dev \
-#     openssl-dev && \
-#     docker-php-ext-configure gd --with-freetype --with-jpeg && \
-#     docker-php-ext-install gd mbstring pdo pdo_pgsql zip intl curl dom xml openssl
+RUN install-php-extensions exif gd
 
-# Install PHP extensions
-# RUN docker-php-ext-configure gd --with-freetype --with-jpeg && \
-#     docker-php-ext-install gd mbstring pdo pdo_pgsql zip intl
+# Set the user ID and group ID for www-data
+RUN docker-php-serversideup-set-id www-data $USER_ID:$GROUP_ID && \
+    docker-php-serversideup-set-file-permissions --owner $USER_ID:$GROUP_ID --service fpm
 
 # Set working directory
 WORKDIR /var/www/html
 
-USER www-data
-
-# Install Composer
-# COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
 # Install production composer dependencies
 COPY --chown=www-data:www-data composer.json composer.lock ./
-RUN composer install --no-dev --prefer-dist --no-scripts --no-autoloader --no-progress --ignore-platform-reqs
+RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs
+
+USER www-data
 
 # Copy the app files to the container
 COPY --chown=www-data:www-data . .
@@ -46,9 +31,13 @@ RUN chown -R www-data:www-data /var/www/html
 # Autoload files
 RUN composer dump-autoload --optimize
 
+# Prepare the laravel app
+RUN php artisan storage:link
+RUN php artisan key:generate --ansi
+RUN php artisan config:clear && php artisan config:cache
+
 # Expose port 9000 for PHP-FPM
 EXPOSE 9000
 
 # Start PHP-FPM
 CMD ["php-fpm"]
-# CMD ["php-fpm", "-R", "-F", "--nodaemonize", "--force-stderr", "-O", "-p", "9000"]
