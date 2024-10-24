@@ -34,7 +34,14 @@ class ReservaEquipoArticuloObserver implements ShouldHandleEventsAfterCommit
     {
         $articulo = $reservaEquipoArticulo->articulo()->first();
 
-        $articulo->disponible = true;
+        $reservados = ReservaEquipoArticulo::all();
+
+        $reservados = ReservaEquipoArticulo::where('articulo_id', $articulo->id)
+            ->where('id', '!=', $reservaEquipoArticulo->id)
+            ->where('devuelto', false)
+            ->count();
+
+        $articulo->disponible = $reservados == 0;
         $articulo->saveQuietly();
     }
     

@@ -16,23 +16,25 @@ class DeleteReservaEquipoController extends Controller
 
     public function __invoke($id)
     {
-        DB::beginTransaction();
+        // DB::beginTransaction();
 
         try {
             $reservaEquipo = $this->repository->find($id);
 
             foreach ($reservaEquipo->articulos as $reservaEquipoArticulo) {
-                $articulo = $reservaEquipoArticulo->articulo()->first();
+                // dd($reservaEquipoArticulo);
+                // $articulo = $reservaEquipoArticulo->articulo()->first();
 
-                $articulo->disponible = true;
-                $articulo->save();
+                // $articulo->disponible = true;
+                // $articulo->save();
+                $reservaEquipoArticulo->delete();
             }
 
             $result = $this->repository->delete($id);
 
-            DB::commit();
+            // DB::commit();
         } catch (\Throwable $th) {
-            DB::rollBack();
+            // DB::rollBack();
             throw $th;
         }
 
