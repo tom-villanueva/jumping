@@ -19,6 +19,7 @@ import {
   ReceiptText,
   Trash,
 } from 'lucide-react'
+import ReservaEnviarMailConfirmacionDialog from './ReservaEnviarMailConfirmacionDialog'
 
 export default function ReservaDetailActions({ reservaId, estadoId, reserva }) {
   const [openPagar, setOpenPagar] = useState(false)
@@ -27,6 +28,7 @@ export default function ReservaDetailActions({ reservaId, estadoId, reserva }) {
   const [openExtenderFechas, setOpenExtenderFechas] = useState(false)
   const [openDesglosePrecios, setOpenDesglosePrecios] = useState(false)
   const [openEnviarContrato, setOpenEnviarContrato] = useState(false)
+  const [openEnviarConfirmacion, setOpenEnviarConfirmacion] = useState(false)
 
   const router = useRouter()
 
@@ -75,6 +77,11 @@ export default function ReservaDetailActions({ reservaId, estadoId, reserva }) {
           <Button type="button" onClick={() => setOpenEnviarContrato(true)}>
             <Mail className="mr-2 h-4 w-4" />
             Enviar contrato
+          </Button>
+
+          <Button type="button" onClick={() => setOpenEnviarConfirmacion(true)}>
+            <Mail className="mr-2 h-4 w-4" />
+            Reenviar confirmación
           </Button>
         </div>
       </div>
@@ -139,6 +146,13 @@ export default function ReservaDetailActions({ reservaId, estadoId, reserva }) {
       <ReservaEnviarMailContratoDialog
         openForm={openEnviarContrato}
         setOpenForm={setOpenEnviarContrato}
+        reservaId={reservaId}
+        reserva={reserva}
+      />
+
+      <ReservaEnviarMailConfirmacionDialog
+        openForm={openEnviarConfirmacion}
+        setOpenForm={setOpenEnviarConfirmacion}
         reservaId={reservaId}
         reserva={reserva}
       />

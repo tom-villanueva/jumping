@@ -5,6 +5,7 @@ use App\Http\Controllers\Reserva\GetByIdReservaController;
 use App\Http\Controllers\Reserva\StoreReservaController;
 use App\Http\Controllers\Reserva\UpdateReservaController;
 use App\Http\Controllers\Reserva\DeleteReservaController;
+use App\Http\Controllers\Reserva\EnviarMailReservaConfirmacionController;
 use App\Http\Controllers\Reserva\EnviarMailReservaContratoController;
 use App\Http\Controllers\Reserva\ExtenderFechasReservaController;
 use App\Http\Controllers\Reserva\ExtenderReservaController;
@@ -23,6 +24,7 @@ Route::group(['prefix' => 'reservas', 'middleware' => 'auth:empleado'], function
     Route::post('/', StoreReservaController::class);
 
     Route::put('/enviar-contrato/{id}', EnviarMailReservaContratoController::class);
+    Route::put('/enviar-confirmacion/{id}', EnviarMailReservaConfirmacionController::class);
     Route::put('/marcar-pagada/{id}', MarcarReservaPagadaController::class);
     Route::put('/extender/{id}', ExtenderReservaController::class);
     Route::put('/extender-fechas/{id}', ExtenderFechasReservaController::class);
