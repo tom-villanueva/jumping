@@ -14,6 +14,7 @@ import {
 } from '@tanstack/react-table'
 import { useEffect, useState } from 'react'
 import { useTraslados } from '@/services/traslados'
+import AsientosDisponibles from './AsientosDisponibles'
 
 const today = formatDate(convertToUTC(new Date().setHours(0, 0, 0, 0)))
 
@@ -21,11 +22,11 @@ export default function TrasladosTable() {
   const [columnFilters, setColumnFilters] = useState([
     {
       id: 'fecha_desde_after',
-      value: [today],
+      value: today,
     },
     {
-      id: 'fecha_hasta_before',
-      value: [today],
+      id: 'fecha_desde_before',
+      value: today,
     },
   ])
   const debouncedColumnFilters = useDebounce(columnFilters, 1000)
@@ -100,6 +101,10 @@ export default function TrasladosTable() {
         )
       },
     },
+    {
+      id: 'fecha_desde_before',
+      accessorKey: 'id',
+    },
   ]
 
   const table = useReactTable({
@@ -110,7 +115,7 @@ export default function TrasladosTable() {
       sorting,
       columnFilters,
       columnVisibility: {
-        articulo_codigo: false,
+        fecha_desde_before: false,
       },
     },
 
@@ -137,30 +142,39 @@ export default function TrasladosTable() {
   }
 
   return (
-    <DataTable
-      table={table}
-      columns={columns}
-      isLoading={isLoading}
-      filters={[
-        {
-          type: 'text',
-          columnName: 'reserva_id',
-          title: 'Nro. reserva',
-          options: [],
-        },
-        {
-          type: 'date',
-          columnName: 'fecha_desde_after',
-          title: 'Fecha Inicio',
-          options: [],
-        },
-        {
-          type: 'date',
-          columnName: 'fecha_hasta_before',
-          title: 'Fecha Fin',
-          options: [],
-        },
-      ]}
-    />
+    <div>
+      <AsientosDisponibles filters={debouncedColumnFilters} />
+      <DataTable
+        table={table}
+        columns={columns}
+        isLoading={isLoading}
+        filters={[
+          {
+            type: 'text',
+            columnName: 'reserva_id',
+            title: 'Nro. reserva',
+            options: [],
+          },
+          {
+            type: 'date',
+            columnName: 'fecha_desde_after',
+            title: 'Fecha Inicio Comienzo',
+            options: [],
+          },
+          {
+            type: 'date',
+            columnName: 'fecha_desde_before',
+            title: 'Fecha Inicio Fin',
+            options: [],
+          },
+          {
+            type: 'date',
+            columnName: 'fecha_hasta_before',
+            title: 'Fecha Fin',
+            options: [],
+          },
+        ]}
+      />
+    </div>
   )
 }

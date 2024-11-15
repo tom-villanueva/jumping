@@ -10,6 +10,7 @@ use App\Models\Traslado;
 use App\Models\TrasladoAsiento;
 use App\Models\TrasladoPrecio;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class StoreTrasladoController extends Controller
 {
@@ -39,9 +40,9 @@ class StoreTrasladoController extends Controller
 
             $trasladoAsiento = TrasladoAsiento::first();
             if ($trasladoAsiento && $trasladoCount + 1 > $trasladoAsiento->cantidad) {
-                return response()->json([
-                    'error' => 'Añadir un traslado excede la cantidad de asientos disponibles.'
-                ], 422);
+                throw ValidationException::withMessages([
+                    'error' => 'Agregar un traslado excedería la cantidad de asientos disponibles para esas fechas.'
+                ]);
             }
 
             $precio = TrasladoPrecio::where(function ($query) use ($startDate, $endDate) {

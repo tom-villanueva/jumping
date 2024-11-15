@@ -59,3 +59,24 @@ export function useTrasladoAsientos({ params, filters } = {}) {
     ...rest,
   }
 }
+
+export function useAsientosDisponibles({ fechaDesde, fechaHasta } = {}) {
+  const queryParams = new URLSearchParams()
+
+  if (fechaDesde) queryParams.append('fecha_desde', fechaDesde)
+  if (fechaHasta) queryParams.append('fecha_hasta', fechaHasta)
+
+  const qs = queryParams.toString()
+
+  const { data, error, isLoading, ...rest } = useSWR([
+    '/api/traslado-asientos/check-disponibles',
+    qs,
+  ])
+
+  return {
+    asientos: data,
+    isLoading,
+    isError: error,
+    ...rest,
+  }
+}
