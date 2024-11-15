@@ -17,6 +17,8 @@ const routes = [
   { id: 4, name: 'equipos' },
   { id: 5, name: 'stock' },
   { id: 6, name: 'usuarios' },
+  { id: 7, name: 'traslados' },
+  { id: 8, name: 'vouchers' },
 ]
 
 function capitalize(word) {
@@ -41,7 +43,7 @@ const Navigation = ({ user, logout }) => {
             </div>
 
             {/* Navigation Links */}
-            <div className="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex ">
+            <div className="hidden space-x-8 lg:-my-px lg:ml-10 lg:flex ">
               {routes.map(route => (
                 <NavLink
                   key={route.id}
@@ -54,7 +56,7 @@ const Navigation = ({ user, logout }) => {
           </div>
 
           {/* Settings Dropdown */}
-          <div className="hidden sm:ml-6 sm:flex sm:items-center">
+          <div className="hidden lg:ml-6 lg:flex lg:items-center">
             <Dropdown
               align="right"
               width="48"
@@ -73,7 +75,7 @@ const Navigation = ({ user, logout }) => {
           </div>
 
           {/* Hamburger */}
-          <div className="-mr-2 flex items-center sm:hidden">
+          <div className="-mr-2 flex items-center lg:hidden">
             <button
               onClick={() => setOpen(open => !open)}
               className="inline-flex items-center justify-center rounded-md p-2 text-black transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none">
@@ -85,7 +87,7 @@ const Navigation = ({ user, logout }) => {
 
       {/* Responsive Navigation Menu */}
       {open && (
-        <div className="block sm:hidden">
+        <div className="block lg:hidden">
           <div className="space-y-1 pb-3 pt-2">
             {routes.map(route => (
               <ResponsiveNavLink

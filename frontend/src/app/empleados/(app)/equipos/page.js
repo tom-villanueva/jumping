@@ -12,6 +12,7 @@ import Header from '../Header'
 import TrasladoPrecioContainer from './sections/traslado-precio/TrasladoPrecioContainer'
 import MetodoPagosContainer from './sections/metodo-pagos/MetodoPagosContainer'
 import TipoPersonasContainer from './sections/tipo-personas/TipoPersonasContainer'
+import TrasladoAsientoContainer from './sections/traslado-precio/TrasladoAsientoContainer'
 
 const Equipos = () => {
   return (
@@ -50,6 +51,7 @@ const Equipos = () => {
           </TabsContent>
           <TabsContent value="traslado_precios">
             <TrasladoPrecioContainer />
+            <TrasladoAsientoContainer />
           </TabsContent>
           <TabsContent value="descuentos">
             <DescuentosContainer />

@@ -40,3 +40,4 @@ require __DIR__.'/User.php';
 require __DIR__.'/TrasladoPrecio.php';
 require __DIR__.'/TipoPersona.php';
 require __DIR__.'/clientes.php';
+require __DIR__.'/TrasladoAsiento.php';

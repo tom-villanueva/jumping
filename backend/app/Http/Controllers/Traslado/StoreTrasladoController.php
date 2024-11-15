@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Repositories\Traslado\TrasladoRepository;
 use App\Http\Requests\Traslado\StoreTrasladoRequest;
 use App\Models\Reserva;
+use App\Models\Traslado;
+use App\Models\TrasladoAsiento;
 use App\Models\TrasladoPrecio;
 use Illuminate\Support\Facades\DB;
 
@@ -27,6 +29,20 @@ class StoreTrasladoController extends Controller
 
             $startDate = $reserva->fecha_desde;
             $endDate = $reserva->fecha_hasta;
+
+            $trasladoCount = Traslado::where(function ($query) use ($startDate, $endDate) {
+                $query->where(function ($query) use ($startDate, $endDate) {
+                    $query->whereDate('fecha_desde', '<=', $endDate)
+                        ->whereDate('fecha_hasta', '>=', $startDate);
+                });
+            })->count();
+
+            $trasladoAsiento = TrasladoAsiento::first();
+            if ($trasladoAsiento && $trasladoCount + 1 > $trasladoAsiento->cantidad) {
+                return response()->json([
+                    'error' => 'Añadir un traslado excede la cantidad de asientos disponibles.'
+                ], 422);
+            }
 
             $precio = TrasladoPrecio::where(function ($query) use ($startDate, $endDate) {
                 $query->where(function ($query) use ($startDate, $endDate) {
