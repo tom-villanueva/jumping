@@ -26,19 +26,24 @@ class Reserva extends BaseModel
         'fecha_desde',
         'fecha_hasta',
         'comentario',
-        'user_id',
-        'nombre',
-        'apellido',
-        'email',
-        'telefono'
+        'cliente_id',
+        // 'user_id',
+        // 'nombre',
+        // 'apellido',
+        // 'email',
+        // 'telefono'
     ];
 
     /**
      * Relaciones
      */
-    public function user()
+    // public function user()
+    // {
+    //     return $this->belongsTo(User::class, 'user_id');
+    // }
+    public function cliente()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(Cliente::class, 'cliente_id');
     }
 
     public function estados()
@@ -155,7 +160,7 @@ class Reserva extends BaseModel
                 });
             }),
 
-            AllowedFilter::exact('user_id'),
+            AllowedFilter::exact('cliente_id'),
             AllowedFilter::beginsWithStrict('apellido'),
             AllowedFilter::beginsWithStrict('email'),
             'telefono',
@@ -180,7 +185,7 @@ class Reserva extends BaseModel
     public function allowedIncludes()
     {
         return [
-            'user',
+            'cliente',
             'traslados',
             'equipos',
             'pagos',

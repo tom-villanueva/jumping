@@ -1,9 +1,11 @@
 <?php
+
 namespace App\Http\Controllers\Reserva;
 
 use App\Http\Controllers\Controller;
 use App\Repositories\Reserva\ReservaRepository;
 use App\Http\Requests\Reserva\StoreReservaRequest;
+use App\Models\Cliente;
 use App\Models\ReservaEstado;
 use Illuminate\Support\Facades\DB;
 
@@ -21,7 +23,31 @@ class StoreReservaController extends Controller
         DB::beginTransaction();
 
         try {
-            $reserva = $this->repository->create($request->all());
+            if (empty($request->cliente_id)) {
+                $cliente = Cliente::create([
+                    'nombre' => $request->nombre,
+                    'apellido' => $request->apellido,
+                    'email' => $request->email,
+                    'telefono' => $request->telefono,
+                    'fecha_nacimiento' => $request->fecha_nacimiento,
+                ]);
+
+                $clienteId = $cliente->id;
+            } else {
+                $clienteId = $request->cliente_id;
+            }
+
+            $data = [
+                ...$request->only([
+                    'fecha_desde',
+                    'fecha_hasta',
+                    'fecha_prueba',
+                    'comentario',
+                ]),
+                'cliente_id' => $clienteId
+            ];
+
+            $reserva = $this->repository->create($data);
 
             ReservaEstado::create([
                 'reserva_id' => $reserva->id,

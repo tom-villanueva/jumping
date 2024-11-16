@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Reserva;
+namespace App\Http\Requests\Cliente;
 
 use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreReservaRequest extends FormRequest
+class StoreClienteRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,15 +25,12 @@ class StoreReservaRequest extends FormRequest
     public function rules()
     {
         return [
-            'fecha_desde' => 'required|date_format:Y-m-d|after_or_equal:today',
-            'fecha_hasta' => 'required|date_format:Y-m-d|after_or_equal:fecha_desde',
-            'fecha_prueba' => 'nullable|date_format:Y-m-d',
-            'comentario' => 'nullable|string|max:255',
-            'cliente_id' => 'nullable|exists:clientes,id',
             'nombre' => 'required',
             'apellido' => 'required',
-            'email' => 'required',
+            'email' => 'required|unique:clientes,email',
             'telefono' => 'nullable',
+            'tipo_persona_id' => 'nullable|exists:tipo_persona,id',
+            'user_id' => 'nullable|exists:users,id',
             'fecha_nacimiento' => 'nullable|date_format:Y-m-d',
         ];
     }

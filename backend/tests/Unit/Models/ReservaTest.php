@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\Models\Cliente;
 use App\Models\Equipo;
 use App\Models\EquipoDescuento;
 use App\Models\EquipoPrecio;
@@ -11,7 +12,6 @@ use App\Models\ReservaEquipoDescuento;
 use App\Models\ReservaEquipoPrecio;
 use App\Models\ReservaEstado;
 use App\Models\Traslado;
-use App\Models\User;
 use App\Repositories\Reserva\ReservaRepository;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -31,11 +31,7 @@ class ReservaTest extends ModelTestCase
                 'fecha_desde',
                 'fecha_hasta',
                 'comentario',
-                'user_id',
-                'nombre',
-                'apellido',
-                'email',
-                'telefono'
+                'cliente_id'
             ],
             casts: [
                 'id' => 'int', 
@@ -53,14 +49,14 @@ class ReservaTest extends ModelTestCase
     public function test_reserva_user_relation_is_ok()
     {
         $reserva = new Reserva();
-        $user = new User();
-        $relation = $reserva->user();
+        $cliente = new Cliente();
+        $relation = $reserva->cliente();
 
         $this->assertBelongsToRelation(
             $relation,
             $reserva,
-            $user,
-            'user_id'
+            $cliente,
+            'cliente_id'
         );
     }
 
@@ -166,7 +162,7 @@ class ReservaTest extends ModelTestCase
 
         $this->assertCount(2, $estados);
 
-        $this->assertEquals(1, $reserva->estado_actual->id);
+        $this->assertEquals(2, $reserva->estado_actual->id);
     }
 
     /** @test */

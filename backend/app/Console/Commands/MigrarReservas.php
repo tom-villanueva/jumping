@@ -56,17 +56,33 @@ class MigrarReservas extends Command
             $count = 0;
             foreach ($oldReservas as $oldReserva) {
                 try {
+
+                    $cliente = DB::connection('pgsql')->table('clientes')
+                        ->where('email', $oldReserva->usua_email)
+                        ->first();
+
+                    if(empty($cliente)) {
+                        $newCliente = [
+                            'nombre' => $oldReserva->usua_nombre,
+                            'apellido' => '',
+                            'email' => $oldReserva->usua_email,
+                            'telefono' => '',
+                        ];
+
+                        $clienteId = DB::connection('pgsql')->table('clientes')->insertGetId($newCliente);
+                    } else {
+                        $clienteId = $cliente->id;
+                    }
+
                     // Transform the data
                     $newReserva = [
                         'fecha_prueba' => Carbon::parse($oldReserva->res_fecha_prueba)->format('Y-m-d'),
                         'fecha_desde' => Carbon::parse($oldReserva->res_fecha_inicio)->format('Y-m-d'),
                         'fecha_hasta' => Carbon::parse($oldReserva->res_fecha_fin)->format('Y-m-d'),
                         'comentario' => '',
-                        'user_id' => null,
-                        'nombre' => $oldReserva->usua_nombre,
-                        'apellido' => '',
-                        'email' => $oldReserva->usua_email,
-                        'telefono' => '',
+                        
+                        'cliente_id' => $clienteId,
+
                         'created_at' => now(),
                         'updated_at' => now(),
                     ];

@@ -44,12 +44,12 @@ class DatabaseSeeder extends Seeder
             // 'password' => '$2a$12$BSycJGxQJUmz2rSyn9Wv2.BpmKRV3Fjfw2DzEPHlKF4dDULvUjiPS', //123
             'remember_token' => Str::random(10),
         ]);
-        $this->call(TipoArticulos::class);
-        $this->call(Talles::class);
-        $this->call(Marcas::class);
-        $this->call(Modelos::class);
-        $this->call(Equipos::class);
-        $this->call(Articulos::class);
+        // $this->call(TipoArticulos::class);
+        // $this->call(Talles::class);
+        // $this->call(Marcas::class);
+        // $this->call(Modelos::class);
+        // $this->call(Equipos::class);
+        // $this->call(Articulos::class);
         $this->call(Estados::class);
         $this->call(Descuentos::class);
         $this->call(Monedas::class);
