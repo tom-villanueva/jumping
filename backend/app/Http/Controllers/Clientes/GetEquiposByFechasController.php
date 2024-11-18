@@ -59,7 +59,7 @@ class GetEquiposByFechasController extends Controller
             }
 
             $equipo['precios'] = $precioFechas;
-            $equipo['descuento'] = $descuento->descuento;
+            $equipo['descuento'] = $descuento ? $descuento->descuento : null;
             $equipo['total_bruto'] = $totalBruto;
             $equipo['total_neto'] = $totalNeto;
 
