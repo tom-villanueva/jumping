@@ -7,7 +7,7 @@ export const reservaSchema = z
     cliente_id: z.number().nullable(),
     nombre: z.string().nullable(),
     apellido: z.string().nullable(),
-    email: z.string().nullable(),
+    email: z.string().email().nullable(),
     telefono: z.string().nullable(),
     crear_user: z.boolean().nullable(),
     fecha_desde: z

@@ -1,12 +1,12 @@
 import Header from '../Header'
-import ClientesTable from './ClientesTable'
+import ClientesContainer from './ClientesContainer'
 
-export default function TrasladosPage() {
+export default function ClientesPage() {
   return (
     <>
       <Header title="Clientes" />
       <div className="container mx-auto pt-10">
-        <ClientesTable />
+        <ClientesContainer />
       </div>
     </>
   )

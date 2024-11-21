@@ -16,13 +16,17 @@ import { useClientes } from '@/services/clientes'
 import { useTipoPersonas } from '@/services/tipo-personas'
 import { DotIcon } from 'lucide-react'
 
-export default function ClientesTable({ onClick = () => {} }) {
+export default function ClientesTable({
+  onClick = () => {},
+  columns,
+  pageSize = 10,
+}) {
   const [columnFilters, setColumnFilters] = useState([])
   const debouncedColumnFilters = useDebounce(columnFilters, 1000)
   const [sorting, setSorting] = useState([])
   const [pagination, setPagination] = useState({
     pageIndex: 0, //initial page index
-    pageSize: 5, //default page size
+    pageSize: pageSize, //default page size
   })
 
   useEffect(() => {
@@ -39,6 +43,7 @@ export default function ClientesTable({ onClick = () => {} }) {
       page: pagination.pageIndex + 1,
       page_size: pagination.pageSize,
       include: 'tipo_persona',
+      sort: 'created_at',
     },
     filters: debouncedColumnFilters,
   })
@@ -50,36 +55,6 @@ export default function ClientesTable({ onClick = () => {} }) {
   } = useTipoPersonas({
     params: {},
   })
-
-  const columns = [
-    {
-      header: 'Apellido',
-      accessorKey: 'apellido',
-    },
-    {
-      header: 'Nombre',
-      accessorKey: 'nombre',
-    },
-    {
-      header: 'Email',
-      accessorKey: 'email',
-    },
-    {
-      header: 'Tier',
-      id: 'tipo_persona_id',
-      accessorFn: row =>
-        `${row.tipo_persona ? row.tipo_persona.descripcion : '-'}`,
-      // cell: ({ row }) => {
-      //   return (
-      //     <span>
-      //       {row.original.tipo_persona
-      //         ? row.original.tipo_persona.descripcion
-      //         : '-'}
-      //     </span>
-      //   )
-      // },
-    },
-  ]
 
   const table = useReactTable({
     data: clientes?.data || [],

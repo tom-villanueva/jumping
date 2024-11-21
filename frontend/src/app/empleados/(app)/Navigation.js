@@ -16,9 +16,13 @@ const routes = [
   { id: 3, name: 'articulos' },
   { id: 4, name: 'equipos' },
   { id: 5, name: 'stock' },
-  { id: 6, name: 'usuarios' },
+  { id: 6, name: 'clientes' },
   { id: 7, name: 'traslados' },
-  { id: 8, name: 'vouchers' },
+]
+
+const dropdownRoutes = [
+  { id: 8, name: 'usuarios' },
+  { id: 9, name: 'vouchers' },
 ]
 
 function capitalize(word) {
@@ -52,6 +56,34 @@ const Navigation = ({ user, logout }) => {
                   {capitalize(route.name)}
                 </NavLink>
               ))}
+
+              {/* More links Dropdown */}
+              <div className="hidden lg:ml-6 lg:flex lg:items-center">
+                <Dropdown
+                  align="right"
+                  width="48"
+                  trigger={
+                    <button className="flex items-center text-sm font-medium text-slate-400 transition duration-150 ease-in-out hover:text-red-400 focus:outline-none">
+                      <div>Más</div>
+
+                      <div className="ml-1">
+                        <ChevronDown className="w-4" />
+                      </div>
+                    </button>
+                  }>
+                  {dropdownRoutes.map(route => (
+                    <DropdownButton key={route.id}>
+                      <NavLink
+                        href={`/empleados/${route.name}`}
+                        active={pathname.startsWith(
+                          `/empleados/${route.name}`,
+                        )}>
+                        {capitalize(route.name)}
+                      </NavLink>
+                    </DropdownButton>
+                  ))}
+                </Dropdown>
+              </div>
             </div>
           </div>
 

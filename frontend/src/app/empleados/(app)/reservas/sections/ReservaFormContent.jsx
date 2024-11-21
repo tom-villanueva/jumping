@@ -43,6 +43,27 @@ export default function ReservaFormContent({
   const [isClient, setIsClient] = useState(true)
   const [client, setClient] = useState(null)
 
+  const columns = [
+    {
+      header: 'Apellido',
+      accessorKey: 'apellido',
+    },
+    {
+      header: 'Nombre',
+      accessorKey: 'nombre',
+    },
+    {
+      header: 'Email',
+      accessorKey: 'email',
+    },
+    {
+      header: 'Tier',
+      id: 'tipo_persona_id',
+      accessorFn: row =>
+        `${row.tipo_persona ? row.tipo_persona.descripcion : '-'}`,
+    },
+  ]
+
   const form = useForm({
     resolver: zodResolver(editing ? reservaSchemaEdit : reservaSchema),
     defaultValues: {
@@ -158,6 +179,8 @@ export default function ReservaFormContent({
             ) : (
               <>
                 <ClientesTable
+                  columns={columns}
+                  pageSize={5}
                   onClick={row => {
                     setClient(row)
                     form.setValue('cliente_id', row.id)
