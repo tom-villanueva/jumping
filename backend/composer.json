@@ -11,7 +11,7 @@
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
         "spatie/laravel-medialibrary": "^11.4",
-        "spatie/laravel-query-builder": "^5.8",
+        "spatie/laravel-query-builder": "^6.0",
         "spatie/period": "^2.4"
     },
     "require-dev": {

@@ -50,7 +50,7 @@ class BaseRepository implements Repository
         }
 
         // filter, sort, includes
-        $query = QueryBuilder::for($this->model)
+        $query = QueryBuilder::for($this->model::class)
             ->allowedFilters($this->getFilters())
             ->allowedSorts($this->getSorts())
             ->allowedIncludes($this->getIncludes());
