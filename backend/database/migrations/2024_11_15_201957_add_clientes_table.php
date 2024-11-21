@@ -49,8 +49,6 @@ return new class extends Migration
     public function down(): void
     {
         //
-        Schema::dropIfExists('clientes');
-
         Schema::table('reservas', function (Blueprint $table) {
             $table->string('nombre')->nullable();
             $table->string('apellido')->nullable();
@@ -60,8 +58,11 @@ return new class extends Migration
             $table->foreignId('user_id')->nullable()->references('id')->on('users')->onDelete('cascade');
             $table->index('user_id');
 
-            $table->dropForeign('cliente_id');
+            $table->dropForeign('reservas_cliente_id_foreign');
             $table->dropColumn('cliente_id');
         });
+
+        Schema::dropIfExists('clientes');
+
     }
 };

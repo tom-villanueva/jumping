@@ -161,8 +161,9 @@ class Reserva extends BaseModel
             }),
 
             AllowedFilter::exact('cliente_id'),
-            AllowedFilter::beginsWithStrict('apellido'),
-            AllowedFilter::beginsWithStrict('email'),
+            AllowedFilter::beginsWithStrict('cliente.nombre'),
+            AllowedFilter::beginsWithStrict('cliente.apellido'),
+            AllowedFilter::beginsWithStrict('cliente.email'),
             'telefono',
             AllowedFilter::scope('fecha_desde_before'),
             AllowedFilter::scope('fecha_desde_after'),
@@ -186,6 +187,7 @@ class Reserva extends BaseModel
     {
         return [
             'cliente',
+            'cliente.tipo_persona.descuento',
             'traslados',
             'equipos',
             'pagos',

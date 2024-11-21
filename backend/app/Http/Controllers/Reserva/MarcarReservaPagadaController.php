@@ -50,10 +50,12 @@ class MarcarReservaPagadaController extends Controller
             if(!empty($metodoPago->descuento)) {
                 $metodoPagoDescuento = $reservaTotal * ($metodoPago->descuento->valor / 100);
             }
+
+            $cliente = $reserva->cliente;
             
             $tipoPersonaDescuento = 0;
-            if(!empty($request->tipo_persona_id)) {
-                $tipoPersona = TipoPersona::find($request->tipo_persona_id);
+            if(!empty($cliente->tipo_persona_id)) {
+                $tipoPersona = TipoPersona::find($cliente->tipo_persona_id);
                 $tipoPersonaDescuento = $reservaTotal * ($tipoPersona->descuento->valor / 100);
             }
             
@@ -66,9 +68,9 @@ class MarcarReservaPagadaController extends Controller
                 'numero_comprobante' => '',
                 'metodo_pago_id' => $request->metodo_pago_id,
                 'moneda_id' => $request->moneda_id,
-                'tipo_persona_id' => $request->tipo_persona_id,
-                'tipo_persona_descuento' => !empty($request->tipo_persona_id) ? $tipoPersona->descuento->valor : 0,
-                'metodo_pago_descuento' => $metodoPago->descuento->valor,
+                'tipo_persona_id' => $cliente->tipo_persona_id,
+                'tipo_persona_descuento' => !empty($cliente->tipo_persona_id) ? $tipoPersona->descuento->valor : 0,
+                'metodo_pago_descuento' => $metodoPago->descuento ? $metodoPago->descuento->valor : null,
             ]);
 
             DB::commit();

@@ -33,7 +33,7 @@ import ReservaMarcarComoPagadaDetallePrecio from './ReservaMarcarComoPagadaDetal
 const reservaMarcarPagadaSchema = z.object({
   metodo_pago_id: z.string().min(1, 'Se requiere metodo'),
   moneda_id: z.string().min(1, 'Se requiere moneda'),
-  tipo_persona_id: z.string().nullable(),
+  // tipo_persona_id: z.string().nullable(),
 })
 
 export default function ReservaMarcarComoPagadaForm({
@@ -57,12 +57,12 @@ export default function ReservaMarcarComoPagadaForm({
     defaultValues: {
       metodo_pago_id: String(1),
       moneda_id: String(1),
-      tipo_persona_id: '',
+      // tipo_persona_id: '',
     },
   })
 
   const metodoSeleccionado = form.watch('metodo_pago_id')
-  const tipoSeleccionado = form.watch('tipo_persona_id')
+  // const tipoSeleccionado = form.watch('tipo_persona_id')
 
   const { trigger, isMutating } = useSWRMutation(
     '/api/reservas/marcar-pagada',
@@ -172,6 +172,13 @@ export default function ReservaMarcarComoPagadaForm({
         )}
 
         {!isLoadingTipos && (
+          <p className="col-span-12 font-bold">
+            {reserva?.cliente?.tipo_persona.descripcion}
+            {` (${reserva?.cliente?.tipo_persona?.descuento?.descripcion})`}
+          </p>
+        )}
+
+        {/* {!isLoadingTipos && (
           <FormField
             control={form.control}
             name="tipo_persona_id"
@@ -197,13 +204,13 @@ export default function ReservaMarcarComoPagadaForm({
               </FormItem>
             )}
           />
-        )}
+        )} */}
 
         {!isLoadingMetodos && !isLoadingTipos && (
           <ReservaMarcarComoPagadaDetallePrecio
             precioTotal={reserva.precio_total}
             metodoSeleccionado={metodoSeleccionado}
-            tipoSeleccionado={tipoSeleccionado}
+            tipoSeleccionado={reserva?.cliente?.tipo_persona_id}
             metodos={metodos}
             tipoPersonas={tipoPersonas}
           />

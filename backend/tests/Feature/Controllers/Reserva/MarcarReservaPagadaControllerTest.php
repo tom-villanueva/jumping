@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Cliente;
 use App\Models\Equipo;
 use App\Models\EquipoPrecio;
 use App\Models\Reserva;
@@ -56,10 +57,16 @@ class MarcarReservaPagadaControllerTest extends TestCase
         $user = $this->createStubUser();
 
         $equipo = Equipo::factory()->create();
+
+        $cliente = Cliente::factory()->create([
+            'tipo_persona_id' => 1
+        ]);
+
         // Create a Reserva
         $reserva = Reserva::factory()->create([
             'fecha_desde' => Carbon::now()->subDays(5),
             'fecha_hasta' => Carbon::now(),
+            'cliente_id' => $cliente->id,
         ]);
 
         // Create related ReservaEquipo
@@ -87,7 +94,7 @@ class MarcarReservaPagadaControllerTest extends TestCase
         $data = [
             'metodo_pago_id' => 1,
             'moneda_id' => 1,
-            'tipo_persona_id' => 1,
+            // 'tipo_persona_id' => 1,
         ];
 
         $response = $this->actingAs($user, $user->getModelGuard())->putJson("/api/reservas/marcar-pagada/{$reserva->id}", $data);
@@ -100,7 +107,7 @@ class MarcarReservaPagadaControllerTest extends TestCase
             'numero_comprobante' => '',
             'metodo_pago_id' => $data["metodo_pago_id"],
             'moneda_id' => $data["moneda_id"],
-            'tipo_persona_id' => $data["tipo_persona_id"],
+            'tipo_persona_id' => $cliente->tipo_persona_id,
             'tipo_persona_descuento' => 10,
             'metodo_pago_descuento' => 10,
         ]);

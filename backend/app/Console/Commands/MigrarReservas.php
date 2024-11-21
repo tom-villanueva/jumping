@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Cliente;
 use App\Models\Pago;
 use App\Models\Reserva;
 use App\Models\ReservaEstado;
@@ -32,6 +33,7 @@ class MigrarReservas extends Command
     {
         //
         Reserva::truncate();
+        Cliente::truncate();
         Pago::truncate();
         ReservaEstado::truncate();
 
@@ -62,9 +64,22 @@ class MigrarReservas extends Command
                         ->first();
 
                     if(empty($cliente)) {
+                        $nombreArray = explode(" ", $oldReserva->usua_nombre);
+                        
+                        $nombre = count($nombreArray) > 0 ? $nombreArray[0] : '';
+                        $apellido = '';
+                        
+                        if(count($nombreArray) > 1) {
+                            for ($i=0; $i < count($nombreArray) - 1; $i++) { 
+                                $apellido .= "{$nombreArray[$i + 1]} ";
+                            }
+
+                            $apellido = trim($apellido);
+                        }
+
                         $newCliente = [
-                            'nombre' => $oldReserva->usua_nombre,
-                            'apellido' => '',
+                            'nombre' => $nombre,
+                            'apellido' => $apellido,
                             'email' => $oldReserva->usua_email,
                             'telefono' => '',
                         ];
@@ -116,7 +131,7 @@ class MigrarReservas extends Command
                     
                     $count += 1;
 
-                    $this->info('Migrated reserva: ' . $newReserva["nombre"] . " Nro: " . $count);
+                    $this->info('Migrated reserva: ' . $newReserva["cliente_id"] . " Nro: " . $count);
                 } catch (\Throwable $th) {
                     //throw $th;
                     $this->error($th->getMessage());

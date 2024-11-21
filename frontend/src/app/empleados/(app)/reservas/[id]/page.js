@@ -23,7 +23,8 @@ export default function ReservaDetailPage({ params }) {
   const { reserva, isLoading, isError, isValidating } = useReservaById({
     id: params.id,
     params: {
-      include: 'user,equipos,pagos.metodo_pago,pagos.tipo_persona,traslados',
+      include:
+        'cliente,cliente.tipo_persona.descuento,equipos,pagos.metodo_pago,pagos.tipo_persona,traslados',
     },
   })
 
@@ -89,7 +90,7 @@ export default function ReservaDetailPage({ params }) {
         />
         <ReservaDetailLabel
           title="A nombre de"
-          label={`${reserva.apellido}, ${reserva.nombre}.`}
+          label={`${reserva.cliente?.apellido}, ${reserva.cliente?.nombre}.`}
           isValidating={isValidating}
         />
         <ReservaDetailLabel

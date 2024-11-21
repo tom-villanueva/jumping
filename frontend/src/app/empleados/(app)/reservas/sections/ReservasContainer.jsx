@@ -67,6 +67,7 @@ export default function ReservasContainer() {
       page: pagination.pageIndex + 1,
       page_size: pagination.pageSize,
       sort: '-fecha_desde',
+      include: 'cliente',
     },
     filters: debouncedColumnFilters,
   })
@@ -74,23 +75,6 @@ export default function ReservasContainer() {
   const { estados, isLoading: isLoadingEstados } = useEstados({})
 
   const columns = [
-    // {
-    //   id: 'acciones',
-    //   cell: ({ row }) => (
-    //     <ReservaTableActions
-    //       row={row.original}
-    //       openDeleteModal={() => {
-    //         setRow(row.original)
-    //         setOpenDeleteModal(true)
-    //       }}
-    //       openEditModal={() => {
-    //         setRow(row.original)
-    //         setEditing(true)
-    //         setOpenFormModal(true)
-    //       }}
-    //     />
-    //   ),
-    // },
     {
       header: 'Nro',
       accessorKey: 'id',
@@ -98,15 +82,18 @@ export default function ReservasContainer() {
     },
     {
       header: 'Apellido',
-      accessorKey: 'apellido',
+      accessorKey: 'cliente.apellido',
+      id: 'cliente.apellido',
     },
     {
       header: 'Nombre',
-      accessorKey: 'nombre',
+      accessorKey: 'cliente.nombre',
+      id: 'cliente.nombre',
     },
     {
       header: 'Email',
-      accessorKey: 'email',
+      accessorKey: 'cliente.email',
+      id: 'cliente.email',
     },
     {
       accessorKey: 'estado_actual.estado.descripcion',
@@ -244,13 +231,13 @@ export default function ReservasContainer() {
           },
           {
             type: 'text',
-            columnName: 'apellido',
+            columnName: 'cliente.apellido',
             title: 'Apellido',
             options: [],
           },
           {
             type: 'text',
-            columnName: 'email',
+            columnName: 'cliente.email',
             title: 'Email',
             options: [],
           },
