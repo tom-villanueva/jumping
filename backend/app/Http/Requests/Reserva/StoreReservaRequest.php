@@ -30,11 +30,12 @@ class StoreReservaRequest extends FormRequest
             'fecha_prueba' => 'nullable|date_format:Y-m-d',
             'comentario' => 'nullable|string|max:255',
             'cliente_id' => 'nullable|exists:clientes,id',
-            'nombre' => 'required',
-            'apellido' => 'required',
-            'email' => 'required',
+            'nombre' => 'required_if:cliente_id,null',
+            'apellido' => 'required_if:cliente_id,null',
+            'email' => 'required_if:cliente_id,null|unique:clientes,email',
             'telefono' => 'nullable',
             'fecha_nacimiento' => 'nullable|date_format:Y-m-d',
+            'crear_user' => 'nullable|boolean'
         ];
     }
 

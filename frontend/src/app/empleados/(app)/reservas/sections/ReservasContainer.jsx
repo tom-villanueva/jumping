@@ -207,7 +207,8 @@ export default function ReservasContainer() {
         open={openFormModal}
         onOpenChange={() => setOpenFormModal(!openFormModal)}
         editing={editing}
-        name="reserva">
+        name="reserva"
+        className="sm:max-w-4xl">
         <ReservaFormContent
           onFormSubmit={() => setOpenFormModal(!openFormModal)}
           reserva={row}

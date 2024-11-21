@@ -22,17 +22,13 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-import { z } from 'zod'
 import axios from 'axios'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { reservaSchema, reservaSchemaEdit } from './ReservaSchemas'
+import ClientesTable from '../../clientes/ClientesTable'
+import { useState } from 'react'
+import { Checkbox } from '@/components/ui/checkbox'
+import ReservaDetailLabel from '../[id]/ReservaDetailLabel'
 
 const today = formatDate(convertToUTC(new Date().setHours(0, 0, 0, 0)))
 
@@ -44,10 +40,14 @@ export default function ReservaFormContent({
 }) {
   const { toast } = useToast()
   const { mutate } = useSWRConfig()
+  const [isClient, setIsClient] = useState(true)
+  const [client, setClient] = useState(null)
 
   const form = useForm({
     resolver: zodResolver(editing ? reservaSchemaEdit : reservaSchema),
     defaultValues: {
+      cliente_id: null,
+      crear_user: false,
       comentario: reserva?.comentario ?? '',
       nombre: reserva?.cliente?.nombre ?? '',
       apellido: reserva?.cliente?.apellido ?? '',
@@ -99,8 +99,11 @@ export default function ReservaFormContent({
   )
 
   function onSubmit(values) {
+    const crearUser = values.crear_user && client && client?.user_id === null
+
     const data = {
       ...values,
+      crear_user: crearUser,
     }
 
     if (editing) {
@@ -115,89 +118,190 @@ export default function ReservaFormContent({
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         className="grid w-full grid-cols-12 gap-2 gap-y-4 rounded p-2">
-        <FormField
-          control={form.control}
-          name="apellido"
-          render={({ field }) => (
-            <FormItem className="col-span-12 md:col-span-6">
-              <FormLabel>Apellido</FormLabel>
-              <FormControl>
-                <Input
-                  id="apellido"
-                  name="apellido"
-                  placeholder="Escriba apellido"
-                  className="col-span-12 "
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="col-span-12 flex items-center space-x-2">
+          <Checkbox
+            id="es_cliente"
+            checked={isClient}
+            onCheckedChange={checked => {
+              form.setValue('cliente_id', null)
+              setClient(null)
+              setIsClient(checked)
+            }}
+          />
+          <label
+            htmlFor="es_cliente"
+            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+            ¿Es cliente? Haga Click en uno para seleccionar
+          </label>
+        </div>
 
-        <FormField
-          control={form.control}
-          name="nombre"
-          render={({ field }) => (
-            <FormItem className="col-span-12 md:col-span-6">
-              <FormLabel>Nombre</FormLabel>
-              <FormControl>
-                <Input
-                  id="nombre"
-                  name="nombre"
-                  placeholder="Escriba nombre"
-                  className="col-span-12"
-                  {...field}
+        {isClient ? (
+          <div className="col-span-12">
+            {form.getValues().cliente_id !== null ? (
+              <div>
+                <ReservaDetailLabel
+                  title={'Nombre'}
+                  label={client?.nombre}
+                  isValidating={false}
                 />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                <ReservaDetailLabel
+                  title={'Apellido'}
+                  label={client?.apellido}
+                  isValidating={false}
+                />
+                <ReservaDetailLabel
+                  title={'Email'}
+                  label={client?.email}
+                  isValidating={false}
+                />
+              </div>
+            ) : (
+              <>
+                <ClientesTable
+                  onClick={row => {
+                    setClient(row)
+                    form.setValue('cliente_id', row.id)
+                  }}
+                />
+                {form.formState.errors.cliente_id && (
+                  <p className="col-span-12 text-sm text-red-500">
+                    {form.formState.errors.cliente_id.message}
+                  </p>
+                )}
+              </>
+            )}
+          </div>
+        ) : (
+          <>
+            <FormField
+              control={form.control}
+              name="apellido"
+              render={({ field }) => (
+                <FormItem className="col-span-12 md:col-span-6">
+                  <FormLabel>Apellido</FormLabel>
+                  <FormControl>
+                    <Input
+                      id="apellido"
+                      name="apellido"
+                      placeholder="Escriba apellido"
+                      className="col-span-12"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem className="col-span-12 md:col-span-6">
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="Escriba email"
-                  className="col-span-12"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+            <FormField
+              control={form.control}
+              name="nombre"
+              render={({ field }) => (
+                <FormItem className="col-span-12 md:col-span-6">
+                  <FormLabel>Nombre</FormLabel>
+                  <FormControl>
+                    <Input
+                      id="nombre"
+                      name="nombre"
+                      placeholder="Escriba nombre"
+                      className="col-span-12"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-        <FormField
-          control={form.control}
-          name="telefono"
-          render={({ field }) => (
-            <FormItem className="col-span-12 md:col-span-6">
-              <FormLabel>Nro. de Teléfono</FormLabel>
-              <FormControl>
-                <Input
-                  id="telefono"
-                  name="telefono"
-                  placeholder="Escriba Nro. teléfono"
-                  className="col-span-12"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem className="col-span-12 md:col-span-6">
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input
+                      id="email"
+                      name="email"
+                      type="email"
+                      placeholder="Escriba email"
+                      className="col-span-12"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="telefono"
+              render={({ field }) => (
+                <FormItem className="col-span-12 md:col-span-6">
+                  <FormLabel>Nro. de Teléfono</FormLabel>
+                  <FormControl>
+                    <Input
+                      id="telefono"
+                      name="telefono"
+                      placeholder="Escriba Nro. teléfono"
+                      className="col-span-12"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </>
+        )}
+
+        {client && client?.user_id !== null ? (
+          <p className="col-span-12">Ya tiene usuario generado</p>
+        ) : (
+          <FormField
+            control={form.control}
+            name="crear_user"
+            render={({ field }) => (
+              <FormItem className="col-span-12 flex items-center space-x-2">
+                <FormControl>
+                  <Checkbox
+                    id="crear_user"
+                    name="crear_user"
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <FormLabel
+                  htmlFor="crear_user"
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                  ¿Generar usuario?
+                </FormLabel>
+              </FormItem>
+            )}
+          />
+        )}
 
         {!editing && (
           <>
+            <FormField
+              control={form.control}
+              name="fecha_prueba"
+              render={({ field }) => (
+                <FormItem className="col-span-12 md:col-span-4">
+                  <FormLabel>Fecha Prueba</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="date"
+                      name="fecha_prueba"
+                      min={editing ? '' : today}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="fecha_desde"
@@ -234,51 +338,8 @@ export default function ReservaFormContent({
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="fecha_prueba"
-              render={({ field }) => (
-                <FormItem className="col-span-12 md:col-span-4">
-                  <FormLabel>Fecha Prueba</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="date"
-                      name="fecha_prueba"
-                      min={editing ? '' : today}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
           </>
         )}
-
-        {/* <FormField
-          control={form.control}
-          name="estado_id"
-          render={({ field }) => (
-            <FormItem className="col-span-12">
-              <FormLabel>Estado</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Seleccione un estado" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {estados?.map(estado => (
-                    <SelectItem key={estado?.id} value={String(estado?.id)}>
-                      {estado?.descripcion}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        /> */}
 
         <FormField
           control={form.control}
@@ -308,7 +369,7 @@ export default function ReservaFormContent({
           </p>
         )}
 
-        <Button type="submit" className="col-span-6">
+        <Button type="submit" className="col-span-6" disabled={isMutating}>
           {isMutating ? 'Guardando...' : 'Guardar'}
         </Button>
       </form>

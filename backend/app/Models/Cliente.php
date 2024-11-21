@@ -49,6 +49,10 @@ class Cliente extends BaseModel
         return [
             AllowedFilter::exact('tipo_persona_id'),
             AllowedFilter::exact('user_id'),
+            'nombre',
+            'apellido',
+            'telefono',
+            'email',
         ];
     }
 

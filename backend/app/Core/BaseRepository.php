@@ -126,7 +126,7 @@ class BaseRepository implements Repository
             $this->request->merge($options);
         }
 
-        $query = QueryBuilder::for($this->model)
+        $query = QueryBuilder::for($this->model::class)
             ->allowedFilters($this->getFilters())
             ->allowedIncludes($this->getIncludes());
 

@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Models\Cliente;
 use App\Models\Reserva;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
@@ -12,7 +13,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class EnviarContrato extends Mailable
+class EnviarCredenciales extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -20,7 +21,8 @@ class EnviarContrato extends Mailable
      * Create a new message instance.
      */
     public function __construct(
-        protected Reserva $reserva
+        protected Cliente $cliente,
+        protected $password
     )
     {
         //
@@ -32,7 +34,7 @@ class EnviarContrato extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Envío de Contrato Jumping',
+            subject: 'Envío de Credenciales Jumping',
         );
     }
 
@@ -41,14 +43,15 @@ class EnviarContrato extends Mailable
      */
     public function content(): Content
     {
+        $frontendUrl = env('FRONTEND_URL', 'http://localhost:3000');
         return new Content(
-            view: 'mail.reservas.contrato',
+            view: 'mail.reservas.credenciales',
             with: [
                 'pathToImage' => 'images/jumping-logo.png',
-                'reservaId' => $this->reserva->id,
-                'nombre' => "{$this->reserva->cliente->apellido}, {$this->reserva->cliente->nombre}",
-                'fecha_desde' => Carbon::parse($this->reserva->fecha_desde)->format('d/m/Y'),
-                'fecha_hasta' => Carbon::parse($this->reserva->fecha_hasta)->format('d/m/Y'),
+                'nombre' => "{$this->cliente->apellido}, {$this->cliente->nombre}",
+                'email' => $this->cliente->email,
+                'password' => $this->password,
+                'frontendUrl' => "{$frontendUrl}/login"
             ]
         );
     }

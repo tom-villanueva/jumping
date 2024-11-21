@@ -98,7 +98,7 @@ class EnviarConfirmacion extends Mailable
             with: [
                 'pathToImage' => 'images/jumping-logo.png',
                 'reservaId' => $this->reserva->id,
-                'nombre' => "{$this->reserva->apellido}, {$this->reserva->nombre}",
+                'nombre' => "{$this->reserva->cliente->apellido}, {$this->reserva->cliente->nombre}",
                 'fecha_desde' => Carbon::parse($this->reserva->fecha_desde)->format('d/m/Y'),
                 'fecha_hasta' => Carbon::parse($this->reserva->fecha_hasta)->format('d/m/Y'),
                 'equipos' => $equipos,
