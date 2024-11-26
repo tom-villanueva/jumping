@@ -60,7 +60,8 @@ export default function EquiposContainer({}) {
     params: {
       page: pagination.pageIndex + 1,
       page_size: pagination.pageSize,
-      include: 'equipo_tipo_articulo,descuentos_vigentes,precios_vigentes',
+      include:
+        'equipo_tipo_articulo,descuentos_vigentes,precios_vigentes,tipo_equipo',
       sort: 'id',
     },
     filters: debouncedColumnFilters,
@@ -74,6 +75,10 @@ export default function EquiposContainer({}) {
     {
       accessorKey: 'descripcion',
       header: 'Descripción',
+    },
+    {
+      accessorKey: 'tipo_equipo.descripcion',
+      header: 'Tipo Equipo',
     },
     {
       accessorKey: 'precio_vigente',
