@@ -25,7 +25,8 @@ class Equipo extends BaseModel implements HasMedia
     protected $fillable = [
         'id',
         'descripcion',
-        'disponible'
+        'disponible',
+        'tipo_equipo_id'
     ];
 
     /**
@@ -34,6 +35,10 @@ class Equipo extends BaseModel implements HasMedia
     public function equipo_tipo_articulo() 
     {
         return $this->belongsToMany(TipoArticulo::class, 'equipo_tipo_articulo', 'equipo_id', 'tipo_articulo_id');
+    }
+
+    public function tipo_equipo() {
+        return $this->belongsTo(TipoEquipo::class, 'tipo_equipo_id');
     }
 
     // precios
@@ -159,7 +164,8 @@ class Equipo extends BaseModel implements HasMedia
             'precios_vigentes', 
             'equipo_descuento',
             'descuentos_vigentes',
-            'reservas'
+            'reservas',
+            'tipo_equipo'
         ];
     }
 
