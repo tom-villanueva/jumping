@@ -29,7 +29,7 @@ class GetEquiposByFechasController extends Controller
 
             $precioFechas = [];
 
-            $descuento = $this->getDescuentoByDays($equipo->id, $fechaDesde, $fechaHasta);
+            $descuento = $equipo->getDescuentoByDays($fechaDesde, $fechaHasta);
 
             $totalBruto = 0;
             $totalNeto = 0;
@@ -93,44 +93,6 @@ class GetEquiposByFechasController extends Controller
         $result[] = $traslado;
 
         return response()->json($result);
-    }
-
-    public function getDescuentoByDays($equipoId, $fechaDesde, $fechaHasta)
-    {
-        // Create a period for the reservation dates
-        $reservaPeriod = Period::make($fechaDesde, $fechaHasta);
-        $dias = $reservaPeriod->length();
-
-        // Get all EquipoDescuentos for the given Equipo
-        $descuentos = EquipoDescuento::where('equipo_id', $equipoId)->orderBy('dias')->get();
-
-        // Check if there are any descuentos for the given equipo
-        if ($descuentos->isEmpty()) {
-            return null;
-        }
-
-        // Look for an exact match of 'dias'
-        $exactMatch = $descuentos->firstWhere('dias', $dias);
-        if ($exactMatch) {
-            return $exactMatch;
-        }
-
-        // Find the lowest and highest 'dias' values
-        $lowestDescuento = $descuentos->first();
-        $highestDescuento = $descuentos->last();
-
-        // If $dias is lower than the lowest 'dias', return null
-        if ($dias < $lowestDescuento->dias) {
-            return null;
-        }
-
-        // If $dias is greater than the highest 'dias', return the highest EquipoDescuento
-        if ($dias > $highestDescuento->dias) {
-            return $highestDescuento;
-        }
-
-        // If no match is found, return null (this case should rarely happen if ordered correctly)
-        return null;
     }
 
     private function getOverlappingDays(Carbon $startDate1, Carbon $endDate1, Carbon $startDate2, Carbon $endDate2)
