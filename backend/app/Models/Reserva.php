@@ -51,6 +51,11 @@ class Reserva extends BaseModel
         return $this->hasMany(ReservaEstado::class, 'reserva_id');
     }
 
+    public function voucher()
+    {
+        return $this->hasOne(Voucher::class, 'reserva_id');
+    }
+
     public function pagos()
     {
         return $this->hasMany(Pago::class, 'reserva_id');
@@ -192,7 +197,8 @@ class Reserva extends BaseModel
             'equipos',
             'pagos',
             'pagos.metodo_pago',
-            'pagos.tipo_persona'
+            'pagos.tipo_persona',
+            'voucher'
         ];
     }
 

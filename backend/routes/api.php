@@ -43,3 +43,4 @@ require __DIR__.'/clientes.php';
 require __DIR__.'/TrasladoAsiento.php';
 require __DIR__.'/Cliente.php';
 require __DIR__.'/TipoEquipo.php';
+require __DIR__.'/Voucher.php';
