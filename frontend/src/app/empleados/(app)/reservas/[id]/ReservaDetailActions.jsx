@@ -17,9 +17,11 @@ import {
   HandCoins,
   Mail,
   ReceiptText,
+  TicketPercentIcon,
   Trash,
 } from 'lucide-react'
 import ReservaEnviarMailConfirmacionDialog from './ReservaEnviarMailConfirmacionDialog'
+import ReservaCrearVoucherDialog from './ReservaCrearVoucherDialog'
 
 export default function ReservaDetailActions({ reservaId, estadoId, reserva }) {
   const [openPagar, setOpenPagar] = useState(false)
@@ -29,6 +31,7 @@ export default function ReservaDetailActions({ reservaId, estadoId, reserva }) {
   const [openDesglosePrecios, setOpenDesglosePrecios] = useState(false)
   const [openEnviarContrato, setOpenEnviarContrato] = useState(false)
   const [openEnviarConfirmacion, setOpenEnviarConfirmacion] = useState(false)
+  const [openCrearVoucher, setOpenCrearVoucher] = useState(false)
 
   const router = useRouter()
 
@@ -59,6 +62,14 @@ export default function ReservaDetailActions({ reservaId, estadoId, reserva }) {
             onClick={() => setOpenDesglosePrecios(true)}>
             <CircleDollarSign className="mr-2 h-4 w-4" />
             Ver desglose de precios
+          </Button>
+
+          <Button
+            variant="secondary"
+            type="button"
+            onClick={() => setOpenCrearVoucher(true)}>
+            <TicketPercentIcon className="mr-2 h-4 w-4" />
+            Crear voucher
           </Button>
         </div>
       </div>
@@ -153,6 +164,13 @@ export default function ReservaDetailActions({ reservaId, estadoId, reserva }) {
       <ReservaEnviarMailConfirmacionDialog
         openForm={openEnviarConfirmacion}
         setOpenForm={setOpenEnviarConfirmacion}
+        reservaId={reservaId}
+        reserva={reserva}
+      />
+
+      <ReservaCrearVoucherDialog
+        openForm={openCrearVoucher}
+        setOpenForm={setOpenCrearVoucher}
         reservaId={reservaId}
         reserva={reserva}
       />

@@ -1,7 +1,6 @@
 'use client'
 
 import { useReservaById } from '@/services/reservas'
-import ReservaFormContent from '../sections/ReservaFormContent'
 import {
   Collapsible,
   CollapsibleContent,
@@ -16,6 +15,7 @@ import { Separator } from '@/components/ui/separator'
 import ReservaDetailLabel from './ReservaDetailLabel'
 import ReservaDetailActions from './ReservaDetailActions'
 import ReservaTrasladoList from './ReservaTrasladoList'
+import ReservaFormContentEdit from '../sections/ReservaFormContentEdit'
 
 export default function ReservaDetailPage({ params }) {
   const [open, setOpen] = useState(false)
@@ -68,7 +68,7 @@ export default function ReservaDetailPage({ params }) {
         </div>
         <CollapsibleContent>
           {!isValidating ? (
-            <ReservaFormContent
+            <ReservaFormContentEdit
               onFormSubmit={() => {}}
               reserva={reserva}
               apiKey={`/api/reservas/${params.id}`}
