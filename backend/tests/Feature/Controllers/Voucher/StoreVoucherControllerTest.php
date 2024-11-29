@@ -36,7 +36,7 @@ class StoreVoucherControllerTest extends TestCase
 
         // Assert
         $response->assertStatus(422);
-        $response->assertJsonValidationErrors(['fecha_expiracion', 'dias', 'reserva_id', 'cliente_id', 'equipos']);
+        $response->assertJsonValidationErrors(['fecha_expiracion', 'dias', 'reserva_id', 'cliente_id', 'reserva_equipo_ids']);
     }
 
     public function test_unauthorized_user_cannot_store_voucher()
@@ -81,7 +81,9 @@ class StoreVoucherControllerTest extends TestCase
             'dias' => 2,
             'reserva_id' => $reserva->id,
             'cliente_id' => Cliente::factory()->create()->id,
-            'equipos' => $reservaEquipos
+            'reserva_equipo_ids' => $reservaEquipos->map(function ($reservaEquipo) {
+                return ['reserva_equipo_id' => $reservaEquipo->id];
+            })->toArray()
         ];
 
         $response = $this->actingAs($user, $user->getModelGuard())->postJson("/api/vouchers", $data);

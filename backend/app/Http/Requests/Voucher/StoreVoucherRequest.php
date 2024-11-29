@@ -30,7 +30,9 @@ class StoreVoucherRequest extends FormRequest
             'dias' => 'required|integer|min:0',
             'reserva_id' => 'nullable|exists:reservas,id',
             'cliente_id' => 'required|exists:clientes,id',
-            'equipos' => 'required|array',//'required_if:traslados,null|array',
+            //'equipos' => 'required|array',//'required_if:traslados,null|array',
+            'reserva_equipo_ids' => 'required|array',
+            'reserva_equipo_ids.*.reserva_equipo_id' => 'exists:reserva_equipo,id',
             // 'traslados' => 'required_if:equipos,null|array',
         ];
     }

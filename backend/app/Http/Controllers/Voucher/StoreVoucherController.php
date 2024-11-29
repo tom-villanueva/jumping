@@ -28,10 +28,11 @@ class StoreVoucherController extends Controller
 
             // son ReservaEquipo
             $equipos = $request->equipos;
+            $reservaEquipoIds = array_column($request->reserva_equipo_ids, 'reserva_equipo_id');
 
-            if(!empty($equipos)) {
-                foreach ($equipos as $equipo) {
-                    $reservaEquipo = ReservaEquipo::find($equipo["id"]);
+            if(!empty($reservaEquipoIds)) {
+                foreach ($reservaEquipoIds as $id) {
+                    $reservaEquipo = ReservaEquipo::find($id);
                     
                     $reservaEquipoPrecio = $reservaEquipo->precios()->first();
 
