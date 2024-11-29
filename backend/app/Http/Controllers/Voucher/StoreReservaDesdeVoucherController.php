@@ -9,6 +9,7 @@ use App\Models\ReservaEstado;
 use App\Repositories\Voucher\VoucherRepository;
 use App\Repositories\Reserva\ReservaRepository;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class StoreReservaDesdeVoucherController extends Controller
 {
@@ -27,6 +28,12 @@ class StoreReservaDesdeVoucherController extends Controller
 
         try {
             $voucher = $this->repository->find($request->voucher_id);
+
+            if($voucher->reserva_id) {
+                throw ValidationException::withMessages([
+                    'voucher_usado' => 'El voucher ya fue utilizado.'
+                ]);
+            }
 
             $reserva = $this->reservaRepository->create([
                 'fecha_prueba' => $request->fecha_prueba,

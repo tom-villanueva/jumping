@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Core\BaseModel;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\QueryBuilder\AllowedFilter;
@@ -45,19 +46,47 @@ class Voucher extends BaseModel
     }
 
     /**
+     * Scopes de fechas
+     */
+
+    // fecha desde
+    public function scopeFechaExpiracionBefore($query, $date)
+    {
+        return $query->where('fecha_expiracion', '<=', Carbon::parse($date));
+    }
+
+    public function scopeFechaExpiracionAfter($query, $date)
+    {
+        return $query->where('fecha_expiracion', '>=', Carbon::parse($date));
+    }
+
+    public function scopeFechaExpiracionBetween($query, $date1, $date2)
+    {
+        return $query->whereBetween('fecha_expiracion', [$date1, $date2]);
+    }
+
+    /**
      * query builder options
      */
     public function allowedFilters()
     {
         return [
             AllowedFilter::exact('reserva_id'),
-            AllowedFilter::exact('cliente_id')
+            AllowedFilter::exact('cliente_id'),
+            AllowedFilter::scope('fecha_expiracion_before'),
+            AllowedFilter::scope('fecha_expiracion_after'),
+            AllowedFilter::scope('fecha_expiracion_between'),
+            'dias',
+            'descripcion',
+            AllowedFilter::beginsWithStrict('cliente.apellido'),
+            AllowedFilter::beginsWithStrict('cliente.email'),
         ];
     }
 
     public function allowedSorts()
     {
         return [
+            'fecha_expiracion'
         ];
     }
 
@@ -67,6 +96,7 @@ class Voucher extends BaseModel
             'reserva',
             'cliente',
             'equipo_voucher',
+            'equipo_voucher.equipo',
             'traslado_precio_voucher'
         ];
     }
