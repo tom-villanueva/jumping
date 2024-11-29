@@ -256,19 +256,8 @@ class Reserva extends BaseModel
                 $priceForThisPeriod = $reservaEquipoPrecio->precio * $daysForThisPrice;
             }
 
-            // Apply any overlapping discounts
-            // $priceForThisPeriod -= $this->applyOverlappingDiscountsForPrice(
-            //     $reservaEquipo,
-            //     $reservaEquipoPrecio,
-            //     $precioStartDate,
-            //     $precioEndDate,
-            //     $startDate,
-            //     $endDate
-            // );
-
             // Add the discounted price to the total price
             $totalPrice += $priceForThisPeriod;
-            // }
         }
 
         return $totalPrice;

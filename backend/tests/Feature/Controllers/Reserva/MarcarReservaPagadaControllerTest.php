@@ -5,9 +5,11 @@ namespace Tests\Feature;
 use App\Models\Cliente;
 use App\Models\Equipo;
 use App\Models\EquipoPrecio;
+use App\Models\EquipoVoucher;
 use App\Models\Reserva;
 use App\Models\ReservaEquipo;
 use App\Models\ReservaEquipoPrecio;
+use App\Models\Voucher;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -91,6 +93,18 @@ class MarcarReservaPagadaControllerTest extends TestCase
             'precio' => $equipoPrecio->precio,
         ]);
 
+        $voucher = Voucher::factory()->create([
+            'dias' => 2,
+            'reserva_id' => $reserva->id,
+            'cliente_id' => $cliente->id,
+        ]);
+
+        EquipoVoucher::create([
+            'voucher_id' => $voucher->id,
+            'equipo_id' =>  $equipo->id,
+            'precio' => $equipoPrecio->precio
+        ]);
+
         $data = [
             'metodo_pago_id' => 1,
             'moneda_id' => 1,
@@ -101,7 +115,7 @@ class MarcarReservaPagadaControllerTest extends TestCase
         
         $response->assertStatus(201);
         $response->assertJson([
-            'total' => $reserva->calculateTotalPrice() - 60 - 60, // 600
+            'total' => $reserva->calculateTotalPrice() - 60 - 60 - 200, // 600 - descuentoTipo - descuentoPersona - descuentoVoucher
             'status' => '',
             'reserva_id' => $reserva->id,
             'numero_comprobante' => '',
