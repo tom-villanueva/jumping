@@ -1,25 +1,31 @@
 <?php
 
-namespace App\Repositories\Reserva;
+namespace App\Http\Controllers\Reserva;
 
-use App\Core\BaseRepository;
+use App\Http\Controllers\Controller;
 use App\Models\MetodoPago;
 use App\Models\Reserva;
 use App\Models\ReservaEquipo;
 use App\Models\Traslado;
+use App\Repositories\Reserva\ReservaRepository;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Spatie\Period\Period;
 
-class ReservaRepository extends BaseRepository
+class GetReservaFacturaLineasController extends Controller
 {
-    public function __construct(Reserva $model, Request $request)
+    private $repository;
+
+    public function __construct(ReservaRepository $repository)
     {
-        parent::__construct($model, $request);
+        $this->repository = $repository;
     }
 
-    public function getReservaLineasFactura($reservaId)
+    public function __invoke(Request $request, $id)
     {
+        $reservaId = $id;
+        $metodoPagoId = $request->query('metodo_pago_id');
+
         // Fetch Reserva
         $reserva = Reserva::with([
             'equipos_reservados.precios',
@@ -27,10 +33,7 @@ class ReservaRepository extends BaseRepository
             'traslados',
             'cliente.tipo_persona.descuento',
             'voucher.equipo_voucher.equipo',
-            'pagos.metodo_pago'
         ])->findOrFail($reservaId);
-
-        $metodoPagoId = $reserva->pagos->first()->metodo_pago_id ?? null;
 
         // Initialize invoice lines and totals
         $invoiceLines = [];
@@ -109,11 +112,11 @@ class ReservaRepository extends BaseRepository
         $priceAfterDiscounts = $priceAfterDiscounts < 0 ? 0 : $priceAfterDiscounts;
 
         // Build response
-        return [
+        return response()->json([
             'invoice' => $invoiceLines,
             'total_price' => round($totalPrice, 2),
             'price_after_discounts' => round($priceAfterDiscounts, 2),
-        ];
+        ]);
     }
 
     private function calculateReservaEquipoPrice(Reserva $reserva, ReservaEquipo $reservaEquipo)

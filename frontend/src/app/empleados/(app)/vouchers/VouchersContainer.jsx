@@ -73,6 +73,19 @@ export default function VouchersContainer() {
       id: 'cliente.email',
     },
     {
+      header: 'Usado',
+      accessorKey: 'reserva_id',
+      cell: ({ row }) => {
+        return (
+          <span>
+            {row.original.reserva_id
+              ? `Utilizado para reserva ${row.original.reserva_id}`
+              : 'No utilizado.'}
+          </span>
+        )
+      },
+    },
+    {
       accessorKey: 'fecha_expiracion',
       id: 'fecha_expiracion_after',
       header: 'Fecha Expiración',
@@ -99,17 +112,17 @@ export default function VouchersContainer() {
         const voucher = row.original
         return (
           <div className="flex flex-row gap-2">
-            {!voucher?.reserva_id && (
-              <Button
-                variant="secondary"
-                type="button"
-                onClick={() => {
-                  setRow(voucher)
-                  setOpenCrearReserva(true)
-                }}>
-                <TicketCheckIcon className="h-4 w-4" />
-              </Button>
-            )}
+            <Button
+              disabled={voucher?.reserva_id}
+              variant="secondary"
+              type="button"
+              onClick={() => {
+                setRow(voucher)
+                setOpenCrearReserva(true)
+              }}>
+              <TicketCheckIcon className="h-4 w-4" />
+            </Button>
+
             <Button
               variant="destructive"
               type="button"

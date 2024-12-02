@@ -198,7 +198,8 @@ class Reserva extends BaseModel
             'pagos',
             'pagos.metodo_pago',
             'pagos.tipo_persona',
-            'voucher'
+            'voucher',
+            'voucher.equipo_voucher'
         ];
     }
 

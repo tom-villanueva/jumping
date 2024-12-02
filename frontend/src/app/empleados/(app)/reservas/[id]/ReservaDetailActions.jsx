@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import ReservaMarcarComoPagadaDialog from './ReservaMarcarComoPagadaDialog'
 import { Button } from '@/components/ui/button'
-import { RESERVA_PAGADA_ID } from '@/lib/utils'
+import { RESERVA_PAGADA_ID, RESERVA_PENDIENTE_ID } from '@/lib/utils'
 import DeleteEntityForm from '@/components/crud/DeleteEntityForm'
 import { useRouter } from 'next/navigation'
 import ReservaExtenderDialog from './ReservaExtenderDialog'
@@ -16,6 +16,7 @@ import {
   CreditCard,
   HandCoins,
   Mail,
+  Receipt,
   ReceiptText,
   TicketPercentIcon,
   Trash,
@@ -56,13 +57,13 @@ export default function ReservaDetailActions({ reservaId, estadoId, reserva }) {
             Modificar fechas
           </Button>
 
-          <Button
+          {/* <Button
             variant="secondary"
             type="button"
             onClick={() => setOpenDesglosePrecios(true)}>
             <CircleDollarSign className="mr-2 h-4 w-4" />
             Ver desglose de precios
-          </Button>
+          </Button> */}
 
           <Button
             variant="secondary"
@@ -82,6 +83,15 @@ export default function ReservaDetailActions({ reservaId, estadoId, reserva }) {
               href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reservas/contrato?reserva_id=${reservaId}`}>
               <ReceiptText className="mr-2 h-4 w-4" />
               Imprimir Contrato
+            </Link>
+          </Button>
+
+          <Button type="button" asChild>
+            <Link
+              target="_blank"
+              href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reservas/factura?reserva_id=${reservaId}`}>
+              <Receipt className="mr-2 h-4 w-4" />
+              Imprimir factura
             </Link>
           </Button>
 
@@ -147,12 +157,12 @@ export default function ReservaDetailActions({ reservaId, estadoId, reserva }) {
         reserva={reserva}
       />
 
-      <ReservaVerDesgloseDePreciosDialog
+      {/* <ReservaVerDesgloseDePreciosDialog
         openForm={openDesglosePrecios}
         setOpenForm={setOpenDesglosePrecios}
         reservaId={reservaId}
         reserva={reserva}
-      />
+      /> */}
 
       <ReservaEnviarMailContratoDialog
         openForm={openEnviarContrato}

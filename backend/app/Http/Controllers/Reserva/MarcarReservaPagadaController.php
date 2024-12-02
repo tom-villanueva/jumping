@@ -119,7 +119,7 @@ class MarcarReservaPagadaController extends Controller
 
                             // Exit early if all voucher days are consumed
                             if ($diasDescuento <= 0) {
-                                break;
+                                continue;
                             }
                         }
                     }

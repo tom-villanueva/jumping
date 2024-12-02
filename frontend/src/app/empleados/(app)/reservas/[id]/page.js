@@ -24,7 +24,7 @@ export default function ReservaDetailPage({ params }) {
     id: params.id,
     params: {
       include:
-        'cliente,cliente.tipo_persona.descuento,equipos,pagos.metodo_pago,pagos.tipo_persona,traslados',
+        'cliente,cliente.tipo_persona.descuento,equipos,pagos.metodo_pago,pagos.tipo_persona,traslados,voucher.equipo_voucher',
     },
   })
 

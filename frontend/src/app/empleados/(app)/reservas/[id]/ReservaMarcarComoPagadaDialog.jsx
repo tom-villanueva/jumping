@@ -17,7 +17,7 @@ export default function ReservaMarcarComoPagadaDialog({
 }) {
   return (
     <Dialog open={openForm} onOpenChange={() => setOpenForm(!openForm)}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle>
             Marcar como paga la reserva Nro. {reservaId}

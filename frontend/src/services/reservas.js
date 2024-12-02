@@ -98,3 +98,32 @@ export function useReservaDesglosePrecios({ id, params } = {}) {
     ...rest,
   }
 }
+
+export function useReservaLineasFactura({ id, params } = {}) {
+  // const filterParams = {}
+
+  // filters.forEach(filter => {
+  //   filterParams[`filter[${filter.id}]`] = filter.value
+  // })
+
+  const allParams = {
+    ...params,
+    // ...filterParams,
+  }
+
+  const queryParams = new URLSearchParams(allParams)
+
+  const qs = queryParams.toString()
+
+  const { data, error, isLoading, ...rest } = useSWR([
+    `/api/reservas/lineas-factura/${id}`,
+    qs,
+  ])
+
+  return {
+    precios: data,
+    isLoading,
+    isError: error,
+    ...rest,
+  }
+}

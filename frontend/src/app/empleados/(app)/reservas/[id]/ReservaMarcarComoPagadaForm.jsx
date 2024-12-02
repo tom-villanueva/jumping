@@ -208,11 +208,12 @@ export default function ReservaMarcarComoPagadaForm({
 
         {!isLoadingMetodos && !isLoadingTipos && (
           <ReservaMarcarComoPagadaDetallePrecio
-            precioTotal={reserva.precio_total}
+            reservaId={reservaId}
+            // precioTotal={reserva.precio_total}
             metodoSeleccionado={metodoSeleccionado}
-            tipoSeleccionado={reserva?.cliente?.tipo_persona_id}
-            metodos={metodos}
-            tipoPersonas={tipoPersonas}
+            // tipoSeleccionado={reserva?.cliente?.tipo_persona_id}
+            // metodos={metodos}
+            // tipoPersonas={tipoPersonas}
           />
         )}
 
