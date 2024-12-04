@@ -48,6 +48,38 @@ class ReservaEquipo extends BaseModel
     }
 
     /**
+     * Funciones
+     */
+    public function storePreciosAndDescuentos($fechaDesde, $fechaHasta)
+    {
+        $precios = $this->equipo->precios_vigentes_en_rango($fechaDesde, $fechaHasta)
+                ->get();
+
+        foreach ($precios as $precio) {
+            // Crear reserva_equipo_precio
+            ReservaEquipoPrecio::create([
+                'reserva_equipo_id' => $this->id,
+                'equipo_precio_id' => $precio->id,
+                'precio' => $precio->precio,
+                'fecha_desde' => $precio->fecha_desde,
+                'fecha_hasta' => $precio->fecha_hasta ?? $fechaHasta,
+            ]);
+        }
+            
+
+        $descuento = $this->equipo->getDescuentoByDays($fechaDesde, $fechaHasta);
+
+        if(!empty($descuento)) {
+            ReservaEquipoDescuento::create([
+                'reserva_equipo_id' => $this->id,
+                'equipo_descuento_id' => $descuento->id,
+                'descuento' => $descuento->descuento->valor,
+                'dias' => $descuento->dias
+            ]);
+        }
+    }
+
+    /**
      * query builder options
      */
     public function allowedFilters()

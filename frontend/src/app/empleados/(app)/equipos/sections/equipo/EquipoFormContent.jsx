@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
-import { useContext, useMemo } from 'react'
+import { useMemo } from 'react'
 import { useToast } from '@/components/ui/use-toast'
 import useSWRMutation from 'swr/mutation'
 import { useSWRConfig } from 'swr'
@@ -23,6 +23,14 @@ import {
 import { z } from 'zod'
 import axios from 'axios'
 import MultipleSelector from '@/components/ui/multiple-select'
+import { useTipoEquipos } from '@/services/tipo-equipos'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 
 const equipoSchema = z.object({
   descripcion: z.string().min(1, 'Se requiere descripcion'),
@@ -34,6 +42,7 @@ const equipoSchema = z.object({
     .nonnegative('No puede ser negativo'),
   disponible: z.boolean(),
   tipoArticulos: z.array(optionSchema).nullable(),
+  tipo_equipo_id: z.string().nullable(),
 })
 
 export default function EquipoFormContent({
@@ -56,7 +65,21 @@ export default function EquipoFormContent({
         value: String(t.id),
         disable: false,
       })),
+      tipo_equipo_id: equipo?.tipo_equipo_id
+        ? String(equipo?.tipo_equipo_id)
+        : '',
     },
+  })
+
+  const {
+    tipoEquipos,
+    isLoading: isLoadingTipoEquipos,
+    isError: isErrorTipoEquipos,
+  } = useTipoEquipos({
+    params: {
+      sort: 'id',
+    },
+    filters: [],
   })
 
   const { trigger, isMutating } = useSWRMutation(
@@ -113,6 +136,7 @@ export default function EquipoFormContent({
       descripcion: values.descripcion,
       precio: values.precio,
       disponible: values.disponible,
+      tipo_equipo_id: values.tipo_equipo_id,
       tipo_articulo_ids:
         values.tipoArticulos.length > 0
           ? values.tipoArticulos.map(tipo => ({ tipo_articulo_id: tipo.value }))
@@ -195,6 +219,35 @@ export default function EquipoFormContent({
             </FormItem>
           )}
         />
+
+        {isLoadingTipoEquipos ? (
+          <p>Cargando tipos</p>
+        ) : (
+          <FormField
+            control={form.control}
+            name="tipo_equipo_id"
+            render={({ field }) => (
+              <FormItem className="col-span-12">
+                <FormLabel>Tipo Equipo</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Seleccione un tipo" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {tipoEquipos?.map(tipo => (
+                      <SelectItem key={tipo?.id} value={String(tipo?.id)}>
+                        {tipo?.descripcion}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
 
         <Separator className="col-span-12" />
 

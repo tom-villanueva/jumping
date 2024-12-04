@@ -30,7 +30,7 @@ class GetReservaContratoController extends Controller
             'id' => $reserva->id,
             'fecha_desde' => Carbon::parse($reserva->fecha_desde)->format('d/m/Y'),
             'fecha_hasta' => Carbon::parse($reserva->fecha_hasta)->format('d/m/Y'),
-            'nombre' => "{$reserva->apellido}, {$reserva->nombre}"
+            'nombre' => "{$reserva->cliente->apellido}, {$reserva->cliente->nombre}"
         ]);
 
         return $pdf->stream($fileName);

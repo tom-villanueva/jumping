@@ -8,6 +8,7 @@ export function cn(...inputs) {
   return twMerge(clsx(inputs))
 }
 
+export const RESERVA_PENDIENTE_ID = 1
 export const RESERVA_PAGADA_ID = 2
 
 /**

@@ -30,6 +30,7 @@ class StoreEquipoRequest extends FormRequest
             'disponible' => 'required|boolean',
             'tipo_articulo_ids' => 'nullable|array',
             'tipo_articulo_ids.*.tipo_articulo_id' => 'exists:tipo_articulos,id',
+            'tipo_equipo_id' => 'nullable|exists:tipo_equipos,id'
         ];
     }
 

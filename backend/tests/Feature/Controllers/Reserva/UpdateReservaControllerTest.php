@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Cliente;
 use App\Models\Reserva;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -20,8 +21,7 @@ class UpdateReservaControllerTest extends TestCase
         $reserva = Reserva::factory()->create();
 
         $data = [
-            'comentario' => null,
-            'user_id' => 25,
+            'comentario' => fake()->words(256, true),
         ];
 
         // Act
@@ -30,7 +30,7 @@ class UpdateReservaControllerTest extends TestCase
 
         // Assert
         $response->assertStatus(422);
-        $response->assertJsonValidationErrors(['user_id']);
+        $response->assertJsonValidationErrors(['comentario']);
     }
 
     public function test_unauthorized_user_can_not_update_reserva()
@@ -52,9 +52,15 @@ class UpdateReservaControllerTest extends TestCase
 
         $reserva = Reserva::factory()->create();
 
+        $cliente = Cliente::find($reserva->cliente_id);
+
         $data = [
             'comentario' => "nuevo comment",
-            'user_id' => $reserva->user_id,
+            'nombre' => 'juan',
+            'apellido' => 'perez',
+            'email' => 'nuevo@gmail.com',
+            'telefono' => 2901,
+            'fecha_nacimiento' => '2000-09-02',
         ];
 
         $response = $this->actingAs($user, $user->getModelGuard())
@@ -63,11 +69,19 @@ class UpdateReservaControllerTest extends TestCase
         $response->assertStatus(200);
         $response->assertJson([
             'comentario' => $data['comentario'],
-            'user_id' => $data['user_id']
         ]);
         
         $this->assertDatabaseHas('reservas', [
             "id" => $response['id'],
+        ]);
+
+        $this->assertDatabaseHas('clientes', [
+            "id" => $response['cliente_id'],
+            "nombre" => $data['nombre'],
+            "apellido" => $data['apellido'],
+            "email" => $data['email'],
+            "telefono" => $data['telefono'],
+            "fecha_nacimiento" => $data['fecha_nacimiento']
         ]);
     }
 }

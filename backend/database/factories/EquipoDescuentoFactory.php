@@ -23,7 +23,7 @@ class EquipoDescuentoFactory extends Factory
         // $todayPlusTenDays = Carbon::now()->addDays(10)->format('Y-m-d');
 
         return [
-            'equipo_id' => 1,//Equipo::factory()->create()->id,
+            'equipo_id' => Equipo::factory()->create()->id,
             'descuento_id' => 1,
             'fecha_desde' => null,
             'fecha_hasta' => null,

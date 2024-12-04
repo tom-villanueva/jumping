@@ -14,7 +14,10 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { DataTable } from '@/components/client-table/data-table'
-import { useReservaDesglosePrecios } from '@/services/reservas'
+import {
+  useReservaDesglosePrecios,
+  useReservaLineasFactura,
+} from '@/services/reservas'
 
 export default function ReservaVerDesgloseDePreciosDialog({
   openForm,

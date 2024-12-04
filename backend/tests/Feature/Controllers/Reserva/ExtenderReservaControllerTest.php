@@ -54,7 +54,7 @@ class ExtenderReservaControllerTest extends TestCase
         $response = $this->actingAs(
             $user,
             $user->getModelGuard()
-        )->postJson("/api/reservas/extender/{$existingReserva->id}", $requestData);
+        )->putJson("/api/reservas/extender/{$existingReserva->id}", $requestData);
 
         // Assert: Check if the response status is 200 (OK)
         $response->assertStatus(200);
@@ -67,9 +67,6 @@ class ExtenderReservaControllerTest extends TestCase
         // Check that the new reservation has the same user info as the old one
         $this->assertDatabaseHas('reservas', [
             'id' => $newReservaId,
-            'nombre' => $existingReserva->nombre,
-            'apellido' => $existingReserva->apellido,
-            'email' => $existingReserva->email,
         ]);
 
         // Assert that the new reservation contains the new ReservaEquipo records

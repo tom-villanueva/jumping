@@ -19,7 +19,7 @@ class EquipoPrecioFactory extends Factory
     public function definition(): array
     {
         return [
-            // 'equipo_id' => Equipo::factory()->create()->id,
+            'equipo_id' => Equipo::factory()->create()->id,
             'precio' => 100,//fake()->randomNumber(3),
             'fecha_desde' => Carbon::now()->format('Y-m-d'),
             'fecha_hasta' => null

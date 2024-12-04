@@ -30,11 +30,12 @@ class UpdateReservaRequest extends FormRequest
             // 'fecha_prueba' => 'nullable|date_format:Y-m-d|after_or_equal:fecha_desde',
             'comentario' => 'nullable|string|max:255',
             // 'estado_id' => 'required|exists:estados,id',
-            'user_id' => 'nullable|exists:users,id',
+            // 'cliente_id' => 'nullable|exists:clientes,id',
             'nombre' => 'nullable',
             'apellido' => 'nullable',
             'email' => 'nullable',
-            'telefono' => 'nullable'
+            'telefono' => 'nullable',
+            'fecha_nacimiento' => 'nullable|date_format:Y-m-d',
         ];
     }
 

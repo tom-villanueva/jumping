@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-Route::middleware(['auth'])->get('/user', function (Request $request) {
+Route::middleware(['auth', 'verified'])->get('/user', function (Request $request) {
     return $request->user();
 });
 
@@ -40,3 +40,7 @@ require __DIR__.'/User.php';
 require __DIR__.'/TrasladoPrecio.php';
 require __DIR__.'/TipoPersona.php';
 require __DIR__.'/clientes.php';
+require __DIR__.'/TrasladoAsiento.php';
+require __DIR__.'/Cliente.php';
+require __DIR__.'/TipoEquipo.php';
+require __DIR__.'/Voucher.php';

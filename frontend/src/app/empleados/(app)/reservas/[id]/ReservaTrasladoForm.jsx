@@ -168,6 +168,17 @@ export default function ReservaTrasladoForm({
           )}
         />
 
+        <FormField
+          control={form.control}
+          name="error"
+          render={({ field }) => (
+            <FormItem className="col-span-12">
+              <FormControl></FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         {form.formState.errors.root && (
           <p className="col-span-12 text-sm text-red-500">
             {form.formState.errors.root.serverError.message}

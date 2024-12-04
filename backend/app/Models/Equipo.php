@@ -10,6 +10,7 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Period\Period;
 
 class Equipo extends BaseModel implements HasMedia
 {
@@ -25,7 +26,8 @@ class Equipo extends BaseModel implements HasMedia
     protected $fillable = [
         'id',
         'descripcion',
-        'disponible'
+        'disponible',
+        'tipo_equipo_id'
     ];
 
     /**
@@ -34,6 +36,10 @@ class Equipo extends BaseModel implements HasMedia
     public function equipo_tipo_articulo() 
     {
         return $this->belongsToMany(TipoArticulo::class, 'equipo_tipo_articulo', 'equipo_id', 'tipo_articulo_id');
+    }
+
+    public function tipo_equipo() {
+        return $this->belongsTo(TipoEquipo::class, 'tipo_equipo_id');
     }
 
     // precios
@@ -91,6 +97,44 @@ class Equipo extends BaseModel implements HasMedia
         return $this->equipo_descuento()
             // ->whereDate('fecha_hasta', '>=', $today)
             ->orderBy("dias", 'asc');
+    }
+
+    public function getDescuentoByDays($fechaDesde, $fechaHasta)
+    {
+        // Create a period for the reservation dates
+        $reservaPeriod = Period::make($fechaDesde, $fechaHasta);
+        $dias = $reservaPeriod->length();
+
+        // Get all EquipoDescuentos for the given Equipo
+        $descuentos = EquipoDescuento::where('equipo_id', $this->id)->orderBy('dias')->get();
+
+        // Check if there are any descuentos for the given equipo
+        if ($descuentos->isEmpty()) {
+            return null;
+        }
+
+        // Look for an exact match of 'dias'
+        $exactMatch = $descuentos->firstWhere('dias', $dias);
+        if ($exactMatch) {
+            return $exactMatch;
+        }
+
+        // Find the lowest and highest 'dias' values
+        $lowestDescuento = $descuentos->first();
+        $highestDescuento = $descuentos->last();
+
+        // If $dias is lower than the lowest 'dias', return null
+        if ($dias < $lowestDescuento->dias) {
+            return null;
+        }
+
+        // If $dias is greater than the highest 'dias', return the highest EquipoDescuento
+        if ($dias > $highestDescuento->dias) {
+            return $highestDescuento;
+        }
+
+        // If no match is found, return null (this case should rarely happen if ordered correctly)
+        return null;
     }
 
     // public function descuentos_vigentes_en_rango($startDate, $endDate)
@@ -159,7 +203,8 @@ class Equipo extends BaseModel implements HasMedia
             'precios_vigentes', 
             'equipo_descuento',
             'descuentos_vigentes',
-            'reservas'
+            'reservas',
+            'tipo_equipo'
         ];
     }
 

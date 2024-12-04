@@ -2,11 +2,14 @@
 
 namespace Tests\Feature;
 
+use App\Models\Cliente;
 use App\Models\Equipo;
 use App\Models\EquipoPrecio;
+use App\Models\EquipoVoucher;
 use App\Models\Reserva;
 use App\Models\ReservaEquipo;
 use App\Models\ReservaEquipoPrecio;
+use App\Models\Voucher;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -56,10 +59,16 @@ class MarcarReservaPagadaControllerTest extends TestCase
         $user = $this->createStubUser();
 
         $equipo = Equipo::factory()->create();
+
+        $cliente = Cliente::factory()->create([
+            'tipo_persona_id' => 1
+        ]);
+
         // Create a Reserva
         $reserva = Reserva::factory()->create([
             'fecha_desde' => Carbon::now()->subDays(5),
             'fecha_hasta' => Carbon::now(),
+            'cliente_id' => $cliente->id,
         ]);
 
         // Create related ReservaEquipo
@@ -84,23 +93,35 @@ class MarcarReservaPagadaControllerTest extends TestCase
             'precio' => $equipoPrecio->precio,
         ]);
 
+        $voucher = Voucher::factory()->create([
+            'dias' => 2,
+            'reserva_id' => $reserva->id,
+            'cliente_id' => $cliente->id,
+        ]);
+
+        EquipoVoucher::create([
+            'voucher_id' => $voucher->id,
+            'equipo_id' =>  $equipo->id,
+            'precio' => $equipoPrecio->precio
+        ]);
+
         $data = [
             'metodo_pago_id' => 1,
             'moneda_id' => 1,
-            'tipo_persona_id' => 1,
+            // 'tipo_persona_id' => 1,
         ];
 
         $response = $this->actingAs($user, $user->getModelGuard())->putJson("/api/reservas/marcar-pagada/{$reserva->id}", $data);
         
         $response->assertStatus(201);
         $response->assertJson([
-            'total' => $reserva->calculateTotalPrice() - 60 - 60, // 600
+            'total' => $reserva->calculateTotalPrice() - 60 - 60 - 200, // 600 - descuentoTipo - descuentoPersona - descuentoVoucher
             'status' => '',
             'reserva_id' => $reserva->id,
             'numero_comprobante' => '',
             'metodo_pago_id' => $data["metodo_pago_id"],
             'moneda_id' => $data["moneda_id"],
-            'tipo_persona_id' => $data["tipo_persona_id"],
+            'tipo_persona_id' => $cliente->tipo_persona_id,
             'tipo_persona_descuento' => 10,
             'metodo_pago_descuento' => 10,
         ]);

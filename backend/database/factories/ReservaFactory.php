@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Cliente;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -26,11 +27,11 @@ class ReservaFactory extends Factory
             'fecha_desde' => Carbon::now()->addDays($this->faker->numberBetween(1, 10)),
             'fecha_hasta' => Carbon::now()->addDays($this->faker->numberBetween(11, 20)),
             'comentario' => $this->faker->sentence(),
-            'user_id' => $this->faker->boolean(50) ? User::factory()->create() : null,
-            'nombre' => $this->faker->firstName(),
-            'apellido' => $this->faker->lastName(),
-            'email' => $this->faker->email(),
-            'telefono' => $this->faker->phoneNumber(),
+            'cliente_id' => Cliente::factory()->create(),
+            // 'nombre' => $this->faker->firstName(),
+            // 'apellido' => $this->faker->lastName(),
+            // 'email' => $this->faker->email(),
+            // 'telefono' => $this->faker->phoneNumber(),
         ];
     }
 }

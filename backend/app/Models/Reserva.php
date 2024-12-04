@@ -26,24 +26,34 @@ class Reserva extends BaseModel
         'fecha_desde',
         'fecha_hasta',
         'comentario',
-        'user_id',
-        'nombre',
-        'apellido',
-        'email',
-        'telefono'
+        'cliente_id',
+        // 'user_id',
+        // 'nombre',
+        // 'apellido',
+        // 'email',
+        // 'telefono'
     ];
 
     /**
      * Relaciones
      */
-    public function user()
+    // public function user()
+    // {
+    //     return $this->belongsTo(User::class, 'user_id');
+    // }
+    public function cliente()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(Cliente::class, 'cliente_id');
     }
 
     public function estados()
     {
         return $this->hasMany(ReservaEstado::class, 'reserva_id');
+    }
+
+    public function voucher()
+    {
+        return $this->hasOne(Voucher::class, 'reserva_id');
     }
 
     public function pagos()
@@ -155,9 +165,10 @@ class Reserva extends BaseModel
                 });
             }),
 
-            AllowedFilter::exact('user_id'),
-            AllowedFilter::beginsWithStrict('apellido'),
-            AllowedFilter::beginsWithStrict('email'),
+            AllowedFilter::exact('cliente_id'),
+            AllowedFilter::beginsWithStrict('cliente.nombre'),
+            AllowedFilter::beginsWithStrict('cliente.apellido'),
+            AllowedFilter::beginsWithStrict('cliente.email'),
             'telefono',
             AllowedFilter::scope('fecha_desde_before'),
             AllowedFilter::scope('fecha_desde_after'),
@@ -180,12 +191,15 @@ class Reserva extends BaseModel
     public function allowedIncludes()
     {
         return [
-            'user',
+            'cliente',
+            'cliente.tipo_persona.descuento',
             'traslados',
             'equipos',
             'pagos',
             'pagos.metodo_pago',
-            'pagos.tipo_persona'
+            'pagos.tipo_persona',
+            'voucher',
+            'voucher.equipo_voucher'
         ];
     }
 
@@ -243,19 +257,8 @@ class Reserva extends BaseModel
                 $priceForThisPeriod = $reservaEquipoPrecio->precio * $daysForThisPrice;
             }
 
-            // Apply any overlapping discounts
-            // $priceForThisPeriod -= $this->applyOverlappingDiscountsForPrice(
-            //     $reservaEquipo,
-            //     $reservaEquipoPrecio,
-            //     $precioStartDate,
-            //     $precioEndDate,
-            //     $startDate,
-            //     $endDate
-            // );
-
             // Add the discounted price to the total price
             $totalPrice += $priceForThisPeriod;
-            // }
         }
 
         return $totalPrice;

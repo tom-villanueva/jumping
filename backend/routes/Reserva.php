@@ -12,13 +12,18 @@ use App\Http\Controllers\Reserva\ExtenderReservaController;
 use App\Http\Controllers\Reserva\GetDesgloseDePreciosReservaController;
 use App\Http\Controllers\Reserva\GetEstadisticasReservasController;
 use App\Http\Controllers\Reserva\GetReservaContratoController;
+use App\Http\Controllers\Reserva\GetReservaFacturaController;
+use App\Http\Controllers\Reserva\GetReservaFacturaLineasController;
 use App\Http\Controllers\Reserva\MarcarReservaPagadaController;
 
 Route::group(['prefix' => 'reservas', 'middleware' => 'auth:empleado'], function () {
     Route::get('/', GetReservaController::class);
     Route::get('/contrato', GetReservaContratoController::class);
+    Route::get('/factura', GetReservaFacturaController::class);
     Route::get('/estadisticas', GetEstadisticasReservasController::class);
     Route::get('/desglose-precios/{id}', GetDesgloseDePreciosReservaController::class);
+    Route::get('/lineas-factura/{id}', GetReservaFacturaLineasController::class);
+    Route::get('/{id}', GetByIdReservaController::class);
     Route::get('/{id}', GetByIdReservaController::class);
 
     Route::post('/', StoreReservaController::class);

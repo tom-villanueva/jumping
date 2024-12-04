@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Cliente;
 use App\Models\Pago;
 use App\Models\Reserva;
 use App\Models\ReservaEstado;
@@ -32,6 +33,7 @@ class MigrarReservas extends Command
     {
         //
         Reserva::truncate();
+        Cliente::truncate();
         Pago::truncate();
         ReservaEstado::truncate();
 
@@ -56,17 +58,46 @@ class MigrarReservas extends Command
             $count = 0;
             foreach ($oldReservas as $oldReserva) {
                 try {
+
+                    $cliente = DB::connection('pgsql')->table('clientes')
+                        ->where('email', $oldReserva->usua_email)
+                        ->first();
+
+                    if(empty($cliente)) {
+                        $nombreArray = explode(" ", $oldReserva->usua_nombre);
+                        
+                        $nombre = count($nombreArray) > 0 ? $nombreArray[0] : '';
+                        $apellido = '';
+                        
+                        if(count($nombreArray) > 1) {
+                            for ($i=0; $i < count($nombreArray) - 1; $i++) { 
+                                $apellido .= "{$nombreArray[$i + 1]} ";
+                            }
+
+                            $apellido = trim($apellido);
+                        }
+
+                        $newCliente = [
+                            'nombre' => $nombre,
+                            'apellido' => $apellido,
+                            'email' => $oldReserva->usua_email,
+                            'telefono' => '',
+                        ];
+
+                        $clienteId = DB::connection('pgsql')->table('clientes')->insertGetId($newCliente);
+                    } else {
+                        $clienteId = $cliente->id;
+                    }
+
                     // Transform the data
                     $newReserva = [
                         'fecha_prueba' => Carbon::parse($oldReserva->res_fecha_prueba)->format('Y-m-d'),
                         'fecha_desde' => Carbon::parse($oldReserva->res_fecha_inicio)->format('Y-m-d'),
                         'fecha_hasta' => Carbon::parse($oldReserva->res_fecha_fin)->format('Y-m-d'),
                         'comentario' => '',
-                        'user_id' => null,
-                        'nombre' => $oldReserva->usua_nombre,
-                        'apellido' => '',
-                        'email' => $oldReserva->usua_email,
-                        'telefono' => '',
+                        
+                        'cliente_id' => $clienteId,
+
                         'created_at' => now(),
                         'updated_at' => now(),
                     ];
@@ -100,7 +131,7 @@ class MigrarReservas extends Command
                     
                     $count += 1;
 
-                    $this->info('Migrated reserva: ' . $newReserva["nombre"] . " Nro: " . $count);
+                    $this->info('Migrated reserva: ' . $newReserva["cliente_id"] . " Nro: " . $count);
                 } catch (\Throwable $th) {
                     //throw $th;
                     $this->error($th->getMessage());

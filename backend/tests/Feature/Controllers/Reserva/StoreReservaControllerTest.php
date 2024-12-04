@@ -24,8 +24,7 @@ class StoreReservaControllerTest extends TestCase
             'fecha_desde' => $today,
             'fecha_hasta' => $todaySubOneDay,
             'comentario' => null,
-            'estado_id' => 10,
-            'user_id' => null,
+            'cliente_id' => null,
         ];
 
         // Act
@@ -33,7 +32,7 @@ class StoreReservaControllerTest extends TestCase
 
         // Assert
         $response->assertStatus(422);
-        $response->assertJsonValidationErrors([ 'fecha_hasta', 'estado_id' ]);
+        $response->assertJsonValidationErrors([ 'fecha_hasta', 'nombre', 'apellido', 'email' ]);
     }
 
 	public function test_unauthorized_user_cannot_store_reserva()
@@ -52,19 +51,19 @@ class StoreReservaControllerTest extends TestCase
         $today = Carbon::now()->format('Y-m-d');
         $todayPlusOneDay = Carbon::now()->addDay()->format('Y-m-d');
 
-        $estado = Estado::factory()->create();
+        // $estado = Estado::factory()->create();
 
         $data = [
             'fecha_prueba' => $today,
             'fecha_desde' => $today,
             'fecha_hasta' => $todayPlusOneDay,
             'comentario' => "soy un comentario",
-            'estado_id' => $estado->id,
-            'user_id' => null,
-            'nombre' => null,
+            'cliente_id' => null,
+            'nombre' => 'tomas',
             'apellido' => 'villanueva',
             'email' => 'tomi@gmail.com',
-            'telefono' => null
+            'telefono' => null,
+            'fecha_nacimiento' => null
         ];
 
         $response = $this->actingAs($user, $user->getModelGuard())->postJson("/api/reservas", $data);
@@ -75,10 +74,10 @@ class StoreReservaControllerTest extends TestCase
             'fecha_desde' => $data['fecha_desde'],
             'fecha_hasta' => $data['fecha_hasta'],
             'comentario' => $data['comentario'],
-            'nombre' => null,
-            'apellido' => $data['apellido'],
-            'email' => $data['email'],
-            'telefono' => null,
+        ]);
+
+        $this->assertDatabaseHas('clientes', [
+            "id" => $response['cliente_id'], 
         ]);
         
         $this->assertDatabaseHas('reservas', [
@@ -87,7 +86,7 @@ class StoreReservaControllerTest extends TestCase
 
         $this->assertDatabaseHas('reserva_estado', [
             "reserva_id" => $response['id'],
-            "estado_id" => $estado->id
+            "estado_id" => 1
         ]);
     }
 }

@@ -18,7 +18,8 @@ class EquipoFactory extends Factory
     {
         return [
             'descripcion' => fake()->sentence(3),
-            'disponible' => true
+            'disponible' => true,
+            'tipo_equipo_id' => null
         ];
     }
 }

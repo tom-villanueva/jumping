@@ -12,6 +12,8 @@ import Header from '../Header'
 import TrasladoPrecioContainer from './sections/traslado-precio/TrasladoPrecioContainer'
 import MetodoPagosContainer from './sections/metodo-pagos/MetodoPagosContainer'
 import TipoPersonasContainer from './sections/tipo-personas/TipoPersonasContainer'
+import TrasladoAsientoContainer from './sections/traslado-precio/TrasladoAsientoContainer'
+import TipoEquiposContainer from './sections/tipo-equipos/TipoEquipoContainer'
 
 const Equipos = () => {
   return (
@@ -32,6 +34,7 @@ const Equipos = () => {
             <TabsTrigger value="descuentos">Descuentos</TabsTrigger>
             <TabsTrigger value="metodos">Método de pagos</TabsTrigger>
             <TabsTrigger value="tipo_personas">Tipos de personas</TabsTrigger>
+            <TabsTrigger value="tipo_equipos">Tipos de equipos</TabsTrigger>
           </TabsList>
           <TabsContent value="equipos">
             <EquiposContainer />
@@ -50,6 +53,7 @@ const Equipos = () => {
           </TabsContent>
           <TabsContent value="traslado_precios">
             <TrasladoPrecioContainer />
+            <TrasladoAsientoContainer />
           </TabsContent>
           <TabsContent value="descuentos">
             <DescuentosContainer />
@@ -59,6 +63,9 @@ const Equipos = () => {
           </TabsContent>
           <TabsContent value="tipo_personas">
             <TipoPersonasContainer />
+          </TabsContent>
+          <TabsContent value="tipo_equipos">
+            <TipoEquiposContainer />
           </TabsContent>
         </Tabs>
         {/* </Suspense> */}

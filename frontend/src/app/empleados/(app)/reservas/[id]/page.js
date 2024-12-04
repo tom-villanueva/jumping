@@ -1,7 +1,6 @@
 'use client'
 
 import { useReservaById } from '@/services/reservas'
-import ReservaFormContent from '../sections/ReservaFormContent'
 import {
   Collapsible,
   CollapsibleContent,
@@ -16,6 +15,7 @@ import { Separator } from '@/components/ui/separator'
 import ReservaDetailLabel from './ReservaDetailLabel'
 import ReservaDetailActions from './ReservaDetailActions'
 import ReservaTrasladoList from './ReservaTrasladoList'
+import ReservaFormContentEdit from '../sections/ReservaFormContentEdit'
 
 export default function ReservaDetailPage({ params }) {
   const [open, setOpen] = useState(false)
@@ -23,7 +23,8 @@ export default function ReservaDetailPage({ params }) {
   const { reserva, isLoading, isError, isValidating } = useReservaById({
     id: params.id,
     params: {
-      include: 'user,equipos,pagos.metodo_pago,pagos.tipo_persona,traslados',
+      include:
+        'cliente,cliente.tipo_persona.descuento,equipos,pagos.metodo_pago,pagos.tipo_persona,traslados,voucher.equipo_voucher',
     },
   })
 
@@ -67,7 +68,7 @@ export default function ReservaDetailPage({ params }) {
         </div>
         <CollapsibleContent>
           {!isValidating ? (
-            <ReservaFormContent
+            <ReservaFormContentEdit
               onFormSubmit={() => {}}
               reserva={reserva}
               apiKey={`/api/reservas/${params.id}`}
@@ -89,7 +90,7 @@ export default function ReservaDetailPage({ params }) {
         />
         <ReservaDetailLabel
           title="A nombre de"
-          label={`${reserva.apellido}, ${reserva.nombre}.`}
+          label={`${reserva.cliente?.apellido}, ${reserva.cliente?.nombre}.`}
           isValidating={isValidating}
         />
         <ReservaDetailLabel

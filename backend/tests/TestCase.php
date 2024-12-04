@@ -11,5 +11,5 @@ abstract class TestCase extends BaseTestCase
      *
      * @var bool
      */
-    protected $seed = false;
+    protected $seed = true;
 }
