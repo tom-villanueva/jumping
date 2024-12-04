@@ -18,6 +18,13 @@ export const FormContextProvider = ({
   const [products, setProducts] = useState([])
   const [selectedProducts, setSelectedProducts] = useState([])
   const [selectedTraslados, setSelectedTraslados] = useState([])
+  const [titular, setTitular] = useState({
+    nombre: '',
+    apellido: '',
+    fecha_nacimiento: '',
+    email: '',
+    telefono: '',
+  })
 
   const value = {
     range,
@@ -28,6 +35,8 @@ export const FormContextProvider = ({
     setSelectedProducts,
     selectedTraslados,
     setSelectedTraslados,
+    titular,
+    setTitular,
   }
 
   return (
