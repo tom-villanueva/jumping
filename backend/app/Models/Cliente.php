@@ -9,7 +9,7 @@ use Spatie\QueryBuilder\AllowedFilter;
 
 class Cliente extends BaseModel
 {
-    use SoftDeletes, HasFactory;
+    use HasFactory;
 
     protected $table = 'clientes';
 
@@ -22,6 +22,15 @@ class Cliente extends BaseModel
         'tipo_persona_id',
         'user_id'
     ];
+
+    public function delete()
+    {
+        $this->reservas()->each(function ($reserva) {
+            $reserva->delete();
+        });
+
+        parent::delete();
+    }
 
     /**
      * Relaciones

@@ -18,15 +18,15 @@ class TipoPersonas extends Seeder
         TipoPersona::truncate();
 
         $metodos = [
-            'Cliente Tier 1',
-            'Cliente Tier 2',
-            'Cliente Tier 3',
+            'Estándar',
+            'VIP',
+            'Premium',
         ];
 
         foreach ($metodos as $metodo) {
             TipoPersona::updateOrCreate([
               "descripcion" => $metodo,
-              "descuento_id" => 1
+              "descuento_id" => $metodo == 'VIP' || $metodo == 'Premium' ? 1 : null
             ]);
         }
         

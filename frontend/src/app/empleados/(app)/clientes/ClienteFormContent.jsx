@@ -220,7 +220,7 @@ export default function ClienteFormContent({ onFormSubmit, cliente, editing }) {
                   <SelectContent>
                     {tipoPersonas?.map(tipo => (
                       <SelectItem key={tipo?.id} value={String(tipo?.id)}>
-                        {`${tipo?.descripcion} (${tipo?.descuento?.descripcion} descuento)`}
+                        {`${tipo?.descripcion} (${tipo?.descuento?.descripcion ?? 'Sin'} descuento)`}
                       </SelectItem>
                     ))}
                   </SelectContent>

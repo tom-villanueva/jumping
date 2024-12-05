@@ -46,7 +46,7 @@ export default function PagosTable({
       page: pagination.pageIndex + 1,
       page_size: pagination.pageSize,
       sort: '-id',
-      include: 'metodo_pago,moneda,reserva',
+      include: 'metodo_pago,moneda,reserva,reserva.cliente',
     },
     filters: debouncedColumnFilters,
   })

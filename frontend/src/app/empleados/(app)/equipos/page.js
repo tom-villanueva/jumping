@@ -33,7 +33,7 @@ const Equipos = () => {
             </TabsTrigger>
             <TabsTrigger value="descuentos">Descuentos</TabsTrigger>
             <TabsTrigger value="metodos">Método de pagos</TabsTrigger>
-            <TabsTrigger value="tipo_personas">Tipos de personas</TabsTrigger>
+            <TabsTrigger value="tipo_personas">Tipos de clientes</TabsTrigger>
             <TabsTrigger value="tipo_equipos">Tipos de equipos</TabsTrigger>
           </TabsList>
           <TabsContent value="equipos">

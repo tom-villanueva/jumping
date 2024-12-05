@@ -7,9 +7,10 @@ export const reservaSchema = z
     cliente_id: z.number().nullable(),
     nombre: z.string().nullable(),
     apellido: z.string().nullable(),
-    email: z.string().email().nullable(),
+    email: z.union([z.literal(''), z.string().email()]),
     telefono: z.string().nullable(),
     crear_user: z.boolean().nullable(),
+    tipo_persona_id: z.string().nullable(),
     fecha_desde: z
       .string({
         required_error: 'Se requiere fecha inicio',

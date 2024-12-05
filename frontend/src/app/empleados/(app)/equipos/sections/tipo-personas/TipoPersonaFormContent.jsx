@@ -140,32 +140,46 @@ export default function TipoPersonaFormContent({
         {isLoadingDescuentos ? (
           <p>Cargando descuentos</p>
         ) : (
-          <FormField
-            control={form.control}
-            name="descuento_id"
-            render={({ field }) => (
-              <FormItem className="col-span-12">
-                <FormLabel>Descuento</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Seleccione un descuento" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {descuentos?.map(descuento => (
-                      <SelectItem
-                        key={descuento?.id}
-                        value={String(descuento?.id)}>
-                        {descuento?.descripcion}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <>
+            <FormField
+              control={form.control}
+              name="descuento_id"
+              render={({ field }) => (
+                <div className="col-span-12 flex flex-row items-end gap-2">
+                  <FormItem className="w-full">
+                    <FormLabel>Descuento</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Seleccione un descuento" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {descuentos?.map(descuento => (
+                          <SelectItem
+                            key={descuento?.id}
+                            value={String(descuento?.id)}>
+                            {descuento?.descripcion}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                  <Button
+                    className="px-2"
+                    variant="secondary"
+                    size="sm"
+                    type="button"
+                    onClick={e => {
+                      form.setValue('descuento_id', '')
+                    }}>
+                    Limpiar
+                  </Button>
+                </div>
+              )}
+            />
+          </>
         )}
 
         {form.formState.errors.root && (

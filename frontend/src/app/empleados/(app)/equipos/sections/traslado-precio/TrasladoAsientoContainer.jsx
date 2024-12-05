@@ -58,7 +58,7 @@ export default function TrasladoAsientoContainer({}) {
         setOpenDeleteForm={setOpenDeleteForm}
         entity={selectedTrasladoAsiento}
         apiKey="/api/traslado-precios"
-        name="traslado precio"
+        name="traslado asiento"
       />
       <div className="flex w-full justify-end pb-4">
         <Button
@@ -67,7 +67,7 @@ export default function TrasladoAsientoContainer({}) {
             setEditing(false)
             setOpenForm(true)
           }}>
-          Nuevo Traslado Asientos
+          Actualizar Traslado Asientos
         </Button>
       </div>
       <CreateEditEntityModal

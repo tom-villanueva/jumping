@@ -29,6 +29,14 @@ import ClientesTable from '../../clientes/ClientesTable'
 import { useState } from 'react'
 import { Checkbox } from '@/components/ui/checkbox'
 import ReservaDetailLabel from '../[id]/ReservaDetailLabel'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { useTipoPersonas } from '@/services/tipo-personas'
 
 const today = formatDate(convertToUTC(new Date().setHours(0, 0, 0, 0)))
 
@@ -42,6 +50,18 @@ export default function ReservaFormContent({
   const { mutate } = useSWRConfig()
   const [isClient, setIsClient] = useState(true)
   const [client, setClient] = useState(null)
+
+  const {
+    tipoPersonas,
+    isLoading: isLoadingTipos,
+    isError: isErrorTipos,
+  } = useTipoPersonas({
+    params: {
+      sort: 'id',
+      include: 'descuento',
+    },
+    filters: [],
+  })
 
   const columns = [
     {
@@ -74,11 +94,16 @@ export default function ReservaFormContent({
       apellido: reserva?.cliente?.apellido ?? '',
       email: reserva?.cliente?.email ?? '',
       telefono: reserva?.cliente?.telefono ?? '',
+      tipo_persona_id: reserva?.cliente?.tipo_persona_id
+        ? String(reserva?.cliente?.tipo_persona_id)
+        : '1',
       fecha_desde: reserva?.fecha_desde ?? '',
       fecha_hasta: reserva?.fecha_hasta ?? '',
       fecha_prueba: reserva?.fecha_prueba ?? '',
     },
   })
+
+  console.log(form.getValues())
 
   const { trigger, isMutating } = useSWRMutation(
     '/api/reservas',
@@ -145,6 +170,10 @@ export default function ReservaFormContent({
             checked={isClient}
             onCheckedChange={checked => {
               form.setValue('cliente_id', null)
+              form.setValue('apellido', '')
+              form.setValue('nombre', '')
+              form.setValue('email', '')
+              form.setValue('telefono', '')
               setClient(null)
               setIsClient(checked)
             }}
@@ -276,6 +305,35 @@ export default function ReservaFormContent({
                 </FormItem>
               )}
             />
+
+            {isLoadingTipos ? (
+              <p>Cargando tipos de persona</p>
+            ) : (
+              <FormField
+                control={form.control}
+                name="tipo_persona_id"
+                render={({ field }) => (
+                  <FormItem className="col-span-12">
+                    <FormLabel>Tipo</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Seleccione un tipo de cliente" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {tipoPersonas?.map(tipo => (
+                          <SelectItem key={tipo?.id} value={String(tipo?.id)}>
+                            {`${tipo?.descripcion} (${tipo?.descuento?.descripcion ?? 'Sin'} descuento)`}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
           </>
         )}
 

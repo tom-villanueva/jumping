@@ -60,7 +60,7 @@ class MigrarReservas extends Command
                 try {
 
                     $cliente = DB::connection('pgsql')->table('clientes')
-                        ->where('email', $oldReserva->usua_email)
+                        ->where('email', trim($oldReserva->usua_email))
                         ->first();
 
                     if(empty($cliente)) {
@@ -73,15 +73,14 @@ class MigrarReservas extends Command
                             for ($i=0; $i < count($nombreArray) - 1; $i++) { 
                                 $apellido .= "{$nombreArray[$i + 1]} ";
                             }
-
-                            $apellido = trim($apellido);
                         }
 
                         $newCliente = [
-                            'nombre' => $nombre,
-                            'apellido' => $apellido,
-                            'email' => $oldReserva->usua_email,
+                            'nombre' => trim($nombre),
+                            'apellido' => trim($apellido),
+                            'email' => trim($oldReserva->usua_email),
                             'telefono' => '',
+                            'tipo_persona_id' => 1
                         ];
 
                         $clienteId = DB::connection('pgsql')->table('clientes')->insertGetId($newCliente);

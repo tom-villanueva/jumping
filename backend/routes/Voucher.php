@@ -11,7 +11,7 @@ Route::group(['prefix' => 'vouchers', 'middleware' => 'auth:empleado'], function
     Route::get('/', GetVoucherController::class);
     Route::get('/{id}', GetByIdVoucherController::class);
     Route::post('/', StoreVoucherController::class);
-    Route::post('/crear-reserva', StoreReservaDesdeVoucherController::class);
+    Route::put('/crear-reserva/{id}', StoreReservaDesdeVoucherController::class);
     Route::put('/{id}', UpdateVoucherController::class);
     Route::delete('/{id}', DeleteVoucherController::class);
 });

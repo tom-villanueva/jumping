@@ -35,6 +35,7 @@ class StoreReservaController extends Controller
                     'email' => $request->email,
                     'telefono' => $request->telefono,
                     'fecha_nacimiento' => $request->fecha_nacimiento,
+                    'tipo_persona_id' => $request->tipo_persona_id
                 ]);
 
                 $clienteId = $cliente->id;

@@ -11,8 +11,9 @@ export default function PagosContainer({}) {
       header: 'Reserva',
     },
     {
-      accessorKey: 'reserva',
-      accessorFn: row => `${row.reserva.nombre} ${row.reserva.apellido}`,
+      accessorKey: 'reserva.cliente',
+      accessorFn: row =>
+        `${row.reserva.cliente.nombre} ${row.reserva.cliente.apellido}`,
       header: 'Nombre y Apellido',
     },
     {

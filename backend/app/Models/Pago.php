@@ -73,6 +73,7 @@ class Pago extends BaseModel
             'metodo_pago',
             'moneda',
             'reserva',
+            'reserva.cliente',
             'tipo_persona'
         ];
     }

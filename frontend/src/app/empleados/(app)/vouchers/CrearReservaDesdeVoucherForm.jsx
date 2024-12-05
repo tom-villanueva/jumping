@@ -4,7 +4,12 @@ import { useToast } from '@/components/ui/use-toast'
 import useSWRMutation from 'swr/mutation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { convertToUTC, formatDate, storeFetcher } from '@/lib/utils'
+import {
+  convertToUTC,
+  formatDate,
+  storeFetcher,
+  updateFetcher,
+} from '@/lib/utils'
 import {
   Form,
   FormControl,
@@ -95,14 +100,14 @@ export default function CrearReservaDesdeVoucherForm({ voucher }) {
 
   const { trigger, isMutating } = useSWRMutation(
     '/api/vouchers/crear-reserva',
-    storeFetcher,
+    updateFetcher,
     {
       onSuccess(data) {
         toast({
           title: `😄 Reserva creada con éxito`,
         })
         form.reset()
-        router.push(`reservas/${data?.data?.id}`)
+        router.push(`/empleados/reservas/${data?.data?.id}`)
       },
       onError(err) {
         if (axios.isAxiosError(err)) {
@@ -135,7 +140,7 @@ export default function CrearReservaDesdeVoucherForm({ voucher }) {
       voucher_id: voucher?.id,
     }
 
-    trigger({ data })
+    trigger({ id: voucher?.id, data })
   }
 
   return (

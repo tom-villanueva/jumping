@@ -20,7 +20,7 @@ class CheckTrasladoAsientoDisponibleController extends Controller
     public function __invoke(Request $request)
     {
         $fechaDesde = Carbon::parse($request->fecha_desde)->format('Y-m-d');
-        $fechaHasta = Carbon::parse($request->fecha_hasta)->format('Y-m-d');
+        $fechaHasta = Carbon::parse($request->fecha_hasta ?? $request->fecha_desde)->format('Y-m-d');
 
         $trasladoCount = Traslado::where(function ($query) use ($fechaDesde, $fechaHasta) {
             $query->where(function ($query) use ($fechaDesde, $fechaHasta) {

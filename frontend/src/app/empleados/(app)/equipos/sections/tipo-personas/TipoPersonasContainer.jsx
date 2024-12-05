@@ -76,7 +76,7 @@ export default function TipoPersonasContainer({}) {
         setOpenDeleteForm={setOpenDeleteForm}
         entity={selectedTipoPersona}
         apiKey="/api/tipo-personas"
-        name="Tipo Persona"
+        name="Tipo Cliente"
       />
       <div className="flex w-full justify-end pb-4">
         <Button
@@ -85,14 +85,14 @@ export default function TipoPersonasContainer({}) {
             setEditing(false)
             setOpenForm(true)
           }}>
-          Nuevo Tipo de Persona
+          Nuevo Tipo de Cliente
         </Button>
       </div>
       <CreateEditEntityModal
         open={openForm}
         onOpenChange={() => setOpenForm(!openForm)}
         editing={editing}
-        name="tipo persona">
+        name="tipo cliente">
         <TipoPersonaFormContent
           onFormSubmit={() => setOpenForm(!openForm)}
           tipo={selectedTipoPersona}

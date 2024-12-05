@@ -33,6 +33,7 @@ class StoreReservaRequest extends FormRequest
             'nombre' => 'required_if:cliente_id,null',
             'apellido' => 'required_if:cliente_id,null',
             'email' => 'required_if:cliente_id,null|unique:clientes,email',
+            'tipo_persona_id' => 'nullable|exists:tipo_persona,id',
             'telefono' => 'nullable',
             'fecha_nacimiento' => 'nullable|date_format:Y-m-d',
             'crear_user' => 'nullable|boolean'

@@ -22,12 +22,12 @@ class StoreReservaDesdeVoucherController extends Controller
         $this->reservaRepository = $reservaRepository;
     }
 
-    public function __invoke(StoreReservaDesdeVoucherRequest $request)
+    public function __invoke(StoreReservaDesdeVoucherRequest $request, $id)
     {
         DB::beginTransaction();
 
         try {
-            $voucher = $this->repository->find($request->voucher_id);
+            $voucher = $this->repository->find($id);
 
             if($voucher->reserva_id) {
                 throw ValidationException::withMessages([
@@ -80,6 +80,6 @@ class StoreReservaDesdeVoucherController extends Controller
             throw $th;
         }
 
-        return response()->json($reserva, 201);
+        return response()->json($reserva);
     }
 }

@@ -26,7 +26,7 @@ class UpdateTipoPersonaRequest extends FormRequest
     {
         return [
             'descripcion' => 'required',
-            'descuento_id' => 'required|exists:descuentos,id',
+            'descuento_id' => 'nullable|exists:descuentos,id',
         ];
     }
 

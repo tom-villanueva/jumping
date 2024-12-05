@@ -34,13 +34,32 @@ class Reserva extends BaseModel
         // 'telefono'
     ];
 
+    public function delete()
+    {
+        // Soft delete related models
+        $this->pagos()->each(function ($pago) {
+            $pago->delete();
+        });
+
+        $this->estados()->each(function ($estado) {
+            $estado->delete();
+        });
+
+        $this->traslados()->each(function ($traslado) {
+            $traslado->delete();
+        });
+
+        if ($this->voucher) {
+            $this->voucher->delete();
+        }
+
+        // Then soft delete the Reserva itself
+        parent::delete();
+    }
+
     /**
      * Relaciones
      */
-    // public function user()
-    // {
-    //     return $this->belongsTo(User::class, 'user_id');
-    // }
     public function cliente()
     {
         return $this->belongsTo(Cliente::class, 'cliente_id');
