@@ -6,7 +6,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogClose,
 } from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
 import {
   Select,
   SelectContent,
@@ -158,14 +160,77 @@ export default function ProductBox({ title }) {
                     <DialogTrigger className="mt-1 text-sm text-gray-500 transition-all duration-75 ease-in hover:text-gray-700">
                       Ver más
                     </DialogTrigger>
-                    <DialogContent>
+                    <DialogContent className="max-w-sm bg-zinc-900 sm:max-w-3xl">
                       <DialogHeader>
-                        <DialogTitle>Are you absolutely sure?</DialogTitle>
-                        <DialogDescription>
-                          This action cannot be undone. This will permanently
-                          delete your account and remove your data from our
-                          servers.
-                        </DialogDescription>
+                        <div className="grid grid-cols-5 gap-10">
+                          <div className="col-span-5 flex flex-col sm:col-span-2 sm:border-r sm:border-white sm:pr-10">
+                            <DialogTitle className="mb-5 font-montserrat text-sm font-light">
+                              Equipo Completo
+                            </DialogTitle>
+                            <img
+                              alt={product.imageAlt}
+                              src={product.imageSrc}
+                              className="h-full w-full object-cover object-center lg:h-full lg:w-full"
+                            />
+                          </div>
+                          <div className="col-span-5 flex flex-col sm:col-span-3">
+                            <DialogTitle className="my-5 font-archivo">
+                              {product.name}
+                            </DialogTitle>
+                            <DialogDescription className="font-montserrat font-light text-white">
+                              This action cannot be undone. This will
+                              permanently delete your account and remove your
+                              data from our servers.dfisdfhns gfdignfdignifgn
+                              fdgidfngidfgnidfgn dfgindfgi
+                            </DialogDescription>
+                            <div className="col-span-2 flex flex-col gap-3">
+                              <p className="mt-5 font-montserrat font-bold tracking-widest">
+                                Valor por dia:{' '}
+                              </p>
+                              <span className="font-montserrat font-bold text-red-600">
+                                {product.price}
+                              </span>
+                              <p className="font-montserrat font-bold tracking-widest">
+                                Cantidad
+                              </p>
+                              <div className="col-span-2 flex w-full flex-row items-center justify-center sm:items-start sm:justify-start">
+                                <button
+                                  className="rounded-l-lg bg-red-600 p-2 font-archivo font-bold"
+                                  onClick={() => handleCounter('minus')}>
+                                  -
+                                </button>
+                                <Input
+                                  type="number"
+                                  placeholder={cantidad}
+                                  value={cantidad}
+                                  className="max-w-[100px] rounded-sm bg-zinc-900 text-white"
+                                  onChange={e => handleCounter(e.target.value)}
+                                />
+
+                                <button
+                                  className="rounded-r-lg bg-red-600 p-2 font-archivo font-bold"
+                                  onClick={() => handleCounter('plus')}>
+                                  +
+                                </button>
+                              </div>
+                              <div className="mt-3 flex w-full justify-end">
+                                <button
+                                  className="w-[200px] rounded-full bg-red-600 px-5 py-3 font-montserrat font-bold transition-all duration-75 ease-in hover:bg-red-800"
+                                  onClick={() =>
+                                    handleSelect(
+                                      altura,
+                                      peso,
+                                      talle,
+                                      nivel,
+                                      cantidad,
+                                    )
+                                  }>
+                                  SELECCIONAR
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                       </DialogHeader>
                     </DialogContent>
                   </Dialog>
@@ -177,7 +242,86 @@ export default function ProductBox({ title }) {
                   {product.price}
                 </p>
               </div>
+
               <Dialog>
+                <DialogTrigger className="flex w-full items-center justify-center rounded-sm border-[1px] border-red-600 py-1 font-archivo font-medium text-black transition-all duration-75 ease-in hover:bg-red-600 hover:text-white">
+                  Seleccionar
+                </DialogTrigger>
+                <DialogContent className="max-w-sm bg-zinc-900 sm:max-w-3xl">
+                  <DialogHeader>
+                    <div className="grid grid-cols-5 gap-10">
+                      <div className="col-span-5 flex flex-col sm:col-span-2 sm:border-r sm:border-white sm:pr-10">
+                        <DialogTitle className="mb-5 font-montserrat text-sm font-light">
+                          Equipo Completo
+                        </DialogTitle>
+                        <img
+                          alt={product.imageAlt}
+                          src={product.imageSrc}
+                          className="h-full w-full object-cover object-center lg:h-full lg:w-full"
+                        />
+                      </div>
+                      <div className="col-span-5 flex flex-col sm:col-span-3">
+                        <DialogTitle className="my-5 font-archivo">
+                          {product.name}
+                        </DialogTitle>
+                        <DialogDescription className="font-montserrat font-light text-white">
+                          This action cannot be undone. This will permanently
+                          delete your account and remove your data from our
+                          servers.dfisdfhns gfdignfdignifgn fdgidfngidfgnidfgn
+                          dfgindfgi
+                        </DialogDescription>
+                        <div className="col-span-2 flex flex-col gap-3">
+                          <p className="mt-5 font-montserrat font-bold tracking-widest">
+                            Valor por dia:{' '}
+                          </p>
+                          <span className="font-montserrat font-bold text-red-600">
+                            {product.price}
+                          </span>
+                          <p className="font-montserrat font-bold tracking-widest">
+                            Cantidad
+                          </p>
+                          <div className="col-span-2 flex w-full flex-row items-center justify-center sm:items-start sm:justify-start">
+                            <button
+                              className="rounded-l-lg bg-red-600 p-2 font-archivo font-bold"
+                              onClick={() => handleCounter('minus')}>
+                              -
+                            </button>
+                            <Input
+                              type="number"
+                              placeholder={cantidad}
+                              value={cantidad}
+                              className="max-w-[100px] rounded-sm bg-zinc-900 text-white"
+                              onChange={e => handleCounter(e.target.value)}
+                            />
+
+                            <button
+                              className="rounded-r-lg bg-red-600 p-2 font-archivo font-bold"
+                              onClick={() => handleCounter('plus')}>
+                              +
+                            </button>
+                          </div>
+                          <div className="mt-3 flex w-full justify-end">
+                            <button
+                              className="w-[200px] rounded-full bg-red-600 px-5 py-3 font-montserrat font-bold transition-all duration-75 ease-in hover:bg-red-800"
+                              onClick={() =>
+                                handleSelect(
+                                  altura,
+                                  peso,
+                                  talle,
+                                  nivel,
+                                  cantidad,
+                                )
+                              }>
+                              SELECCIONAR
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </DialogHeader>
+                </DialogContent>
+              </Dialog>
+              {/* <Dialog>
                 <DialogTrigger className="flex w-full items-center justify-center rounded-sm border-[1px] border-red-600 py-1 font-archivo font-medium text-black transition-all duration-75 ease-in hover:bg-red-600 hover:text-white">
                   Seleccionar
                 </DialogTrigger>
@@ -311,7 +455,7 @@ export default function ProductBox({ title }) {
                     </div>
                   </DialogHeader>
                 </DialogContent>
-              </Dialog>
+              </Dialog> */}
             </div>
           ))}
         </div>

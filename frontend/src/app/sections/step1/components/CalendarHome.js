@@ -1,6 +1,5 @@
 'use client'
 import * as React from 'react'
-
 import { Calendar } from '@/components/ui/calendar'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
@@ -8,16 +7,16 @@ import { addDays } from 'date-fns'
 import { DateRange, DayPicker } from 'react-day-picker'
 import IconSection from './IconSection.js'
 import { useToast } from '@/components/ui/use-toast'
+import FormContext from '../../context/FormContext.jsx'
+import { useContext } from 'react'
+import { useEquiposClientes } from '@/services/clientes.js'
+import { formatDate } from '@/lib/utils.js'
+import axios from '@/lib/axios.js'
 
-export default function CalendarHome({ setStep1, setSteps, setBgStyle }) {
+export default function CalendarHome({ setSteps, setBgStyle }) {
   const { toast } = useToast()
+  const { range, setDateRange, setProducts } = useContext(FormContext)
 
-  const initialRange = {
-    from: new Date(),
-    to: addDays(new Date(), 2),
-  }
-
-  const [range, setDateRange] = React.useState(initialRange)
   const [disableButton, setDisableButton] = useState(false)
 
   const handleDayClick = day => {
@@ -41,7 +40,13 @@ export default function CalendarHome({ setStep1, setSteps, setBgStyle }) {
     })
   }
 
-  function dateSubmit(e) {
+  // const { equipos, isLoading, isError, fetchEquipos } = useEquiposClientes({
+  //   fecha_desde: formatDate(range.from ?? new Date()),
+  //   fecha_hasta: formatDate(range.to ?? new Date()),
+  //   onSuccess: data => setProducts(data),
+  // })
+
+  async function dateSubmit(e) {
     // e.preventDefault()
 
     if (range.from === undefined || range.to === undefined) {
@@ -53,27 +58,63 @@ export default function CalendarHome({ setStep1, setSteps, setBgStyle }) {
       return
     }
 
-    const fromDay = range.from.getDate()
+    // const fromDay = range.from.getDate()
 
-    if (fromDay < new Date().getDate()) {
+    // if (fromDay < new Date().getDate()) {
+    //   toast({
+    //     title: 'No puedes elegir un dia que ya paso',
+    //     variant: 'destructive',
+    //   })
+    //   return
+    // }
+    try {
+      setDisableButton(true)
+      const queryParams = new URLSearchParams()
+
+      queryParams.append('fecha_desde', formatDate(range.from))
+      queryParams.append('fecha_hasta', formatDate(range.to))
+
+      const qs = queryParams.toString()
+      const endpoint = qs
+        ? `/api/clientes/equipos?${qs}`
+        : '/api/clientes/equipos'
+
+      //fetchEquipos()
+      const response = await axios.get(endpoint)
+
+      setProducts(response.data)
+
       toast({
-        title: 'No puedes elegir un dia que ya paso',
+        title: 'Exito!',
+        description: 'Buscando equipos disponibles',
+        variant: 'success',
+      })
+
+      //setStep1(range)
+      setBgStyle(2)
+      setSteps(2)
+    } catch (error) {
+      toast({
+        title: `error ${error}`,
         variant: 'destructive',
       })
-      return
     }
-
-    setDisableButton(true)
-
-    toast({
-      title: 'Exito!',
-      description: 'Buscando equipos disponibles',
-      variant: 'success',
-    })
-    setStep1(range)
-    setBgStyle(2)
-    setSteps(2)
   }
+
+  const fromMonth =
+    new Date().getMonth() + 1 > 9
+      ? new Date(new Date().getFullYear() + 1, 5)
+      : new Date(new Date().getFullYear(), 5)
+
+  const toMonth =
+    new Date().getMonth() + 1 > 9
+      ? new Date(new Date().getFullYear() + 1, 8)
+      : new Date(new Date().getFullYear(), 8)
+
+  const fromYear =
+    new Date().getMonth() + 1 > 9
+      ? new Date().getFullYear() + 1
+      : new Date().getFullYear()
 
   return (
     <div className="mt-16">
@@ -87,10 +128,10 @@ export default function CalendarHome({ setStep1, setSteps, setBgStyle }) {
           numberOfMonths={1}
           weekStartsOn={1}
           min={3}
-          fromMonth={new Date(new Date().getFullYear(), 5)}
-          toMonth={new Date(new Date().getFullYear(), 8)}
-          fromYear={new Date().getFullYear()}
-          toYear={new Date().getFullYear()}
+          fromMonth={fromMonth}
+          toMonth={toMonth}
+          fromYear={fromYear}
+          toYear={fromYear}
           disabled={{
             before: new Date(
               new Date().getFullYear(),
