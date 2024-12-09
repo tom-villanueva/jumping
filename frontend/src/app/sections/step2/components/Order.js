@@ -1,11 +1,6 @@
 import React from 'react'
 
-export default function Order({ setSteps, setBgStyle }) {
-  function handleSubmit() {
-    setBgStyle(1)
-    setSteps(3)
-  }
-
+export default function Order({ setBgStyle }) {
   return (
     <div className="w-full">
       <p className="my-10 text-center font-montserrat text-xl font-bold uppercase text-black">
@@ -37,7 +32,8 @@ export default function Order({ setSteps, setBgStyle }) {
         </div>
         <button
           className="rounded-full bg-red-600 px-5 py-3 font-montserrat font-bold transition-all duration-75 ease-in hover:bg-red-800"
-          onClick={() => handleSubmit()}>
+          // onClick={() => handleSubmit()}
+          type="submit">
           CONTINUAR
         </button>
       </div>

@@ -114,7 +114,7 @@ export const fetcher = async ([url, qs]) => {
 
 // https://swr.vercel.app/docs/mutation#useswrmutation
 export async function storeFetcher(url, { arg }) {
-  await axios.post(url, arg.data)
+  return await axios.post(url, arg.data)
 }
 
 export async function updateFetcher(url, { arg }) {

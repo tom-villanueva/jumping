@@ -1,25 +1,31 @@
-import React from 'react'
-import CalendarHome from './step1/components/CalendarHome'
-import EquipmentSelection from './step2/components/EquipmentSelection'
-import RegisterForm from './step3/components/RegisterForm'
-import { useState } from 'react'
+import React, { useState } from 'react'
+import CalendarStep from './step1/components/CalendarStep'
+import EquipmentStep from './step2/components/EquipmentStep'
+import RegisterStep from './step3/components/RegisterStep'
 import { FormContextProvider } from './context/FormContext'
 
 export default function RentForm({ setBgStyle }) {
-  const [steps, setSteps] = useState(1)
+  const [currentStep, setCurrentStep] = useState(1)
+
+  const steps = [
+    <CalendarStep
+      key="step1"
+      onNext={() => setCurrentStep(2)}
+      setBgStyle={setBgStyle}
+    />,
+    <EquipmentStep
+      key="step2"
+      onNext={() => setCurrentStep(3)}
+      onBack={() => setCurrentStep(1)}
+      setBgStyle={setBgStyle}
+    />,
+    <RegisterStep key="step3" onBack={() => setCurrentStep(2)} />,
+  ]
 
   return (
     <div className="my-8 overflow-auto">
       <FormContextProvider>
-        <form>
-          {steps === 1 ? (
-            <CalendarHome setSteps={setSteps} setBgStyle={setBgStyle} />
-          ) : steps === 2 ? (
-            <EquipmentSelection setSteps={setSteps} setBgStyle={setBgStyle} />
-          ) : (
-            <RegisterForm />
-          )}
-        </form>
+        <div>{steps[currentStep - 1]}</div>
       </FormContextProvider>
     </div>
   )
