@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Cliente;
 use App\Models\Descuento;
 use App\Models\Equipo;
 use App\Models\EquipoDescuento;
@@ -9,6 +10,7 @@ use App\Models\EquipoPrecio;
 use App\Models\Estado;
 use App\Models\ReservaEquipo;
 use App\Models\TrasladoPrecio;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -60,6 +62,7 @@ class StoreReservaClienteControllerTest extends TestCase
             'fecha_desde' => $fechaDesde,
             'fecha_hasta' => $fechaHasta,
             'user_id' => null,
+            'nombre' => 'John',
             'apellido' => 'Doe',
             'email' => 'tomas.villanueva.jousset@gmail.com',
             'equipos' => $equipos->map(function ($equipo) {
@@ -85,7 +88,7 @@ class StoreReservaClienteControllerTest extends TestCase
         // Assert response
         $response->assertStatus(201);
         $response->assertJsonStructure([
-            'id', 'fecha_desde', 'fecha_hasta', 'user_id'
+            'id', 'fecha_desde', 'fecha_hasta'
         ]);
 
         // Assert reserva and related data in the database
@@ -93,7 +96,6 @@ class StoreReservaClienteControllerTest extends TestCase
             'id' => $response->json('id'),
             'fecha_desde' => $fechaDesde,
             'fecha_hasta' => $fechaHasta,
-            'user_id' => null,
         ]);
 
         $this->assertDatabaseHas('reserva_estado', [
@@ -126,5 +128,122 @@ class StoreReservaClienteControllerTest extends TestCase
                 'fecha_hasta' => $traslado['fecha_hasta'],
             ]);
         }
+    }
+
+    private function preparePayload($equipos, $fechaDesde, $fechaHasta, $overrides = [])
+    {
+        return array_merge([
+            'fecha_desde' => $fechaDesde,
+            'fecha_hasta' => $fechaHasta,
+            'user_id' => null,
+            'nombre' => 'John',
+            'apellido' => 'Doe',
+            'email' => 'tomas.villanueva.jousset@gmail.com',
+            'equipos' => $equipos->map(fn ($equipo) => [
+                'nombre' => 'Nombre Equipo',
+                'apellido' => 'Apellido Equipo',
+                'equipo_id' => $equipo->id,
+            ])->toArray(),
+            'traslados' => [[
+                'direccion' => 'Direccion 1',
+                'fecha_desde' => $fechaDesde,
+                'fecha_hasta' => $fechaHasta,
+            ]]
+        ], $overrides);
+    }
+
+    /** @test */
+    public function it_creates_a_new_client_and_user()
+    {
+        $equipos = Equipo::factory()->count(2)->create();
+        $fechaDesde = '2025-06-15';
+        $fechaHasta = '2025-06-20';
+
+        EquipoPrecio::factory()->count(2)->create([
+            'fecha_desde' => $fechaDesde,
+            'fecha_hasta' => $fechaHasta,
+        ]);
+
+        $payload = $this->preparePayload($equipos, $fechaDesde, $fechaHasta, [
+            'crear_user' => true
+        ]);
+
+        $response = $this->postJson('/api/clientes/reserva', $payload);
+
+        $response->assertStatus(201);
+
+        $this->assertDatabaseHas('clientes', [
+            'email' => $payload['email'],
+        ]);
+
+        $this->assertDatabaseHas('users', [
+            'email' => $payload['email'],
+        ]);
+    }
+
+    /** @test */
+    public function it_uses_existing_client_with_no_user_and_creates_user()
+    {
+        $cliente = Cliente::factory()->create(['email' => 'tomas.villanueva.jousset@gmail.com']);
+        $equipos = Equipo::factory()->count(2)->create();
+        $fechaDesde = '2025-06-15';
+        $fechaHasta = '2025-06-20';
+
+        $payload = $this->preparePayload($equipos, $fechaDesde, $fechaHasta, [
+            'crear_user' => true
+        ]);
+
+        $response = $this->postJson('/api/clientes/reserva', $payload);
+
+        $response->assertStatus(201);
+
+        $this->assertDatabaseHas('users', [
+            'email' => $cliente->email,
+        ]);
+    }
+
+    /** @test */
+    public function it_uses_existing_client_with_user()
+    {
+        $user = User::factory()->create(['email' => 'tomas.villanueva.jousset@gmail.com']);
+        $cliente = Cliente::factory()->create(['email' => $user->email, 'user_id' => $user->id]);
+        $equipos = Equipo::factory()->count(2)->create();
+        $fechaDesde = '2025-06-15';
+        $fechaHasta = '2025-06-20';
+
+        $payload = $this->preparePayload($equipos, $fechaDesde, $fechaHasta, [
+            'user_id' => $user->id
+        ]);
+
+        $response = $this->postJson('/api/clientes/reserva', $payload);
+
+        $response->assertStatus(201);
+
+        $this->assertDatabaseHas('clientes', [
+            'email' => $user->email,
+            'user_id' => $user->id,
+        ]);
+    }
+
+    /** @test */
+    public function it_creates_a_new_client_without_user()
+    {
+        $equipos = Equipo::factory()->count(2)->create();
+        $fechaDesde = '2025-06-15';
+        $fechaHasta = '2025-06-20';
+
+        $payload = $this->preparePayload($equipos, $fechaDesde, $fechaHasta);
+
+        $response = $this->postJson('/api/clientes/reserva', $payload);
+
+        $response->assertStatus(201);
+
+        $this->assertDatabaseHas('clientes', [
+            'email' => $payload['email'],
+        ]);
+
+        $this->assertDatabaseMissing('users', [
+            'email' => $payload['email'],
+        ]);
     }
 }

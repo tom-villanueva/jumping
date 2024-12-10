@@ -50,18 +50,30 @@ class StoreReservaClienteRequest extends FormRequest
             ],
             'fecha_prueba' => 'nullable|date_format:Y-m-d',
             'user_id' => 'nullable|exists:users,id',
-            'nombre' => 'nullable',
-            'apellido' => 'required',
-            'email' => 'required',
-            'telefono' => 'nullable',
+            'nombre' => 'required|string|min:2|max:50|regex:/^[\pL\s\-]+$/u',
+            'apellido' => 'required|string|min:2|max:50|regex:/^[\pL\s\-]+$/u',
+            'email' => 'required|email:rfc,dns|max:255',
+            'telefono' => 'nullable|string|max:15|regex:/^\+?[0-9]{7,15}$/',
+            'crear_user' => 'nullable|boolean',
             'equipos' => 'required|array',
+            'equipos.*.equipo_id' => 'required|exists:equipo,id',
+            'equipos.*.nombre' => 'nullable|string|max:255',
+            'equipos.*.apellido' => 'nullable|string|max:255',
             'traslados' => 'required|array',
+            'traslados.*.direccion' => 'required|string|max:255',
+            'traslados.*.fecha_desde' => 'required|date_format:Y-m-d',
+            'traslados.*.fecha_hasta' => 'required|date_format:Y-m-d|after_or_equal:traslados.*.fecha_desde'
         ];
     }
 
     public function messages()
     {
         return [
+            'fecha_desde.after_or_equal' => 'La fecha de inicio no puede ser anterior a hoy.',
+            'fecha_hasta.after_or_equal' => 'La fecha de finalización debe ser posterior o igual a la fecha de inicio.',
+            'telefono.regex' => 'El formato del número de teléfono no es válido.',
+            'email.email' => 'Debe proporcionar un email válido.',
+            // Add more custom messages as needed.
         ];
     }
 }
