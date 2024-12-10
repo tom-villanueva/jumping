@@ -52,3 +52,33 @@ export function useEquiposClientes({ fechaDesde, fechaHasta, onSuccess } = {}) {
     ...rest,
   }
 }
+
+export function useTipoEquiposClientes({ params, filters } = {}) {
+  const filterParams = {}
+
+  filters &&
+    filters.forEach(filter => {
+      filterParams[`filter[${filter.id}]`] = filter.value
+    })
+
+  const allParams = {
+    ...params,
+    ...filterParams,
+  }
+
+  const queryParams = new URLSearchParams(allParams)
+
+  const qs = queryParams.toString()
+
+  const { data, error, isLoading, ...rest } = useSWR([
+    '/api/clientes/tipo-equipos',
+    qs,
+  ])
+
+  return {
+    tipoEquipos: data,
+    isLoading,
+    isError: error,
+    ...rest,
+  }
+}
