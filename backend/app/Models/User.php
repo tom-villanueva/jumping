@@ -49,6 +49,11 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
+    public function cliente()
+    {
+        return $this->hasOne(Cliente::class, 'user_id');
+    }
+
     /**
      * query builder options
      */
